@@ -13,10 +13,9 @@ export async function GET(request) {
   if (!domain || !supabase) return Response.json({ active: false }, { headers })
 
   const { data, error } = await supabase
-    .from('sites').select('active, expires_at').eq('domain', domain).single()
+    .from('sites').select('active').eq('domain', domain).single()
 
   if (error || !data) return Response.json({ active: false }, { headers })
 
-  const expired = data.expires_at ? new Date(data.expires_at) < new Date() : false
-  return Response.json({ active: data.active && !expired }, { headers })
+  return Response.json({ active: data.active }, { headers })
 }

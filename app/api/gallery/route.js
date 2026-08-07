@@ -15,12 +15,10 @@ export async function GET(request) {
     return Response.json({ error: 'Missing params' }, { status: 400, headers })
 
   const { data, error } = await supabase
-    .from('sites').select('active, expires_at').eq('domain', domain).single()
+    .from('sites').select('active').eq('domain', domain).single()
 
   if (error || !data) return Response.json({ error: 'Unlicensed' }, { status: 403, headers })
-
-  const expired = data.expires_at ? new Date(data.expires_at) < new Date() : false
-  if (!data.active || expired) return Response.json({ error: 'License inactive' }, { status: 403, headers })
+  if (!data.active) return Response.json({ error: 'License inactive' }, { status: 403, headers })
 
   try {
     const cacheBuster = (csvUrl.includes('?') ? '&' : '?') + 't=' + Date.now()

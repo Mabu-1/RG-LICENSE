@@ -8,13 +8,13 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [newDomain, setNewDomain] = useState('')
   const [newLabel, setNewLabel] = useState('')
-  const [newExpiry, setNewExpiry] = useState('')
+  const [newNotes, setNewNotes] = useState('')
   const [message, setMessage] = useState('')
   const [adminPass, setAdminPass] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [editDomain, setEditDomain] = useState('')
   const [editLabel, setEditLabel] = useState('')
-  const [editExpiry, setEditExpiry] = useState('')
+  const [editNotes, setEditNotes] = useState('')
 
   useEffect(() => { if (authed) fetchSites() }, [authed])
 
@@ -31,11 +31,11 @@ export default function AdminPage() {
 
   async function addSite() {
     if (!newDomain) return
-    const res = await fetch('/api/sites', { method: 'POST', headers, body: JSON.stringify({ domain: newDomain, label: newLabel, expires_at: newExpiry || null }) })
+    const res = await fetch('/api/sites', { method: 'POST', headers, body: JSON.stringify({ domain: newDomain, label: newLabel, notes: newNotes }) })
     const data = await res.json()
     if (data.error) { setMessage('Error: ' + data.error); return }
     setMessage('Site added!')
-    setNewDomain(''); setNewLabel(''); setNewExpiry('')
+    setNewDomain(''); setNewLabel(''); setNewNotes('')
     fetchSites()
   }
 
@@ -54,13 +54,13 @@ export default function AdminPage() {
     setEditingId(site.id)
     setEditDomain(site.domain)
     setEditLabel(site.label || '')
-    setEditExpiry(site.expires_at ? site.expires_at.split('T')[0] : '')
+    setEditNotes(site.notes || '')
   }
 
-  function cancelEdit() { setEditingId(null); setEditDomain(''); setEditLabel(''); setEditExpiry('') }
+  function cancelEdit() { setEditingId(null); setEditDomain(''); setEditLabel(''); setEditNotes('') }
 
   async function saveEdit(id) {
-    const res = await fetch('/api/sites', { method: 'PATCH', headers, body: JSON.stringify({ id, domain: editDomain, label: editLabel, expires_at: editExpiry || null }) })
+    const res = await fetch('/api/sites', { method: 'PATCH', headers, body: JSON.stringify({ id, domain: editDomain, label: editLabel, notes: editNotes }) })
     const data = await res.json()
     if (data.error) { setMessage('Error: ' + data.error); return }
     setEditingId(null)
@@ -94,13 +94,15 @@ export default function AdminPage() {
 
       <div style={{ background:'white', padding:'24px', borderRadius:'12px', boxShadow:'0 2px 10px rgba(0,0,0,0.06)', marginBottom:'30px' }}>
         <h2 style={{ fontSize:'16px', fontWeight:'600', marginBottom:'16px' }}>Add New Site</h2>
-        <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
+        <div style={{ display:'flex', gap:'10px', flexWrap:'wrap', marginBottom:'10px' }}>
           <input placeholder="Domain (e.g. client.com)" value={newDomain} onChange={e => setNewDomain(e.target.value)}
             style={{ flex:'1', minWidth:'180px', padding:'10px', border:'1px solid #ddd', borderRadius:'8px' }} />
           <input placeholder="Label (e.g. Client Name)" value={newLabel} onChange={e => setNewLabel(e.target.value)}
             style={{ flex:'1', minWidth:'150px', padding:'10px', border:'1px solid #ddd', borderRadius:'8px' }} />
-          <input type="date" value={newExpiry} onChange={e => setNewExpiry(e.target.value)}
-            style={{ padding:'10px', border:'1px solid #ddd', borderRadius:'8px' }} />
+        </div>
+        <div style={{ display:'flex', gap:'10px' }}>
+          <input placeholder="Notes (optional)" value={newNotes} onChange={e => setNewNotes(e.target.value)}
+            style={{ flex:'1', padding:'10px', border:'1px solid #ddd', borderRadius:'8px' }} />
           <button onClick={addSite} style={{ padding:'10px 24px', background:'#111', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'600' }}>Add</button>
         </div>
         {message && <p style={{ marginTop:'10px', fontSize:'13px', color: message.startsWith('Error') ? 'red' : 'green' }}>{message}</p>}
@@ -120,9 +122,9 @@ export default function AdminPage() {
                     style={{ flex:'1', minWidth:'180px', padding:'8px 10px', border:'1px solid #ddd', borderRadius:'8px', fontSize:'14px' }} />
                   <input value={editLabel} onChange={e => setEditLabel(e.target.value)} placeholder="Label"
                     style={{ flex:'1', minWidth:'140px', padding:'8px 10px', border:'1px solid #ddd', borderRadius:'8px', fontSize:'14px' }} />
-                  <input type="date" value={editExpiry} onChange={e => setEditExpiry(e.target.value)}
-                    style={{ padding:'8px 10px', border:'1px solid #ddd', borderRadius:'8px', fontSize:'14px' }} />
                 </div>
+                <input value={editNotes} onChange={e => setEditNotes(e.target.value)} placeholder="Notes"
+                  style={{ width:'100%', padding:'8px 10px', border:'1px solid #ddd', borderRadius:'8px', fontSize:'14px', boxSizing:'border-box' }} />
                 <div style={{ display:'flex', gap:'8px' }}>
                   <button onClick={() => saveEdit(site.id)}
                     style={{ padding:'7px 18px', background:'#111', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'600', fontSize:'13px' }}>Save</button>
@@ -135,8 +137,8 @@ export default function AdminPage() {
                 <div style={{ flex:'1', minWidth:'150px' }}>
                   <div style={{ fontWeight:'600', fontSize:'15px' }}>{site.domain}</div>
                   {site.label && <div style={{ fontSize:'12px', color:'#888', marginTop:'2px' }}>{site.label}</div>}
+                  {site.notes && <div style={{ fontSize:'12px', color:'#aaa', marginTop:'2px', fontStyle:'italic' }}>{site.notes}</div>}
                 </div>
-                {site.expires_at && <div style={{ fontSize:'12px', color:'#999' }}>Expires: {new Date(site.expires_at).toLocaleDateString()}</div>}
                 <div style={{ fontSize:'12px', color:'#999' }}>Added: {new Date(site.created_at).toLocaleDateString()}</div>
                 <button onClick={() => toggleSite(site.id, site.active)}
                   style={{ padding:'6px 16px', borderRadius:'20px', border:'none', cursor:'pointer', fontWeight:'600', fontSize:'13px',
