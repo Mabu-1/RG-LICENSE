@@ -9,14 +9,12 @@ export async function GET(request) {
     'Access-Control-Allow-Origin': '*',
   }
 
-  const referer = request.headers.get('referer') || request.headers.get('origin') || ''
-
-  let domain = ''
-  try {
-    domain = new URL(referer).hostname.replace(/^www\./, '')
-  } catch {
-    return new Response('/* no referer */', { status: 200, headers: jsHeaders })
-  }
+  const { searchParams } = new URL(request.url)
+  const raw = searchParams.get('d') || ''
+  const domain = raw.toLowerCase()
+    .replace(/^https?:///, '')
+    .replace(/^www./, '')
+    .replace(//$/, '')
 
   if (!domain || !supabase) {
     return new Response('/* error */', { status: 200, headers: jsHeaders })
