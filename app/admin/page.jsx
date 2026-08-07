@@ -1,8 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-const ADMIN_PASSWORD = 'yourpassword123'
-
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [passwordInput, setPasswordInput] = useState('')
@@ -12,17 +10,19 @@ export default function AdminPage() {
   const [newLabel, setNewLabel] = useState('')
   const [newExpiry, setNewExpiry] = useState('')
   const [message, setMessage] = useState('')
-
-  const headers = { 'Content-Type': 'application/json', 'x-admin-password': ADMIN_PASSWORD }
+  const [adminPass, setAdminPass] = useState('')
 
   useEffect(() => {
     if (authed) fetchSites()
   }, [authed])
 
+  const headers = { 'Content-Type': 'application/json', 'x-admin-password': adminPass }
+
   async function fetchSites() {
     setLoading(true)
-    const res = await fetch('/api/sites', { headers })
+    const res = await fetch('/api/sites', { headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPass } })
     const data = await res.json()
+    if (data.error) { setAuthed(false); setMessage('Wrong password'); setLoading(false); return }
     setSites(data || [])
     setLoading(false)
   }
@@ -65,11 +65,11 @@ export default function AdminPage() {
           placeholder="Password"
           value={passwordInput}
           onChange={e => setPasswordInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && (passwordInput === ADMIN_PASSWORD ? setAuthed(true) : setMessage('Wrong password'))}
+          onKeyDown={e => { if(e.key === 'Enter') { setAdminPass(passwordInput); setAuthed(true); setMessage('') }}}
           style={{ width:'100%', padding:'10px', border:'1px solid #ddd', borderRadius:'8px', marginBottom:'12px', boxSizing:'border-box' }}
         />
         <button
-          onClick={() => passwordInput === ADMIN_PASSWORD ? setAuthed(true) : setMessage('Wrong password')}
+          onClick={() => { setAdminPass(passwordInput); setAuthed(true); setMessage('') }}
           style={{ width:'100%', padding:'10px', background:'#111', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontWeight:'600' }}
         >Login</button>
         {message && <p style={{ color:'red', marginTop:'10px', fontSize:'13px' }}>{message}</p>}
@@ -81,10 +81,12 @@ export default function AdminPage() {
     <div style={{ maxWidth:'900px', margin:'0 auto', padding:'40px 20px', fontFamily:'system-ui, sans-serif' }}>
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px' }}>
         <h1 style={{ fontSize:'24px', fontWeight:'700' }}>RG License Manager</h1>
-        <span style={{ fontSize:'13px', color:'#888' }}>{sites.length} sites</span>
+        <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
+          <span style={{ fontSize:'13px', color:'#888' }}>{sites.length} sites</span>
+          <button onClick={() => setAuthed(false)} style={{ padding:'6px 14px', border:'1px solid #ddd', borderRadius:'8px', cursor:'pointer', fontSize:'13px' }}>Logout</button>
+        </div>
       </div>
 
-      {/* Add Site */}
       <div style={{ background:'white', padding:'24px', borderRadius:'12px', boxShadow:'0 2px 10px rgba(0,0,0,0.06)', marginBottom:'30px' }}>
         <h2 style={{ fontSize:'16px', fontWeight:'600', marginBottom:'16px' }}>Add New Site</h2>
         <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
@@ -102,7 +104,6 @@ export default function AdminPage() {
         {message && <p style={{ marginTop:'10px', fontSize:'13px', color: message.startsWith('Error') ? 'red' : 'green' }}>{message}</p>}
       </div>
 
-      {/* Sites List */}
       <div style={{ background:'white', borderRadius:'12px', boxShadow:'0 2px 10px rgba(0,0,0,0.06)', overflow:'hidden' }}>
         {loading ? (
           <p style={{ padding:'30px', textAlign:'center', color:'#888' }}>Loading...</p>
@@ -114,14 +115,8 @@ export default function AdminPage() {
               <div style={{ fontWeight:'600', fontSize:'15px' }}>{site.domain}</div>
               {site.label && <div style={{ fontSize:'12px', color:'#888', marginTop:'2px' }}>{site.label}</div>}
             </div>
-            {site.expires_at && (
-              <div style={{ fontSize:'12px', color:'#999' }}>
-                Expires: {new Date(site.expires_at).toLocaleDateString()}
-              </div>
-            )}
-            <div style={{ fontSize:'12px', color:'#999' }}>
-              Added: {new Date(site.created_at).toLocaleDateString()}
-            </div>
+            {site.expires_at && <div style={{ fontSize:'12px', color:'#999' }}>Expires: {new Date(site.expires_at).toLocaleDateString()}</div>}
+            <div style={{ fontSize:'12px', color:'#999' }}>Added: {new Date(site.created_at).toLocaleDateString()}</div>
             <button onClick={() => toggleSite(site.id, site.active)}
               style={{ padding:'6px 16px', borderRadius:'20px', border:'none', cursor:'pointer', fontWeight:'600', fontSize:'13px',
                 background: site.active ? '#dcfce7' : '#fee2e2', color: site.active ? '#166534' : '#991b1b' }}>
