@@ -15,7 +15,7 @@ export async function POST(request) {
   if (!checkAuth(request)) return Response.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await request.json()
   const { data, error } = await supabase.from('sites').insert({
-    domain: body.domain.toLowerCase().replace('www.', ''),
+    domain: body.domain.toLowerCase().replace('www.', '').replace('https://', '').replace('http://', '').replace(/\/$/, ''),
     label: body.label || '',
     active: true,
     expires_at: body.expires_at || null
@@ -27,7 +27,12 @@ export async function POST(request) {
 export async function PATCH(request) {
   if (!checkAuth(request)) return Response.json({ error: 'Unauthorized' }, { status: 401 })
   const body = await request.json()
-  const { data } = await supabase.from('sites').update({ active: body.active }).eq('id', body.id).select().single()
+  const updates = {}
+  if (body.active !== undefined) updates.active = body.active
+  if (body.domain !== undefined) updates.domain = body.domain.toLowerCase().replace('www.', '').replace('https://', '').replace('http://', '').replace(/\/$/, '')
+  if (body.label !== undefined) updates.label = body.label
+  if (body.expires_at !== undefined) updates.expires_at = body.expires_at
+  const { data } = await supabase.from('sites').update(updates).eq('id', body.id).select().single()
   return Response.json(data)
 }
 
