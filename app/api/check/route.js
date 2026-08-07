@@ -9,7 +9,7 @@ export async function GET(request) {
     'Content-Type': 'application/json',
   }
 
-  if (!domain) return Response.json({ active: false }, { headers })
+  if (!domain || !supabase) return Response.json({ active: false }, { headers })
 
   const { data, error } = await supabase
     .from('sites')
