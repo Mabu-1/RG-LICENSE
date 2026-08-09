@@ -1,10 +1,34 @@
 ﻿export default function GoogleSheets() {
   const rows = [
-    { r: 5, a: 'Sarah M.',  b: 'Absolutely love this!',   d: '2024-01-15', v: 'TRUE'  },
-    { r: 4, a: 'James R.',  b: 'Great product overall',    d: '2024-01-14', v: 'FALSE' },
-    { r: 5, a: 'Priya K.',  b: 'Exceeded expectations',    d: '2024-01-13', v: 'TRUE'  },
-    { r: 5, a: 'Tom W.',    b: 'Second purchase, perfect', d: '2024-01-12', v: 'FALSE' },
-  ]
+    {
+      r: 5,
+      a: "Sarah M.",
+      b: "Absolutely love this!",
+      d: "2024-01-15",
+      v: "TRUE",
+    },
+    {
+      r: 4,
+      a: "James R.",
+      b: "Great product overall",
+      d: "2024-01-14",
+      v: "FALSE",
+    },
+    {
+      r: 5,
+      a: "Priya K.",
+      b: "Exceeded expectations",
+      d: "2024-01-13",
+      v: "TRUE",
+    },
+    {
+      r: 5,
+      a: "Tom W.",
+      b: "Second purchase, perfect",
+      d: "2024-01-12",
+      v: "FALSE",
+    },
+  ];
   return (
     <>
       <style>{`
@@ -13,7 +37,7 @@
         .gs-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
         .gs-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
         .gs-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: #64748B; }
-        .gs-list { list-style: none; }
+        .gs-list { list-style: none; padding: 0; margin: 0; }
         .gs-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }
         .gs-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
         .gs-sheet-wrap { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; border: 1px solid #e2e8f0; }
@@ -27,12 +51,24 @@
         .gs-row-num { color: #999; text-align: center; background: #f8f9fa !important; width: 32px; }
         .gs-star { color: #F59E0B; }
         .gs-verified { color: #0F9D58; font-weight: 600; }
+
         @media (max-width: 900px) {
           .gs { padding: 70px 0; }
           .gs-split { grid-template-columns: 1fr; gap: 48px; }
         }
-        @media (max-width: 480px) {
-          .gs-sheet-bar { font-size: 11px; }
+        @media (max-width: 600px) {
+          .gs { padding: 50px 0; }
+          .gs-h2 { font-size: clamp(24px, 7vw, 36px); letter-spacing: -1px; }
+          .gs-p { font-size: 15px; }
+          .gs-list li { font-size: 13px; }
+          .gs-sheet-bar { font-size: 11px; padding: 8px 12px; }
+          .gs-sheet-wrap { border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.10); }
+          .gs-table { font-size: 11px; min-width: 360px; }
+          .gs-table th, .gs-table td { padding: 6px 8px; }
+        }
+        @media (max-width: 380px) {
+          .gs-table { min-width: 320px; }
+          .gs-table th, .gs-table td { padding: 5px 6px; }
         }
       `}</style>
       <section className="gs" id="feat-sheets">
@@ -41,9 +77,16 @@
             <div>
               <div className="gs-eyebrow">Google Sheets Powered</div>
               <h2 className="gs-h2">Your spreadsheet IS your database</h2>
-              <p className="gs-p">No CMS, no dashboard, no complexity. Point the section to any Google Sheet, make it public, and your reviews appear on the store instantly. Add a row — refresh — it is live.</p>
+              <p className="gs-p">
+                No CMS, no dashboard, no complexity. Point the section to any
+                Google Sheet, make it public, and your reviews appear on the
+                store instantly. Add a row — refresh — it is live.
+              </p>
               <ul className="gs-list">
-                <li>8 simple columns — rating, author, body, date, photo, verified, variant</li>
+                <li>
+                  8 simple columns — rating, author, body, date, photo,
+                  verified, variant
+                </li>
                 <li>Update reviews without touching Shopify at all</li>
                 <li>Works with any public Google Sheet export URL</li>
                 <li>Cache-busting ensures reviews always stay fresh</li>
@@ -71,11 +114,15 @@
                       {rows.map((r, i) => (
                         <tr key={i}>
                           <td className="gs-row-num">{i + 2}</td>
-                          <td className="gs-star">{'★'.repeat(r.r) + '☆'.repeat(5 - r.r)}</td>
+                          <td className="gs-star">
+                            {"★".repeat(r.r) + "☆".repeat(5 - r.r)}
+                          </td>
                           <td>{r.a}</td>
                           <td>{r.b}</td>
                           <td>{r.d}</td>
-                          <td className={r.v === 'TRUE' ? 'gs-verified' : ''}>{r.v}</td>
+                          <td className={r.v === "TRUE" ? "gs-verified" : ""}>
+                            {r.v}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -87,5 +134,5 @@
         </div>
       </section>
     </>
-  )
+  );
 }
