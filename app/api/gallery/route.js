@@ -38,7 +38,7 @@ function parseCSV(text) {
   const reviews = []
   if (rows.length > 0) rows.shift()
   rows.forEach((row, idx) => {
-    if (row.length < 3) return
+    if (row.length < 2) return
     const rawMediaUrl = row[5] ? row[5].trim() : ''
     let finalPhotoUrl = '', finalVideoUrl = ''
     if (rawMediaUrl.length > 5) {
@@ -46,10 +46,13 @@ function parseCSV(text) {
       if (isVideo) { finalVideoUrl = rawMediaUrl } else { finalPhotoUrl = rawMediaUrl }
     }
     const rawVerified = row[6] ? row[6].trim().toUpperCase() : ''
+    const rating = parseInt(row[0])
+    if (!rating) return
     reviews.push({
       id: idx,
-      rating: parseInt(row[0]) || 5,
+      rating: rating || 5,
       author: row[1] || 'Customer',
+      email: row[2] || '',
       body: row[3] || '',
       date: row[4] || '',
       photoUrl: finalPhotoUrl,
