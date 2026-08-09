@@ -16,17 +16,24 @@
         .gs-list { list-style: none; }
         .gs-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }
         .gs-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
-        .gs-sheet-wrap { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; border: 1px solid #e2e8f0; }
+        .gs-sheet-wrap { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; border: 1px solid #e2e8f0; }
         .gs-sheet-bar { background: #f1f3f4; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #5f6368; font-weight: 500; }
         .gs-sheet-icon { color: #0F9D58; font-size: 16px; }
-        .gs-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .gs-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .gs-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
         .gs-table th { background: #f8f9fa; padding: 8px 12px; text-align: left; font-weight: 600; color: #5f6368; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; white-space: nowrap; }
-        .gs-table td { padding: 7px 12px; color: #333; border-bottom: 1px solid #f1f3f4; border-right: 1px solid #f1f3f4; white-space: nowrap; }
+        .gs-table td { padding: 7px 12px; color: #333; border-bottom: 1px solid #f1f3f4; border-right: 1px solid #f1f3f4; white-space: nowrap; max-width: 160px; overflow: hidden; text-overflow: ellipsis; }
         .gs-table tr:hover td { background: #f8f9fa; }
         .gs-row-num { color: #999; text-align: center; background: #f8f9fa !important; width: 32px; }
         .gs-star { color: #F59E0B; }
         .gs-verified { color: #0F9D58; font-weight: 600; }
-        @media (max-width: 900px) { .gs { padding: 70px 0; } .gs-split { grid-template-columns: 1fr; gap: 48px; } }
+        @media (max-width: 900px) {
+          .gs { padding: 70px 0; }
+          .gs-split { grid-template-columns: 1fr; gap: 48px; }
+        }
+        @media (max-width: 480px) {
+          .gs-sheet-bar { font-size: 11px; }
+        }
       `}</style>
       <section className="gs" id="feat-sheets">
         <div className="rgl-container">
@@ -48,7 +55,7 @@
                   <span className="gs-sheet-icon">📊</span>
                   reviews-data — Google Sheets
                 </div>
-                <div style={{overflowX:'auto'}}>
+                <div className="gs-scroll">
                   <table className="gs-table">
                     <thead>
                       <tr>
@@ -61,14 +68,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {rows.map((r,i) => (
+                      {rows.map((r, i) => (
                         <tr key={i}>
-                          <td className="gs-row-num">{i+2}</td>
-                          <td className="gs-star">{'★'.repeat(r.r)+'☆'.repeat(5-r.r)}</td>
+                          <td className="gs-row-num">{i + 2}</td>
+                          <td className="gs-star">{'★'.repeat(r.r) + '☆'.repeat(5 - r.r)}</td>
                           <td>{r.a}</td>
-                          <td style={{maxWidth:140,overflow:'hidden',textOverflow:'ellipsis'}}>{r.b}</td>
+                          <td>{r.b}</td>
                           <td>{r.d}</td>
-                          <td className={r.v==='TRUE'?'gs-verified':''}>{r.v}</td>
+                          <td className={r.v === 'TRUE' ? 'gs-verified' : ''}>{r.v}</td>
                         </tr>
                       ))}
                     </tbody>
