@@ -25,10 +25,10 @@ export default function MediaPage() {
       const ext = file.name.split('.').pop();
       const fileName = Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
       const { error: storageError } = await supabaseBrowser.storage
-        .from('YOUR_BUCKET_NAME')
+        .from('review-images')
         .upload(fileName, file, { contentType: file.type, upsert: false });
       if (storageError) { setMsg('Upload failed: ' + storageError.message); continue; }
-      const { data: urlData } = supabaseBrowser.storage.from('YOUR_BUCKET_NAME').getPublicUrl(fileName);
+      const { data: urlData } = supabaseBrowser.storage.from('review-images').getPublicUrl(fileName);
       const { error: dbError } = await supabaseBrowser.from('media').insert({ name: file.name, url: urlData.publicUrl, type: file.type });
       if (dbError) { console.error('DB insert error:', dbError); setMsg('DB save failed: ' + dbError.message); }
     }
@@ -42,7 +42,7 @@ export default function MediaPage() {
     if (!confirm('Delete this file?')) return;
     const parts = url.split('/');
     const fileName = parts[parts.length - 1];
-    await supabaseBrowser.storage.from('YOUR_BUCKET_NAME').remove([fileName]);
+    await supabaseBrowser.storage.from('review-images').remove([fileName]);
     await supabaseBrowser.from('media').delete().eq('id', id);
     loadMedia();
   }
@@ -118,5 +118,6 @@ export default function MediaPage() {
     </div>
   )
 }
+
 
 
