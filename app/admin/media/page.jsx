@@ -11,7 +11,8 @@ export default function MediaPage() {
   useEffect(() => { loadMedia(); }, []);
 
   async function loadMedia() {
-    const { data } = await supabaseBrowser.from('media').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabaseBrowser.from('media').select('*').order('created_at', { ascending: false });
+    if (error) console.error('Load error:', error);
     setUploads(data || []);
   }
 
@@ -23,22 +24,24 @@ export default function MediaPage() {
     for (const file of files) {
       const ext = file.name.split('.').pop();
       const fileName = Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
-      const { error } = await supabaseBrowser.storage
+      const { error: storageError } = await supabaseBrowser.storage
         .from('review-images')
         .upload(fileName, file, { contentType: file.type, upsert: false });
-      if (error) { setMsg('Upload failed: ' + error.message); continue; }
+      if (storageError) { setMsg('Upload failed: ' + storageError.message); continue; }
       const { data: urlData } = supabaseBrowser.storage.from('review-images').getPublicUrl(fileName);
-      await supabaseBrowser.from('media').insert({ name: file.name, url: urlData.publicUrl, type: file.type });
+      const { error: dbError } = await supabaseBrowser.from('media').insert({ name: file.name, url: urlData.publicUrl, type: file.type });
+      if (dbError) { console.error('DB insert error:', dbError); setMsg('DB save failed: ' + dbError.message); }
     }
     setUploading(false);
-    setMsg('Done!');
+    setMsg('Upload complete!');
     e.target.value = '';
     loadMedia();
   }
 
   async function deleteMedia(id, url) {
     if (!confirm('Delete this file?')) return;
-    const fileName = url.split('/').pop();
+    const parts = url.split('/');
+    const fileName = parts[parts.length - 1];
     await supabaseBrowser.storage.from('review-images').remove([fileName]);
     await supabaseBrowser.from('media').delete().eq('id', id);
     loadMedia();
@@ -67,39 +70,47 @@ export default function MediaPage() {
             {uploading ? '⏳ Uploading...' : '📁 Choose Files'}
             <input type="file" accept="image/*,video/*" multiple onChange={uploadFile} style={{ display:'none' }} disabled={uploading} />
           </label>
-          {msg && <div style={{ marginTop:16, fontSize:13, color:'#10B981', fontWeight:600 }}>{msg}</div>}
+          {msg && <div style={{ marginTop:16, fontSize:13, color: msg.includes('failed') ? '#dc2626' : '#10B981', fontWeight:600 }}>{msg}</div>}
         </div>
 
         <div style={{ background:'white', borderRadius:16, padding:28, border:'1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A', marginBottom:20 }}>All Media ({uploads.length})</h2>
-          <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+            <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A' }}>All Media ({uploads.length})</h2>
+            <button onClick={loadMedia} style={{ padding:'6px 14px', background:'#f1f5f9', color:'#64748b', border:'none', borderRadius:6, fontSize:12, cursor:'pointer' }}>Refresh</button>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:16 }}>
             {uploads.map((u) => (
-              <div key={u.id} style={{ display:'flex', alignItems:'center', gap:16, padding:12, background:'#f8f7f4', borderRadius:10, border:'1px solid #e2e8f0' }}>
-                <div style={{ width:80, height:80, borderRadius:8, overflow:'hidden', flexShrink:0, background:'#e2e8f0', display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <div key={u.id} style={{ background:'#f8f7f4', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden' }}>
+                <div style={{ width:'100%', aspectRatio:'16/9', background:'#e2e8f0', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center' }}>
                   {u.type && u.type.startsWith('image') ? (
-                    <img src={u.url} alt={u.name} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                    <img src={u.url} alt={u.name}
+                      style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
+                      onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }}
+                    />
                   ) : (
-                    <span style={{ fontSize:28 }}>🎬</span>
+                    <div style={{ fontSize:36 }}>🎬</div>
                   )}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:12, fontWeight:600, color:'#0F172A', marginBottom:6, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
-                  <input value={u.url} readOnly
-                    style={{ width:'100%', padding:'6px 10px', border:'1px solid #e2e8f0', borderRadius:6, fontSize:11, background:'white', color:'#64748b', boxSizing:'border-box' }} />
-                </div>
-                <div style={{ display:'flex', flexDirection:'column', gap:6, flexShrink:0 }}>
-                  <button onClick={() => copyUrl(u.url)}
-                    style={{ padding:'7px 14px', background:'#0F172A', color:'white', border:'none', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer' }}>
-                    Copy URL
-                  </button>
-                  <button onClick={() => deleteMedia(u.id, u.url)}
-                    style={{ padding:'7px 14px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:6, fontSize:12, cursor:'pointer' }}>
-                    Delete
-                  </button>
+                <div style={{ padding:10 }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:'#0F172A', marginBottom:8, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
+                  <div style={{ display:'flex', gap:6 }}>
+                    <button onClick={() => copyUrl(u.url)}
+                      style={{ flex:1, padding:'6px 0', background:'#0F172A', color:'white', border:'none', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer' }}>
+                      Copy URL
+                    </button>
+                    <button onClick={() => deleteMedia(u.id, u.url)}
+                      style={{ padding:'6px 10px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:6, fontSize:11, cursor:'pointer' }}>
+                      🗑
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
-            {uploads.length === 0 && <div style={{ color:'#94a3b8', fontSize:14, textAlign:'center', padding:20 }}>No media uploaded yet.</div>}
+            {uploads.length === 0 && (
+              <div style={{ gridColumn:'1/-1', color:'#94a3b8', fontSize:14, textAlign:'center', padding:40 }}>
+                No media uploaded yet.
+              </div>
+            )}
           </div>
         </div>
 
