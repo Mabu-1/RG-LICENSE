@@ -1,6 +1,9 @@
-import { supabase } from '@/lib/supabase'
+﻿import { supabase } from '@/lib/supabase'
 
-const headers = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' }
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Content-Type': 'application/json'
+}
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -21,11 +24,11 @@ export async function GET(request) {
   if (!data.active) return Response.json({ error: 'License inactive' }, { status: 403, headers })
 
   try {
-    const cacheBuster = (csvUrl.includes('?') ? '&' : '?') + 't=' + Date.now()
-    const csvRes = await fetch(csvUrl + cacheBuster)
+    const cb = (csvUrl.includes('?') ? '&' : '?') + 't=' + Date.now()
+    const csvRes = await fetch(csvUrl + cb)
     const csvText = await csvRes.text()
     return Response.json({ reviews: parseCSV(csvText) }, { headers })
-  } catch (e) {
+  } catch(e) {
     return Response.json({ error: 'CSV fetch failed' }, { status: 500, headers })
   }
 }
@@ -36,17 +39,25 @@ function parseCSV(text) {
   if (rows.length > 0) rows.shift()
   rows.forEach((row, idx) => {
     if (row.length < 3) return
-    const rawMediaUrl = row[6] ? row[6].trim() : ''
+    const rawMediaUrl = row[5] ? row[5].trim() : ''
     let finalPhotoUrl = '', finalVideoUrl = ''
     if (rawMediaUrl.length > 5) {
       const isVideo = rawMediaUrl.includes('.mp4') || rawMediaUrl.includes('.mov') || rawMediaUrl.includes('/videos/')
       if (isVideo) { finalVideoUrl = rawMediaUrl } else { finalPhotoUrl = rawMediaUrl }
     }
-    const rawVerified = row[7] ? row[7].trim().toUpperCase() : ''
-    reviews.push({ id: idx, productHandle: row[0] || '', rating: parseInt(row[1]) || 5, author: row[2] || 'Customer',
-      body: row[4] || '', date: row[5] || '', photoUrl: finalPhotoUrl, videoUrl: finalVideoUrl,
-      hasMedia: (finalPhotoUrl !== '' || finalVideoUrl !== ''), isVerified: (rawVerified === 'TRUE' || rawVerified === '1'),
-      variant: row[8] ? row[8].trim() : '' })
+    const rawVerified = row[6] ? row[6].trim().toUpperCase() : ''
+    reviews.push({
+      id: idx,
+      rating: parseInt(row[0]) || 5,
+      author: row[1] || 'Customer',
+      body: row[3] || '',
+      date: row[4] || '',
+      photoUrl: finalPhotoUrl,
+      videoUrl: finalVideoUrl,
+      hasMedia: (finalPhotoUrl !== '' || finalVideoUrl !== ''),
+      isVerified: (rawVerified === 'TRUE' || rawVerified === '1'),
+      variant: row[7] ? row[7].trim() : ''
+    })
   })
   return reviews
 }
