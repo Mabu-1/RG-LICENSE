@@ -1,7 +1,6 @@
 ﻿import { supabase } from '@/lib/supabase'
-
-const B64 = 'KEEP_YOUR_EXISTING_B64_HERE'
-const SCRIPT = Buffer.from(B64.trim(), 'base64').toString('utf8').replace(/^\uFEFF/, '')
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 export async function GET(request) {
   const jsHeaders = {
@@ -24,5 +23,7 @@ export async function GET(request) {
 
   if (error || !data || !data.active) return new Response('/* unauthorized */', { status: 200, headers: jsHeaders })
 
-  return new Response(SCRIPT, { status: 200, headers: jsHeaders })
+  const script = readFileSync(join(process.cwd(), 'public', 'rg-loader.js'), 'utf8').replace(/^\uFEFF/, '').replace(/\r\n/g, '\n')
+
+  return new Response(script, { status: 200, headers: jsHeaders })
 }
