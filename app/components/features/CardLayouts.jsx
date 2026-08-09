@@ -1,30 +1,30 @@
-﻿'use client'
-import { useState } from 'react'
+﻿"use client";
+import { useState } from "react";
 
 const tabs = [
   {
-    id: 'natural',
-    label: 'Natural',
-    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296630082_cqs3l68wsg.png',
-    desc: 'Cards use their own content height. Clean rows, variable card heights.'
+    id: "natural",
+    label: "Natural",
+    img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296630082_cqs3l68wsg.png",
+    desc: "Cards use their own content height. Clean rows, variable card heights.",
   },
   {
-    id: 'equal',
-    label: 'Equal Height',
-    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296629642_hja4gyhm34r.png',
-    desc: 'All cards in a row match the tallest. Uniform, grid-like layout.'
+    id: "equal",
+    label: "Equal Height",
+    img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297480876_s6pt5bulk5g.png",
+    desc: "All cards in a row match the tallest. Uniform, grid-like layout.",
   },
   {
-    id: 'masonry',
-    label: 'Masonry',
-    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296628914_8t8v46l8yct.png',
-    desc: 'Cards stack into columns filling gaps. Pinterest-style layout.'
+    id: "masonry",
+    label: "Masonry",
+    img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296628914_8t8v46l8yct.png",
+    desc: "Cards stack into columns filling gaps. Pinterest-style layout.",
   },
-]
+];
 
 export default function CardLayouts() {
-  const [active, setActive] = useState('natural')
-  const current = tabs.find(t => t.id === active)
+  const [active, setActive] = useState("natural");
+  const current = tabs.find((t) => t.id === active);
   return (
     <>
       <style>{`
@@ -51,7 +51,11 @@ export default function CardLayouts() {
             <div>
               <div className="cl-eyebrow">Three Card Layouts</div>
               <h2 className="cl-h2">Pick the layout that fits your store</h2>
-              <p className="cl-p">Every store has a different aesthetic. Switch between three distinct layout modes from the Shopify theme editor — no code, no rebuilds, instant preview.</p>
+              <p className="cl-p">
+                Every store has a different aesthetic. Switch between three
+                distinct layout modes from the Shopify theme editor — no code,
+                no rebuilds, instant preview.
+              </p>
               <ul className="cl-list">
                 <li>Natural, Equal Height, and Masonry modes</li>
                 <li>2 to 6 columns on desktop, 1 to 2 on mobile</li>
@@ -62,14 +66,20 @@ export default function CardLayouts() {
             <div>
               <div className="cl-tab-wrap">
                 <div className="cl-tab-bar">
-                  {tabs.map(t => (
-                    <button key={t.id} className={'cl-tab-btn' + (active===t.id?' active':'')} onClick={() => setActive(t.id)}>
+                  {tabs.map((t) => (
+                    <button
+                      key={t.id}
+                      className={
+                        "cl-tab-btn" + (active === t.id ? " active" : "")
+                      }
+                      onClick={() => setActive(t.id)}
+                    >
                       {t.label}
                     </button>
                   ))}
                 </div>
                 <div className="cl-tab-content">
-                  <div style={{width:'100%'}}>
+                  <div style={{ width: "100%" }}>
                     <img
                       key={current.id}
                       src={current.img}
@@ -85,5 +95,5 @@ export default function CardLayouts() {
         </div>
       </section>
     </>
-  )
+  );
 }

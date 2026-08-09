@@ -2,14 +2,36 @@
 import { useState } from 'react'
 
 const thumbs = [
-  { emoji: '🛍️', bg: 'linear-gradient(135deg,#FEF3C7,#FDE68A)', author: 'Sarah M.', stars: '★★★★★', body: 'Absolutely love this product. The quality is incredible and it arrived perfectly packaged. Will definitely order again soon!' },
-  { emoji: '📦', bg: 'linear-gradient(135deg,#DBEAFE,#BFDBFE)', author: 'James R.', stars: '★★★★★', body: 'Fast shipping and exactly as described. This is my second purchase and I am just as happy as the first time around.' },
-  { emoji: '✨', bg: 'linear-gradient(135deg,#D1FAE5,#A7F3D0)', author: 'Priya K.', stars: '★★★★☆', body: 'Great quality for the price. The packaging was beautiful and everything arrived in perfect condition. Highly recommend!' },
-  { emoji: '💫', bg: 'linear-gradient(135deg,#FCE7F3,#FBCFE8)', author: 'Tom W.',   stars: '★★★★★', body: 'Second purchase and still the best. Customer service is also top notch. This brand never disappoints at all.' },
+  {
+    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297614686_hvss33m0uxg.jpeg',
+    author: 'Sarah M.', stars: '★★★★★',
+    body: 'Absolutely love this product. The quality is incredible and it arrived perfectly packaged. Will definitely order again soon!'
+  },
+  {
+    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297674810_54vlkmi3asm.avif',
+    author: 'James R.', stars: '★★★★★',
+    body: 'Fast shipping and exactly as described. This is my second purchase and I am just as happy as the first time around.'
+  },
+  {
+    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297674810_54vlkmi3asm.avif',
+    author: 'Priya K.', stars: '★★★★☆',
+    body: 'Great quality for the price. The packaging was beautiful and everything arrived in perfect condition. Highly recommend!'
+  },
+  {
+    img: 'https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297731460_mc12v3pxp8.jpeg',
+    author: 'Tom W.', stars: '★★★★★',
+    body: 'Second purchase and still the best. Customer service is also top notch. This brand never disappoints at all.'
+  },
 ]
 
 export default function Lightbox() {
   const [open, setOpen] = useState(null)
+
+  function prev() { setOpen(i => (i - 1 + thumbs.length) % thumbs.length) }
+  function next() { setOpen(i => (i + 1) % thumbs.length) }
+
+  const current = open !== null ? thumbs[open] : null
+
   return (
     <>
       <style>{`
@@ -23,27 +45,39 @@ export default function Lightbox() {
         .lb-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
         .lb-wrap { background: #1a1a1a; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); padding: 16px; }
         .lb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .lb-thumb { aspect-ratio: 4/3; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; overflow: hidden; transition: transform 0.2s; }
+        .lb-thumb { aspect-ratio: 4/3; border-radius: 10px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s; }
         .lb-thumb:hover { transform: scale(1.02); }
-        .lb-thumb-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-        .lb-thumb:hover .lb-thumb-overlay { background: rgba(0,0,0,0.3); }
-        .lb-zoom { background: rgba(255,255,255,0.9); color: #111; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; opacity: 0; transition: opacity 0.2s; }
-        .lb-thumb:hover .lb-zoom { opacity: 1; }
-        .lb-label { text-align: center; margin-top: 12px; font-size: 12px; color: rgba(255,255,255,0.4); }
-        .lb-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .lb-modal.lb-open { opacity: 1; pointer-events: auto; }
-        .lb-modal-inner { display: flex; max-width: 900px; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-height: 90vh; }
-        .lb-modal-img-side { flex: 0 0 60%; display: flex; align-items: center; justify-content: center; font-size: 80px; min-height: 400px; }
-        .lb-modal-text-side { flex: 1; background: #fff; padding: 32px; display: flex; flex-direction: column; overflow-y: auto; }
-        .lb-modal-close { position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.9); border: none; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 10000; transition: all 0.2s; }
-        .lb-modal-close:hover { background: #fff; transform: scale(1.1); }
-        .lb-modal-author { font-weight: 700; font-size: 18px; color: #0F172A; margin-bottom: 4px; }
-        .lb-modal-stars { color: #F59E0B; font-size: 18px; margin-bottom: 12px; }
-        .lb-modal-body { font-size: 14px; color: #64748B; line-height: 1.7; flex: 1; }
-        .lb-nav-btn { padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 13px; background: #fff; transition: all 0.2s; margin-top: 20px; }
-        .lb-nav-btn:hover { border-color: #0F172A; }
-        @media (max-width: 900px) { .lb { padding: 70px 0; } .lb-split { grid-template-columns: 1fr; gap: 48px; } .lb-modal-inner { flex-direction: column; } .lb-modal-img-side { flex: 0 0 auto; min-height: 220px; } }
+        .lb-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.3s; }
+        .lb-thumb:hover img { transform: scale(1.05); }
+        .lb-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+        .lb-thumb:hover .lb-overlay { background:rgba(0,0,0,0.3); }
+        .lb-zoom { background:rgba(255,255,255,0.9); color:#111; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; opacity:0; transition:opacity 0.2s; }
+        .lb-thumb:hover .lb-zoom { opacity:1; }
+        .lb-label { text-align:center; margin-top:12px; font-size:12px; color:rgba(255,255,255,0.4); }
+        .lb-modal { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(8px); opacity:0; pointer-events:none; transition:opacity 0.3s; }
+        .lb-modal.open { opacity:1; pointer-events:auto; }
+        .lb-modal-inner { display:flex; max-width:900px; width:100%; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5); max-height:90vh; }
+        .lb-img-side { flex:0 0 60%; background:#111; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+        .lb-img-side img { width:100%; height:100%; object-fit:cover; display:block; }
+        .lb-text-side { flex:1; background:#fff; padding:32px; display:flex; flex-direction:column; overflow-y:auto; }
+        .lb-close { position:fixed; top:20px; right:20px; background:rgba(255,255,255,0.9); border:none; cursor:pointer; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; z-index:10000; transition:all 0.2s; }
+        .lb-close:hover { background:#fff; transform:scale(1.1); }
+        .lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:none; cursor:pointer; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all 0.2s; z-index:10; }
+        .lb-nav:hover { background:#fff; transform:translateY(-50%) scale(1.1); }
+        .lb-prev { left:12px; }
+        .lb-next { right:12px; }
+        .lb-author { font-weight:700; font-size:18px; color:#0F172A; margin-bottom:4px; }
+        .lb-stars { color:#F59E0B; font-size:18px; margin-bottom:12px; }
+        .lb-body { font-size:14px; color:#64748B; line-height:1.7; flex:1; }
+        .lb-counter { font-size:12px; color:#94a3b8; margin-top:16px; text-align:center; }
+        @media (max-width:900px) {
+          .lb { padding:70px 0; }
+          .lb-split { grid-template-columns:1fr; gap:48px; }
+          .lb-modal-inner { flex-direction:column; }
+          .lb-img-side { flex:0 0 auto; min-height:220px; }
+        }
       `}</style>
+
       <section className="lb" id="feat-lightbox">
         <div className="rgl-container">
           <div className="lb-split">
@@ -61,10 +95,10 @@ export default function Lightbox() {
             <div>
               <div className="lb-wrap">
                 <div className="lb-grid">
-                  {thumbs.map((t,i) => (
-                    <div key={i} className="lb-thumb" style={{background:t.bg}} onClick={() => setOpen(i)}>
-                      <span>{t.emoji}</span>
-                      <div className="lb-thumb-overlay">
+                  {thumbs.map((t, i) => (
+                    <div key={i} className="lb-thumb" onClick={() => setOpen(i)}>
+                      <img src={t.img} alt={t.author} />
+                      <div className="lb-overlay">
                         <div className="lb-zoom">🔍</div>
                       </div>
                     </div>
@@ -77,21 +111,20 @@ export default function Lightbox() {
         </div>
       </section>
 
-      {open !== null && (
-        <div className="lb-modal lb-open">
-          <button className="lb-modal-close" onClick={() => setOpen(null)}>✕</button>
+      {open !== null && current && (
+        <div className="lb-modal open">
+          <button className="lb-close" onClick={() => setOpen(null)}>✕</button>
           <div className="lb-modal-inner">
-            <div className="lb-modal-img-side" style={{background:thumbs[open].bg}}>
-              <span style={{fontSize:80}}>{thumbs[open].emoji}</span>
+            <div className="lb-img-side">
+              <img src={current.img} alt={current.author} />
+              <button className="lb-nav lb-prev" onClick={prev}>❮</button>
+              <button className="lb-nav lb-next" onClick={next}>❯</button>
             </div>
-            <div className="lb-modal-text-side">
-              <div className="lb-modal-author">{thumbs[open].author}</div>
-              <div className="lb-modal-stars">{thumbs[open].stars}</div>
-              <div className="lb-modal-body">{thumbs[open].body}</div>
-              <div style={{display:'flex',gap:8}}>
-                <button className="lb-nav-btn" onClick={() => setOpen(o => (o-1+thumbs.length)%thumbs.length)}>❮ Prev</button>
-                <button className="lb-nav-btn" onClick={() => setOpen(o => (o+1)%thumbs.length)}>Next ❯</button>
-              </div>
+            <div className="lb-text-side">
+              <div className="lb-author">{current.author}</div>
+              <div className="lb-stars">{current.stars}</div>
+              <div className="lb-body">{current.body}</div>
+              <div className="lb-counter">{open + 1} / {thumbs.length}</div>
             </div>
           </div>
         </div>
