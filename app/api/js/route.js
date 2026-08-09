@@ -5,7 +5,7 @@ import { join } from 'path'
 export async function GET(request) {
   const jsHeaders = {
     'Content-Type': 'application/javascript',
-    'Cache-Control': 'public, max-age=3600',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
     'Access-Control-Allow-Origin': '*',
   }
 
