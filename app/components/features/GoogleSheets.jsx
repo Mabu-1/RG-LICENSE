@@ -34,15 +34,17 @@
       <style>{`
         .gs { padding: 100px 0; background: #F8F7F4; }
         .gs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+        .gs-split > * { min-width: 0; }
         .gs-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
         .gs-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
         .gs-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: #64748B; }
         .gs-list { list-style: none; padding: 0; margin: 0; }
         .gs-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }
         .gs-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
-        .gs-sheet-wrap { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; border: 1px solid #e2e8f0; }
+        .gs-sheet-wrap { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); overflow: hidden; border: 1px solid #e2e8f0; width: 100%; }
         .gs-sheet-bar { background: #f1f3f4; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #5f6368; font-weight: 500; }
-        .gs-sheet-icon { color: #0F9D58; font-size: 16px; }
+        .gs-sheet-icon { color: #0F9D58; font-size: 16px; flex-shrink: 0; }
+        .gs-sheet-bar span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .gs-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .gs-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 420px; }
         .gs-table th { background: #f8f9fa; padding: 8px 12px; text-align: left; font-weight: 600; color: #5f6368; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; white-space: nowrap; }
@@ -58,17 +60,13 @@
         }
         @media (max-width: 600px) {
           .gs { padding: 50px 0; }
-          .gs-h2 { font-size: clamp(24px, 7vw, 36px); letter-spacing: -1px; }
-          .gs-p { font-size: 15px; }
-          .gs-list li { font-size: 13px; }
           .gs-sheet-bar { font-size: 11px; padding: 8px 12px; }
-          .gs-sheet-wrap { border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.10); }
-          .gs-table { font-size: 11px; min-width: 360px; }
+          .gs-table { font-size: 11px; min-width: 340px; }
           .gs-table th, .gs-table td { padding: 6px 8px; }
         }
-        @media (max-width: 380px) {
-          .gs-table { min-width: 320px; }
-          .gs-table th, .gs-table td { padding: 5px 6px; }
+        @media (max-width: 400px) {
+          .gs-table { min-width: 300px; }
+          .gs-table th, .gs-table td { padding: 5px 6px; font-size: 10px; }
         }
       `}</style>
       <section className="gs" id="feat-sheets">
@@ -96,7 +94,7 @@
               <div className="gs-sheet-wrap">
                 <div className="gs-sheet-bar">
                   <span className="gs-sheet-icon">📊</span>
-                  reviews-data — Google Sheets
+                  <span>reviews-data — Google Sheets</span>
                 </div>
                 <div className="gs-scroll">
                   <table className="gs-table">
