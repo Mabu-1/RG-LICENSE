@@ -1,7 +1,7 @@
 ﻿import { supabase } from '@/lib/supabase'
 
-const B64 = 'KEEP_YOUR_EXISTING_B64_STRING_HERE'
-const SCRIPT = Buffer.from(B64.trim(), 'base64').toString('utf8')
+const B64 = 'KEEP_YOUR_EXISTING_B64_HERE'
+const SCRIPT = Buffer.from(B64.trim(), 'base64').toString('utf8').replace(/^\uFEFF/, '')
 
 export async function GET(request) {
   const jsHeaders = {
