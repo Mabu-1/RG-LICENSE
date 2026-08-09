@@ -1,4 +1,4 @@
-import './styles/landing.css'
+﻿import './styles/landing.css'
 
 export const metadata = {
   title: 'ReviewGallery Pro — Beautiful Review Sections for Shopify',
