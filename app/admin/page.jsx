@@ -1,17 +1,15 @@
 ﻿'use client'
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useState } from 'react'
+import Link from 'next/link'
 
 export default function AdminPage() {
-  const [password, setPassword]       = useState('')
-  const [authed, setAuthed]           = useState(false)
-  const [sites, setSites]             = useState([])
-  const [loading, setLoading]         = useState(false)
-  const [form, setForm]               = useState({ domain: '', label: '', notes: '' })
-  const [editId, setEditId]           = useState(null)
-  const [msg, setMsg]                 = useState('')
-  const [uploading, setUploading]     = useState(false)
-  const [uploadedUrl, setUploadedUrl] = useState('')
+  const [password, setPassword] = useState('')
+  const [authed, setAuthed]     = useState(false)
+  const [sites, setSites]       = useState([])
+  const [loading, setLoading]   = useState(false)
+  const [form, setForm]         = useState({ domain: '', label: '', notes: '' })
+  const [editId, setEditId]     = useState(null)
+  const [msg, setMsg]           = useState('')
 
   const headers = { 'x-admin-password': password }
 
@@ -60,28 +58,6 @@ export default function AdminPage() {
     loadSites()
   }
 
-  async function uploadImage(e) {
-    const file = e.target.files[0]
-    if (!file) return
-    setUploading(true)
-    setUploadedUrl('')
-    setMsg('')
-    const ext = file.name.split('.').pop()
-    const fileName = Date.now() + '.' + ext
-    const { data, error } = await supabase.storage
-      .from('review-images')
-      .upload(fileName, file, { contentType: file.type, upsert: false })
-    if (error) {
-      setMsg('Upload failed: ' + error.message)
-      setUploading(false)
-      return
-    }
-    const { data: urlData } = supabase.storage.from('review-images').getPublicUrl(fileName)
-    setUploadedUrl(urlData.publicUrl)
-    setUploading(false)
-    setMsg('Image uploaded!')
-  }
-
   const inputStyle = { padding:'10px 14px', border:'1px solid #e2e8f0', borderRadius:8, fontSize:13, boxSizing:'border-box', width:'100%' }
   const btnStyle   = { padding:'10px 24px', background:'#0F172A', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }
 
@@ -102,7 +78,13 @@ export default function AdminPage() {
   return (
     <div style={{ minHeight:'100vh', background:'#f8f7f4', padding:'40px 24px' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
-        <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', marginBottom:32, letterSpacing:-1 }}>★ ReviewGallery Admin</h1>
+
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
+          <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>
+          <Link href="/admin/media" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>
+            📸 Media Upload
+          </Link>
+        </div>
 
         {/* ADD / EDIT FORM */}
         <div style={{ background:'white', borderRadius:16, padding:28, marginBottom:24, border:'1px solid #e2e8f0' }}>
@@ -126,37 +108,6 @@ export default function AdminPage() {
             )}
           </div>
           {msg && <div style={{ marginTop:12, color:'#10B981', fontSize:13, fontWeight:500 }}>{msg}</div>}
-        </div>
-
-        {/* IMAGE / VIDEO UPLOAD */}
-        <div style={{ background:'white', borderRadius:16, padding:28, marginBottom:24, border:'1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A', marginBottom:6 }}>📸 Upload Review Media</h2>
-          <p style={{ fontSize:13, color:'#64748b', marginBottom:16 }}>Upload an image or video — copy the URL and paste it into your Google Sheet <strong>photo_url</strong> column.</p>
-          <label style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>
-            {uploading ? '⏳ Uploading...' : '📁 Choose Image or Video'}
-            <input type="file" accept="image/*,video/*" onChange={uploadImage} style={{ display:'none' }} disabled={uploading} />
-          </label>
-
-          {uploadedUrl && (
-            <div style={{ marginTop:16, background:'#f8f7f4', borderRadius:10, padding:16, border:'1px solid #e2e8f0' }}>
-              <div style={{ fontSize:12, color:'#10B981', marginBottom:10, fontWeight:700 }}>✅ Upload successful — copy URL below:</div>
-              <div style={{ display:'flex', gap:8, alignItems:'center', marginBottom:12 }}>
-                <input value={uploadedUrl} readOnly
-                  style={{ flex:1, padding:'8px 12px', border:'1px solid #e2e8f0', borderRadius:6, fontSize:12, background:'white', color:'#0F172A' }} />
-                <button
-                  onClick={()=>{ navigator.clipboard.writeText(uploadedUrl); setMsg('URL copied to clipboard!') }}
-                  style={{ padding:'8px 16px', background:'#0F172A', color:'white', border:'none', borderRadius:6, fontSize:12, fontWeight:600, cursor:'pointer', whiteSpace:'nowrap' }}>
-                  Copy URL
-                </button>
-              </div>
-              {uploadedUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) && (
-                <img src={uploadedUrl} alt="preview" style={{ maxHeight:140, borderRadius:8, objectFit:'cover', border:'1px solid #e2e8f0' }} />
-              )}
-              {uploadedUrl.match(/\.(mp4|mov)$/i) && (
-                <video src={uploadedUrl} controls style={{ maxHeight:140, borderRadius:8, border:'1px solid #e2e8f0' }} />
-              )}
-            </div>
-          )}
         </div>
 
         {/* SITES LIST */}
