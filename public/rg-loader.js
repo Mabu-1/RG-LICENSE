@@ -30,6 +30,12 @@
     const displayStarsEl = document.getElementById('rg-display-stars-'+sid);
     const sortSelect     = document.getElementById('rg-sort-'+sid);
     const searchInput    = document.getElementById('rg-search-'+sid);
+    const modal          = document.getElementById('ReviewModal');
+    const modalMediaWrap = document.getElementById('modal-media-wrap');
+    const modalCap       = document.getElementById('modal-caption');
+    const closeBtn       = document.getElementById('rg-close-btn');
+    const prevBtn        = document.getElementById('rg-prev-btn');
+    const nextBtn        = document.getElementById('rg-next-btn');
 
     let allReviews=[],filteredReviews=[],lightboxImages=[],currentSlide=0,currentLimit=0;
 
@@ -60,12 +66,16 @@
           if(isVideo){finalVideoUrl=rawMediaUrl;}else{finalPhotoUrl=rawMediaUrl;}
         }
         const rawVerified=row[COL_VERIFIED]?row[COL_VERIFIED].trim().toUpperCase():'';
-        const isVerified=(rawVerified==='TRUE'||rawVerified==='1');
         allReviews.push({
-          id:idx,rating:parseInt(row[COL_RATING])||5,
-          author:row[COL_AUTHOR]||'Customer',body:row[COL_BODY]||'',date:row[COL_DATE]||'',
-          dateObj:new Date(row[COL_DATE]||Date.now()),photoUrl:finalPhotoUrl,videoUrl:finalVideoUrl,
-          hasMedia:(finalPhotoUrl!==''||finalVideoUrl!==''),isVerified:isVerified,
+          id:idx,
+          rating:parseInt(row[COL_RATING])||5,
+          author:row[COL_AUTHOR]||'Customer',
+          body:row[COL_BODY]||'',
+          date:row[COL_DATE]||'',
+          photoUrl:finalPhotoUrl,
+          videoUrl:finalVideoUrl,
+          hasMedia:(finalPhotoUrl!==''||finalVideoUrl!==''),
+          isVerified:(rawVerified==='TRUE'||rawVerified==='1'),
           variant:row[COL_VARIANT]?row[COL_VARIANT].trim():''
         });
       });
@@ -85,22 +95,19 @@
     function calculateAverageRating(){
       const total=allReviews.reduce((sum,r)=>sum+r.rating,0);
       const avg=(total/allReviews.length).toFixed(1);
-      const fullStars=Math.floor(avg);
       if(avgRatingEl)avgRatingEl.textContent=avg;
       if(reviewCountEl)reviewCountEl.textContent=allReviews.length;
-      let starsDisplay='';
-      for(let i=0;i<5;i++){
-        starsDisplay+=(i<fullStars)?'★':'☆';
-      }
-      if(displayStarsEl)displayStarsEl.textContent=starsDisplay;
+      let stars='';
+      for(let i=0;i<5;i++) stars+=(i<Math.floor(avg))?'★':'☆';
+      if(displayStarsEl)displayStarsEl.textContent=stars;
     }
 
     function applySorting(){
-      const sortValue=sortSelect?sortSelect.value:'recent';
+      const v=sortSelect?sortSelect.value:'recent';
       filteredReviews.sort((a,b)=>{
-        if(sortValue==='recent')return a.id-b.id;
-        if(sortValue==='highest')return b.rating-a.rating;
-        if(sortValue==='lowest')return a.rating-b.rating;
+        if(v==='recent')return a.id-b.id;
+        if(v==='highest')return b.rating-a.rating;
+        if(v==='lowest')return a.rating-b.rating;
         return 0;
       });
     }
@@ -109,27 +116,43 @@
       lightboxImages=[];
       let html='';
       let imgCounter=0;
-      const reviewsToShow=filteredReviews.slice(0,currentLimit);
-      if(reviewsToShow.length===0){
+      const toShow=filteredReviews.slice(0,currentLimit);
+      if(toShow.length===0){
         if(emptyEl)emptyEl.style.display='block';
         if(gridEl)gridEl.innerHTML='';
         if(loadMoreBtn)loadMoreBtn.classList.add('hidden');
         return;
-      } else {
-        if(emptyEl)emptyEl.style.display='none';
       }
-      reviewsToShow.forEach((review)=>{
+      if(emptyEl)emptyEl.style.display='none';
+
+      toShow.forEach((review)=>{
         if(review.hasMedia){
-          lightboxImages.push({src:review.photoUrl,videoSrc:review.videoUrl,name:review.author,
-            text:review.body,rating:review.rating,date:review.date,variant:review.variant,isVerified:review.isVerified});
+          lightboxImages.push({
+            src:review.photoUrl,
+            videoSrc:review.videoUrl,
+            name:review.author,
+            text:review.body,
+            rating:review.rating,
+            date:review.date,
+            variant:review.variant,
+            isVerified:review.isVerified
+          });
         }
         const stars='★'.repeat(review.rating)+'☆'.repeat(5-review.rating);
         let mediaHtml='';
         if(review.hasMedia){
-          if(review.photoUrl){
-            mediaHtml=`<div class="rg-image-wrap" onclick="RGOpenModal_${sid}(${imgCounter})"><img src="${review.photoUrl}" alt="Review photo"><div class="rg-zoom-icon">🔍</div></div>`;
-          } else if(review.videoUrl){
-            mediaHtml=`<div class="rg-image-wrap" onclick="RGOpenModal_${sid}(${imgCounter})"><video src="${review.videoUrl}#t=0.1" preload="metadata" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video><div class="rg-video-icon-small">▶</div><div class="rg-zoom-icon">🔍</div></div>`;
+          const idx=imgCounter;
+          if(review.videoUrl){
+            mediaHtml=`<div class="rg-image-wrap" onclick="RGOpenModal_${sid}(${idx})" style="cursor:pointer;">
+              <video src="${review.videoUrl}#t=0.1" preload="metadata" muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;"></video>
+              <div class="rg-video-icon-small">▶</div>
+              <div class="rg-zoom-icon">🔍</div>
+            </div>`;
+          } else if(review.photoUrl){
+            mediaHtml=`<div class="rg-image-wrap" onclick="RGOpenModal_${sid}(${idx})" style="cursor:pointer;">
+              <img src="${review.photoUrl}" alt="Review photo" loading="lazy">
+              <div class="rg-zoom-icon">🔍</div>
+            </div>`;
           }
           imgCounter++;
         }
@@ -152,97 +175,81 @@
             </div>
           </div>`;
       });
+
       if(gridEl)gridEl.innerHTML=html;
       if(settings.cardLayout==='masonry')applyMasonryLayout();
       if(loadMoreBtn){
-        if(currentLimit<filteredReviews.length){loadMoreBtn.classList.remove('hidden');}
-        else{loadMoreBtn.classList.add('hidden');}
+        if(currentLimit<filteredReviews.length)loadMoreBtn.classList.remove('hidden');
+        else loadMoreBtn.classList.add('hidden');
       }
     }
 
     function applyMasonryLayout(){
       const cards=gridEl.querySelectorAll('.rg-card');
-      if(cards.length===0)return;
+      if(!cards.length)return;
       const gap=12;
-      const columns=window.innerWidth>=1024?settings.columnsDesktop:(window.innerWidth>=768?parseInt(settings.columnsMobile):1);
-      const containerWidth=gridEl.offsetWidth;
-      const cardWidth=(containerWidth-(gap*(columns-1)))/columns;
-      const columnHeights=Array(columns).fill(0);
-      cards.forEach((card)=>{
-        const shortestColumnIndex=columnHeights.indexOf(Math.min(...columnHeights));
-        card.style.left=(shortestColumnIndex*(cardWidth+gap))+'px';
-        card.style.top=columnHeights[shortestColumnIndex]+'px';
-        card.style.width=cardWidth+'px';
-        columnHeights[shortestColumnIndex]+=card.offsetHeight+gap;
+      const cols=window.innerWidth>=1024?settings.columnsDesktop:(window.innerWidth>=768?parseInt(settings.columnsMobile):1);
+      const w=(gridEl.offsetWidth-(gap*(cols-1)))/cols;
+      const heights=Array(cols).fill(0);
+      cards.forEach(card=>{
+        const col=heights.indexOf(Math.min(...heights));
+        card.style.left=(col*(w+gap))+'px';
+        card.style.top=heights[col]+'px';
+        card.style.width=w+'px';
+        heights[col]+=card.offsetHeight+gap;
       });
-      gridEl.style.height=Math.max(...columnHeights)+'px';
+      gridEl.style.height=Math.max(...heights)+'px';
     }
 
     if(settings.cardLayout==='masonry'){
-      let resizeTimer;
+      let t;
       window.addEventListener('resize',()=>{
-        clearTimeout(resizeTimer);
-        resizeTimer=setTimeout(()=>{
-          if(gridEl&&gridEl.querySelectorAll('.rg-card').length>0)applyMasonryLayout();
-        },250);
+        clearTimeout(t);
+        t=setTimeout(()=>{ if(gridEl&&gridEl.querySelectorAll('.rg-card').length)applyMasonryLayout(); },250);
       });
     }
 
     if(loadMoreBtn){
-      loadMoreBtn.addEventListener('click',function(){
-        currentLimit+=settings.loadMoreCount;
-        renderReviews();
-      });
+      loadMoreBtn.addEventListener('click',()=>{ currentLimit+=settings.loadMoreCount; renderReviews(); });
     }
 
     document.querySelectorAll('.rg-filter-btn').forEach(btn=>{
       btn.addEventListener('click',function(){
         document.querySelectorAll('.rg-filter-btn').forEach(b=>b.classList.remove('active'));
         this.classList.add('active');
-        const filter=this.dataset.filter;
-        if(filter==='all'){filteredReviews=[...allReviews];}
-        else{filteredReviews=allReviews.filter(r=>r.rating===parseInt(filter));}
+        const f=this.dataset.filter;
+        filteredReviews=f==='all'?[...allReviews]:allReviews.filter(r=>r.rating===parseInt(f));
         if(searchInput&&searchInput.value){
-          const term=searchInput.value.toLowerCase();
-          filteredReviews=filteredReviews.filter(r=>r.body.toLowerCase().includes(term)||r.author.toLowerCase().includes(term));
+          const t=searchInput.value.toLowerCase();
+          filteredReviews=filteredReviews.filter(r=>r.body.toLowerCase().includes(t)||r.author.toLowerCase().includes(t));
         }
-        applySorting();
-        currentLimit=settings.initialLoad;
-        renderReviews();
+        applySorting(); currentLimit=settings.initialLoad; renderReviews();
       });
     });
 
     if(sortSelect){
-      sortSelect.addEventListener('change',function(){
-        applySorting();
-        renderReviews();
-      });
+      sortSelect.addEventListener('change',()=>{ applySorting(); renderReviews(); });
     }
 
     if(searchInput){
-      searchInput.addEventListener('input',(e)=>{
-        const term=e.target.value.toLowerCase();
+      searchInput.addEventListener('input',e=>{
+        const t=e.target.value.toLowerCase();
+        const activeFilter=document.querySelector('.rg-filter-btn.active');
+        const f=activeFilter?activeFilter.dataset.filter:'all';
         filteredReviews=allReviews.filter(r=>{
-          const matchesSearch=r.body.toLowerCase().includes(term)||r.author.toLowerCase().includes(term)||r.variant.toLowerCase().includes(term);
-          const activeBtn=document.querySelector('.rg-filter-btn.active');
-          const activeFilter=activeBtn?activeBtn.dataset.filter:'all';
-          const matchesStar=(activeFilter==='all')||(r.rating===parseInt(activeFilter));
-          return matchesSearch&&matchesStar;
+          const matchSearch=r.body.toLowerCase().includes(t)||r.author.toLowerCase().includes(t)||r.variant.toLowerCase().includes(t);
+          const matchStar=(f==='all')||(r.rating===parseInt(f));
+          return matchSearch&&matchStar;
         });
-        applySorting();
-        currentLimit=settings.initialLoad;
-        renderReviews();
+        applySorting(); currentLimit=settings.initialLoad; renderReviews();
       });
     }
 
-    const modal=document.getElementById('ReviewModal');
-    const modalMediaWrap=document.getElementById('modal-media-wrap');
-    const modalCap=document.getElementById('modal-caption');
-
+    /* ---- LIGHTBOX ---- */
     window['RGOpenModal_'+sid]=function(index){
-      if(!modal||lightboxImages.length===0)return;
+      if(!modal)return;
       currentSlide=index;
-      updateModalContent();
+      updateModal();
       modal.classList.add('active');
       document.body.style.overflow='hidden';
     };
@@ -250,53 +257,53 @@
     function closeModal(){
       if(!modal)return;
       modal.classList.remove('active');
-      document.body.style.overflow='auto';
-      if(modalMediaWrap)modalMediaWrap.innerHTML='';
+      document.body.style.overflow='';
+      if(modalMediaWrap){
+        const v=modalMediaWrap.querySelector('video');
+        if(v)v.pause();
+        modalMediaWrap.innerHTML='';
+      }
     }
 
     function changeSlide(step){
-      currentSlide+=step;
-      if(currentSlide>=lightboxImages.length)currentSlide=0;
-      if(currentSlide<0)currentSlide=lightboxImages.length-1;
-      updateModalContent();
+      if(!lightboxImages.length)return;
+      currentSlide=(currentSlide+step+lightboxImages.length)%lightboxImages.length;
+      updateModal();
     }
 
-    function updateModalContent(){
-      const data=lightboxImages[currentSlide];
+    function updateModal(){
+      if(!lightboxImages.length)return;
+      const d=lightboxImages[currentSlide];
       let mediaHtml='';
-      if(data.videoSrc&&data.videoSrc.length>0){
-        mediaHtml=`<video src="${data.videoSrc}" controls autoplay muted loop playsinline class="rg-modal-video"></video>`;
+      if(d.videoSrc&&d.videoSrc.length>0){
+        mediaHtml=`<video src="${d.videoSrc}" controls autoplay muted loop playsinline class="rg-modal-video"></video>`;
       } else {
-        mediaHtml=`<img src="${data.src}" class="rg-modal-img" alt="Review photo">`;
+        mediaHtml=`<img src="${d.src}" class="rg-modal-img" alt="Review photo">`;
       }
       if(modalMediaWrap)modalMediaWrap.innerHTML=mediaHtml;
-      const stars='★'.repeat(data.rating)+'☆'.repeat(5-data.rating);
+      const stars='★'.repeat(d.rating)+'☆'.repeat(5-d.rating);
+      const verBadge=d.isVerified?`<span class="rg-verified"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>Verified</span>`:'';
       if(modalCap)modalCap.innerHTML=`
         <div class="rg-caption-header">
-          <div class="rg-caption-author">${data.name}${data.isVerified?`<span class="rg-verified"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>Verified</span>`:''}</div>
-          <div class="rg-caption-date">${formatDate(data.date)}</div>
+          <div class="rg-caption-author">${d.name} ${verBadge}</div>
+          <div class="rg-caption-date">${formatDate(d.date)}</div>
         </div>
         <div class="rg-caption-stars">${stars}</div>
-        <div class="rg-caption-body">${data.text}</div>
-        ${data.variant?`<div style="margin-top:20px;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#888;"><strong>Item:</strong> ${data.variant}</div>`:''}`;
+        <div class="rg-caption-body">${d.text}</div>
+        ${d.variant?`<div style="margin-top:20px;padding-top:15px;border-top:1px solid #eee;font-size:13px;color:#888;"><strong>Item:</strong> ${d.variant}</div>`:''}`;
     }
 
+    if(closeBtn)closeBtn.onclick=closeModal;
+    if(prevBtn)prevBtn.onclick=()=>changeSlide(-1);
+    if(nextBtn)nextBtn.onclick=()=>changeSlide(1);
     if(modal){
-      const closeBtn=modal.querySelector('.rg-close');
-      const prevBtn=modal.querySelector('.rg-prev');
-      const nextBtn=modal.querySelector('.rg-next');
-      if(closeBtn)closeBtn.onclick=closeModal;
-      if(prevBtn)prevBtn.onclick=()=>changeSlide(-1);
-      if(nextBtn)nextBtn.onclick=()=>changeSlide(1);
-      modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
+      modal.addEventListener('click',e=>{ if(e.target===modal)closeModal(); });
     }
-
-    document.addEventListener('keydown',function(e){
+    document.addEventListener('keydown',e=>{
+      if(!modal||!modal.classList.contains('active'))return;
       if(e.key==='Escape')closeModal();
-      if(modal&&modal.classList.contains('active')){
-        if(e.key==='ArrowLeft')changeSlide(-1);
-        if(e.key==='ArrowRight')changeSlide(1);
-      }
+      if(e.key==='ArrowLeft')changeSlide(-1);
+      if(e.key==='ArrowRight')changeSlide(1);
     });
   }
 
@@ -304,15 +311,12 @@
     if(!dateStr)return'';
     try{
       const d=new Date(dateStr);
-      const month=String(d.getMonth()+1).padStart(2,'0');
-      const day=String(d.getDate()).padStart(2,'0');
-      const year=d.getFullYear();
-      return`${month}/${day}/${year}`;
+      return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear();
     }catch(e){return dateStr;}
   }
 
   function csvToArray(text){
-    let p='',row=[''],ret=[row],i=0,r=0,s=!0,l;
+    let p='',row=[''],ret=[row],i=0,r=0,s=true,l;
     for(l of text){
       if('"'===l){if(s&&l===p)row[i]+=l;s=!s;}
       else if(','===l&&s)l=row[++i]='';
