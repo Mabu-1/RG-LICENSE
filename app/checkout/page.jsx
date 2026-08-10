@@ -70,7 +70,9 @@ function CheckoutContent() {
             3. You add reviews to your Google Sheet and go live
           </div>
         </div>
-        <Link href="/" style={{ display:'inline-flex', padding:'12px 28px', background:'#0F172A', color:'white', borderRadius:100, fontSize:14, fontWeight:600, textDecoration:'none' }}>← Back to Home</Link>
+        <a href="https://tidycal.com/" target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'14px 32px', background:'#F59E0B', color:'white', borderRadius:100, fontSize:15, fontWeight:700, textDecoration:'none', marginBottom:12 }}>📅 Schedule Your Setup Meeting</a>
+        <br/>
+        <Link href="/" style={{ display:'inline-flex', padding:'10px 24px', background:'transparent', color:'#64748b', borderRadius:100, fontSize:13, fontWeight:500, textDecoration:'none', border:'1px solid #e2e8f0', marginTop:8 }}>← Back to Home</Link>
       </div>
     </div>
   )
