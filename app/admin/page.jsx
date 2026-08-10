@@ -81,9 +81,10 @@ export default function AdminPage() {
 
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
           <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>
-          <Link href="/admin/media" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>
-            📸 Media Upload
-          </Link>
+          <div style={{ display:'flex', gap:10 }}>
+            <Link href="/admin/media" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📸 Media</Link>
+            <Link href="/admin/pricing" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#10B981', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>💰 Pricing</Link>
+          </div>
         </div>
 
         {/* ADD / EDIT FORM */}
