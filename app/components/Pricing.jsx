@@ -91,7 +91,7 @@ export default function Pricing() {
                 <ul className="rgl-plan-feats">
                   {(Array.isArray(p.features) ? p.features : []).map((f, i) => <li key={i}>{f}</li>)}
                 </ul>
-                <a href="#" className="rgl-plan-cta">{p.cta} →</a>
+                <a href={`/checkout?plan=${p.name.toLowerCase()}`} className="rgl-plan-cta">{p.cta} →</a>
               </div>
             ))}
           </div>
