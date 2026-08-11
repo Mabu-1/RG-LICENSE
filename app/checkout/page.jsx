@@ -10,15 +10,16 @@ const PLANS = {
   studio:  { name: 'Studio',  price: 89.99, desc: '3 Gallery Design Styles + 3 Licensed Domains', features: ['3 Gallery Design Styles', '3 Licensed Domains', 'Everything in Growth', 'Early Access to New Designs', 'Priority Support'] }
 }
 
+const TIDYCAL_URL = 'https://tidycal.com/mahdi/shop-review'
+
 function CheckoutContent() {
   const searchParams = useSearchParams()
   const planKey = searchParams.get('plan') || 'starter'
   const plan = PLANS[planKey] || PLANS.starter
 
   const [addonDomain, setAddonDomain]   = useState(false)
-  const [extraDesigns, setExtraDesigns] = useState(0) // 0, 1, or 2 — only for starter
+  const [extraDesigns, setExtraDesigns] = useState(0)
   const [form, setForm]                 = useState({ name: '', email: '', domain: '', message: '' })
-  const [submitted, setSubmitted]       = useState(false)
   const [loading, setLoading]           = useState(false)
   const [errors, setErrors]             = useState({})
 
@@ -51,33 +52,8 @@ function CheckoutContent() {
       status: 'pending'
     })
     if (error) console.error('Order save error:', error)
-    setLoading(false)
-    setSubmitted(true)
+    window.location.href = TIDYCAL_URL
   }
-
-  if (submitted) return (
-    <div style={{ minHeight:'100vh', background:'#F8F7F4', display:'flex', alignItems:'center', justifyContent:'center', padding:24 }}>
-      <div style={{ maxWidth:480, width:'100%', background:'white', borderRadius:20, padding:48, textAlign:'center', boxShadow:'0 20px 60px rgba(0,0,0,0.08)' }}>
-        <div style={{ fontSize:56, marginBottom:16 }}>🎉</div>
-        <h2 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', marginBottom:12, letterSpacing:-1 }}>Order Received!</h2>
-        <p style={{ fontSize:15, color:'#64748b', lineHeight:1.7, marginBottom:24 }}>
-          Thanks <strong>{form.name}</strong>! We received your <strong>{plan.name}</strong> order.
-          We will contact <strong>{form.email}</strong> within 24 hours to schedule setup.
-        </p>
-        <div style={{ background:'#FFFBEB', border:'1px solid #FDE68A', borderRadius:12, padding:16, marginBottom:28 }}>
-          <div style={{ fontSize:13, fontWeight:600, color:'#92400E', marginBottom:6 }}>What happens next?</div>
-          <div style={{ fontSize:13, color:'#78350F', lineHeight:1.7 }}>
-            1. We will email you a Google Meet link to schedule setup<br/>
-            2. We will install the section on your Shopify theme<br/>
-            3. You add reviews to your Google Sheet and go live
-          </div>
-        </div>
-        <a href="https://tidycal.com/mahdi/shop-review" target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'14px 32px', background:'#F59E0B', color:'white', borderRadius:100, fontSize:15, fontWeight:700, textDecoration:'none', marginBottom:12 }}>📅 Schedule Your Setup Meeting</a>
-        <br/>
-        <Link href="/" style={{ display:'inline-flex', padding:'10px 24px', background:'transparent', color:'#64748b', borderRadius:100, fontSize:13, fontWeight:500, textDecoration:'none', border:'1px solid #e2e8f0', marginTop:8 }}>← Back to Home</Link>
-      </div>
-    </div>
-  )
 
   const inputStyle = { width:'100%', padding:'11px 14px', border:'1px solid #e2e8f0', borderRadius:10, fontSize:14, boxSizing:'border-box', fontFamily:'inherit', outline:'none' }
   const labelStyle = { fontSize:12, fontWeight:600, color:'#64748b', display:'block', marginBottom:5 }
@@ -214,12 +190,12 @@ function CheckoutContent() {
 
             <button onClick={handleSubmit} disabled={loading}
               style={{ width:'100%', padding:'16px', background: loading ? '#94a3b8' : '#0F172A', color:'white', border:'none', borderRadius:100, fontSize:15, fontWeight:700, cursor: loading ? 'not-allowed' : 'pointer', marginBottom:12, transition:'all 0.2s' }}>
-              {loading ? '⏳ Submitting...' : `Place Order — $${total.toFixed(2)}`}
+              {loading ? '⏳ Saving order...' : `Place Order — $${total.toFixed(2)}`}
             </button>
 
             <div style={{ textAlign:'center', fontSize:12, color:'#94a3b8', lineHeight:1.7 }}>
               🔒 No payment now — we will invoice you after setup<br/>
-              ⚡ Setup within 24 hours of order
+              ⚡ You'll book your setup meeting on the next step
             </div>
             <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:12, flexWrap:'wrap' }}>
               {['✓ No subscription', '✓ Lifetime license', '✓ We install it'].map(t => (
