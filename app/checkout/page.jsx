@@ -16,13 +16,14 @@ function CheckoutContent() {
   const plan = PLANS[planKey] || PLANS.starter
 
   const [addonDomain, setAddonDomain]   = useState(false)
-  const [addonDesign, setAddonDesign]   = useState(false)
+  const [extraDesigns, setExtraDesigns] = useState(0) // 0, 1, or 2 — only for starter
   const [form, setForm]                 = useState({ name: '', email: '', domain: '', message: '' })
   const [submitted, setSubmitted]       = useState(false)
   const [loading, setLoading]           = useState(false)
   const [errors, setErrors]             = useState({})
 
-  const total = plan.price + (addonDomain ? 10 : 0) + (addonDesign ? 20 : 0)
+  const showDesignAddon = planKey === 'starter'
+  const total = plan.price + (addonDomain ? 10 : 0) + (extraDesigns * 20)
 
   function validate() {
     const e = {}
@@ -43,7 +44,8 @@ function CheckoutContent() {
       plan: plan.name,
       plan_price: plan.price,
       addon_domain: addonDomain,
-      addon_design: addonDesign,
+      addon_design: extraDesigns > 0,
+      addon_design_count: extraDesigns,
       total: total,
       notes: form.message,
       status: 'pending'
@@ -91,6 +93,29 @@ function CheckoutContent() {
           <div style={{ fontSize:12, color:'#64748b' }}>{desc}</div>
         </div>
         <div style={{ fontFamily:'serif', fontSize:20, fontWeight:900, color: checked ? '#F59E0B' : '#0F172A' }}>+${price}</div>
+      </div>
+    )
+  }
+
+  function DesignCounter() {
+    return (
+      <div style={{ padding:16, border: extraDesigns > 0 ? '2px solid #F59E0B' : '2px solid #e2e8f0', borderRadius:12, background: extraDesigns > 0 ? '#FFFBEB' : 'white', marginBottom:10, transition:'all 0.2s' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+          <div style={{ flex:1 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:'#0F172A' }}>Extra Design Style</div>
+            <div style={{ fontSize:12, color:'#64748b' }}>Unlock additional gallery styles — up to 2 extra (3 total)</div>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <button onClick={() => setExtraDesigns(Math.max(0, extraDesigns - 1))}
+              style={{ width:30, height:30, borderRadius:6, border:'1px solid #e2e8f0', background:'white', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, color:'#0F172A' }}>−</button>
+            <span style={{ fontFamily:'serif', fontSize:20, fontWeight:900, color: extraDesigns > 0 ? '#F59E0B' : '#0F172A', minWidth:24, textAlign:'center' }}>{extraDesigns}</span>
+            <button onClick={() => setExtraDesigns(Math.min(2, extraDesigns + 1))}
+              style={{ width:30, height:30, borderRadius:6, border:'1px solid #e2e8f0', background:'white', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, color:'#0F172A' }}>+</button>
+          </div>
+          <div style={{ fontFamily:'serif', fontSize:20, fontWeight:900, color: extraDesigns > 0 ? '#F59E0B' : '#0F172A', minWidth:60, textAlign:'right' }}>
+            {extraDesigns > 0 ? `+$${extraDesigns * 20}` : '$20 ea'}
+          </div>
+        </div>
       </div>
     )
   }
@@ -145,13 +170,7 @@ function CheckoutContent() {
                 desc="License one more Shopify store"
                 price={10}
               />
-              <Addon
-                checked={addonDesign}
-                onChange={() => setAddonDesign(!addonDesign)}
-                label="Extra Design Style"
-                desc="Unlock an additional gallery style"
-                price={20}
-              />
+              {showDesignAddon && <DesignCounter />}
             </div>
           </div>
 
@@ -178,10 +197,10 @@ function CheckoutContent() {
                   <div style={{ fontSize:13, fontWeight:700, color:'#92400E' }}>+$10</div>
                 </div>
               )}
-              {addonDesign && (
+              {extraDesigns > 0 && (
                 <div style={{ display:'flex', justifyContent:'space-between', padding:'8px 12px', background:'#FFFBEB', borderRadius:8, marginBottom:8, border:'1px solid #FDE68A' }}>
-                  <div style={{ fontSize:13, fontWeight:600, color:'#92400E' }}>Extra Design Style</div>
-                  <div style={{ fontSize:13, fontWeight:700, color:'#92400E' }}>+$20</div>
+                  <div style={{ fontSize:13, fontWeight:600, color:'#92400E' }}>Extra Design Style ×{extraDesigns}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'#92400E' }}>+${extraDesigns * 20}</div>
                 </div>
               )}
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:16, borderTop:'2px solid #f1f5f9', marginTop:8 }}>
