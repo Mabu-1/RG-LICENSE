@@ -68,7 +68,7 @@ export default function OrdersPage() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#f8f7f4", borderBottom: "2px solid #e2e8f0" }}>
-                  {["Date", "Name", "Email", "Domain", "Plan", "Add-ons", "Total", "Status", "Notes", ""].map(h => (
+                  {["Date","Name","Email","Domain","Plan","Add-ons","Total","Status","Notes",""].map(h => (
                     <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
