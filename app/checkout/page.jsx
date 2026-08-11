@@ -113,7 +113,7 @@ function CheckoutContent() {
               style={{ width:30, height:30, borderRadius:6, border:'1px solid #e2e8f0', background:'white', fontSize:18, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, color:'#0F172A' }}>+</button>
           </div>
           <div style={{ fontFamily:'serif', fontSize:20, fontWeight:900, color: extraDesigns > 0 ? '#F59E0B' : '#0F172A', minWidth:60, textAlign:'right' }}>
-            {extraDesigns > 0 ? `+$${extraDesigns * 20}` : '$20 ea'}
+            {extraDesigns > 0 ? `+$${extraDesigns * 20}` : '$20'}
           </div>
         </div>
       </div>
