@@ -1,12 +1,12 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { supabaseBrowser } from "@/lib/supabase";
 import Link from "next/link";
 
 const STATUS_COLORS = {
-  pending:   { bg: "#FEF3C7", color: "#92400E" },
-  active:    { bg: "#D1FAE5", color: "#065F46" },
-  cancelled: { bg: "#FEE2E2", color: "#991B1B" },
+  pending:   { bg: '#FEF3C7', color: '#92400E' },
+  active:    { bg: '#D1FAE5', color: '#065F46' },
+  cancelled: { bg: '#FEE2E2', color: '#991B1B' },
 }
 
 export default function OrdersPage() {
@@ -53,6 +53,7 @@ export default function OrdersPage() {
             <Link href="/admin" style={{ padding: "8px 18px", background: "#0F172A", color: "white", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none" }}>← Back</Link>
           </div>
         </div>
+
         <div style={{ background: "white", borderRadius: 16, border: "1px solid #e2e8f0", overflow: "hidden" }}>
           {loading ? (
             <div style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>Loading...</div>
@@ -89,7 +90,7 @@ export default function OrdersPage() {
                         <td style={{ padding: "14px 16px", fontSize: 12, color: extraDomains.length ? "#F59E0B" : "#94a3b8", fontFamily:"monospace" }}>
                           {extraDomains.length ? extraDomains.join(", ") : "—"}
                         </td>
-                        <td style={{ padding: "14px 16px", fontSize: 13, fontWeight: 700, color: "#0F172A", whiteSpace: "nowrap" }}></td>
+                        <td style={{ padding: "14px 16px", fontSize: 13, fontWeight: 700, color: "#0F172A", whiteSpace: "nowrap" }}>${Number(o.total).toFixed(2)}</td>
                         <td style={{ padding: "14px 16px" }} onClick={e => e.stopPropagation()}>
                           <select value={o.status || "pending"} onChange={e => updateStatus(o.id, e.target.value)}
                             style={{ padding: "4px 8px", borderRadius: 20, border: "none", fontSize: 11, fontWeight: 700, background: sc.bg, color: sc.color, cursor: "pointer" }}>
@@ -109,7 +110,7 @@ export default function OrdersPage() {
                               <div><div style={{ fontWeight:700, color:"#92400E", marginBottom:4 }}>Designs</div><div style={{ color:"#78350F" }}>{designs.length ? designs.join(", ") : "—"}</div></div>
                               <div><div style={{ fontWeight:700, color:"#92400E", marginBottom:4 }}>Extra Domain</div><div style={{ color:"#78350F", fontFamily:"monospace" }}>{extraDomains.length ? extraDomains.join(", ") : "—"}</div></div>
                               <div><div style={{ fontWeight:700, color:"#92400E", marginBottom:4 }}>Notes</div><div style={{ color:"#78350F" }}>{o.notes || "—"}</div></div>
-                              <div><div style={{ fontWeight:700, color:"#92400E", marginBottom:4 }}>Breakdown</div><div style={{ color:"#78350F" }}>Plan: {o.addon_domain ? " +  domain" : ""}{o.addon_design_count > 0 ? " + $" + (o.addon_design_count*20) + " designs" : ""}</div></div>
+                              <div><div style={{ fontWeight:700, color:"#92400E", marginBottom:4 }}>Breakdown</div><div style={{ color:"#78350F" }}>${Number(o.plan_price||0).toFixed(2)} plan{o.addon_domain ? " + $10 domain" : ""}{o.addon_design_count > 0 ? " + $" + (o.addon_design_count*20) + " designs" : ""}</div></div>
                             </div>
                           </td>
                         </tr>
@@ -121,8 +122,9 @@ export default function OrdersPage() {
             </table>
           )}
         </div>
+
         <div style={{ marginTop: 16, fontSize: 12, color: "#94a3b8" }}>
-          {orders.length} order{orders.length !== 1 ? "s" : ""} total ·  revenue
+          {orders.length} order{orders.length !== 1 ? "s" : ""} total · ${orders.reduce((s, o) => s + Number(o.total || 0), 0).toFixed(2)} revenue
         </div>
       </div>
     </div>
