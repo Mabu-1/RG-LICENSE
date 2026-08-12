@@ -1,4 +1,4 @@
-﻿import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -33,6 +33,15 @@ export async function GET(request) {
   }
 }
 
+function isVideoUrl(url) {
+  return url.includes('.mp4') ||
+    url.includes('.mov') ||
+    url.includes('.m3u8') ||
+    url.includes('/videos/') ||
+    url.includes('cdn.shopify.com/videos') ||
+    url.includes('video')
+}
+
 function parseCSV(text) {
   const rows = csvToArray(text)
   const reviews = []
@@ -42,8 +51,11 @@ function parseCSV(text) {
     const rawMediaUrl = row[5] ? row[5].trim() : ''
     let finalPhotoUrl = '', finalVideoUrl = ''
     if (rawMediaUrl.length > 5) {
-      const isVideo = rawMediaUrl.includes('.mp4') || rawMediaUrl.includes('.mov') || rawMediaUrl.includes('/videos/')
-      if (isVideo) { finalVideoUrl = rawMediaUrl } else { finalPhotoUrl = rawMediaUrl }
+      if (isVideoUrl(rawMediaUrl)) {
+        finalVideoUrl = rawMediaUrl
+      } else {
+        finalPhotoUrl = rawMediaUrl
+      }
     }
     const rawVerified = row[6] ? row[6].trim().toUpperCase() : ''
     const rating = parseInt(row[0])
