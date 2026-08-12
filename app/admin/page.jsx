@@ -113,7 +113,7 @@ export default function AdminPage() {
     <div style={{ minHeight:'100vh', background:'#f8f7f4', padding:'40px 24px' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
-          <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>
+          <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ Shop Review Admin</h1>
           <div style={{ display:'flex', gap:10 }}>
             <Link href="/admin/orders" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#6366F1', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📋 Orders</Link>
             <Link href="/admin/media" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📸 Media</Link>
