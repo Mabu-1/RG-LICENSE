@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 
 const tabs = [
@@ -29,7 +29,7 @@ export default function CardLayouts() {
     <>
       <style>{`
         .cl { padding: 100px 0; background: #0F172A; }
-        .cl-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+        .cl-split { display: grid; grid-template-columns: 1fr 1.4fr; gap: 72px; align-items: start; }
         .cl-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
         .cl-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #fff; }
         .cl-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: rgba(255,255,255,0.55); }
@@ -40,9 +40,9 @@ export default function CardLayouts() {
         .cl-tab-bar { display: flex; padding: 12px 12px 0; gap: 4px; }
         .cl-tab-btn { padding: 8px 20px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
         .cl-tab-btn.active { background: #0F172A; color: #F59E0B; }
-        .cl-tab-content { background: #0F172A; padding: 16px; min-height: 260px; display: flex; align-items: center; justify-content: center; }
-        .cl-tab-img { width: 100%; border-radius: 10px; display: block; object-fit: cover; transition: opacity 0.3s; }
-        .cl-tab-desc { text-align: center; margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.4); padding: 0 8px 8px; }
+        .cl-tab-content { background: #0F172A; padding: 20px; }
+        .cl-tab-img { width: 100%; border-radius: 10px; display: block; object-fit: contain; transition: opacity 0.3s; }
+        .cl-tab-desc { text-align: center; margin-top: 12px; font-size: 13px; color: rgba(255,255,255,0.4); padding: 0 8px 4px; }
         @media (max-width: 900px) { .cl { padding: 70px 0; } .cl-split { grid-template-columns: 1fr; gap: 48px; } }
       `}</style>
       <section className="cl" id="feat-layouts">
@@ -69,9 +69,7 @@ export default function CardLayouts() {
                   {tabs.map((t) => (
                     <button
                       key={t.id}
-                      className={
-                        "cl-tab-btn" + (active === t.id ? " active" : "")
-                      }
+                      className={"cl-tab-btn" + (active === t.id ? " active" : "")}
                       onClick={() => setActive(t.id)}
                     >
                       {t.label}
@@ -79,15 +77,13 @@ export default function CardLayouts() {
                   ))}
                 </div>
                 <div className="cl-tab-content">
-                  <div style={{ width: "100%" }}>
-                    <img
-                      key={current.id}
-                      src={current.img}
-                      alt={current.label}
-                      className="cl-tab-img"
-                    />
-                    <div className="cl-tab-desc">{current.desc}</div>
-                  </div>
+                  <img
+                    key={current.id}
+                    src={current.img}
+                    alt={current.label}
+                    className="cl-tab-img"
+                  />
+                  <div className="cl-tab-desc">{current.desc}</div>
                 </div>
               </div>
             </div>
