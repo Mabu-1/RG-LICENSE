@@ -1,9 +1,26 @@
+'use client'
+import { useState, useEffect } from 'react'
+import { supabaseBrowser } from '@/lib/supabase'
+
 export default function Nav() {
+  const [logo, setLogo]             = useState('')
+  const [logoHeight, setLogoHeight] = useState(44)
+
+  useEffect(() => {
+    supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
+      .then(({ data }) => { if (data?.value) setLogo(data.value) })
+    supabaseBrowser.from('settings').select('value').eq('key','branding_logo_height').single()
+      .then(({ data }) => { if (data?.value) setLogoHeight(parseInt(data.value)) })
+  }, [])
+
   return (
     <nav className="rgl-nav">
       <div className="rgl-nav-inner">
         <div className="rgl-logo">
-          <span className="rgl-logo-star">★</span> Shop Review
+          {logo
+            ? <img src={logo} alt="Logo" style={{ height: logoHeight, display: 'block' }} />
+            : <><span className="rgl-logo-star">★</span> Shop Review</>
+          }
         </div>
         <div className="rgl-nav-links">
           <a href="#feat-sheets" className="rgl-nav-link">Features</a>
