@@ -1,8 +1,10 @@
 import { supabase } from '@/lib/supabase'
 
 function checkAuth(request) {
-  const auth = request.headers.get('x-admin-password')
-  return auth === process.env.ADMIN_PASSWORD
+  const token = request.headers.get('x-admin-token')
+  const password = request.headers.get('x-admin-password')
+  const expectedToken = Buffer.from(`${process.env.ADMIN_USERNAME}:${process.env.ADMIN_PASSWORD}`).toString('base64')
+  return token === expectedToken || password === process.env.ADMIN_PASSWORD
 }
 
 export async function GET(request) {
