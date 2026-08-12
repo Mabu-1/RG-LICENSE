@@ -3,7 +3,7 @@ export default function Nav() {
     <nav className="rgl-nav">
       <div className="rgl-nav-inner">
         <div className="rgl-logo">
-          <span className="rgl-logo-star">★</span> ReviewGallery Pro
+          <span className="rgl-logo-star">★</span> Shop Review
         </div>
         <div className="rgl-nav-links">
           <a href="#features" className="rgl-nav-link">Features</a>

@@ -190,7 +190,7 @@ function CheckoutContent() {
               marginLeft: "auto",
             }}
           >
-            ★ ReviewGallery Pro
+            ★ Shop Review
           </div>
         </div>
 
