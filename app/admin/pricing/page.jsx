@@ -4,19 +4,23 @@ import { supabaseBrowser } from "@/lib/supabase";
 import Link from "next/link";
 
 export default function PricingAdmin() {
-  const [plans, setPlans]   = useState([]);
-  const [addons, setAddons] = useState([]);
-  const [msg, setMsg]       = useState("");
-  const [editPlan, setEditPlan]   = useState(null);
+  const [plans, setPlans]       = useState([]);
+  const [addons, setAddons]     = useState([]);
+  const [msg, setMsg]           = useState("");
+  const [editPlan, setEditPlan] = useState(null);
   const [editAddon, setEditAddon] = useState(null);
+  const [logo, setLogo]         = useState("");
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
+      .then(({ data }) => { if (data?.value) setLogo(data.value) })
+  }, []);
 
   async function load() {
     const { data: p } = await supabaseBrowser.from("pricing_plans").select("*").order("sort_order");
     const { data: a } = await supabaseBrowser.from("pricing_addons").select("*").order("sort_order");
-    setPlans(p || []);
-    setAddons(a || []);
+    setPlans(p || []); setAddons(a || []);
   }
 
   async function savePlan(plan) {
@@ -24,32 +28,18 @@ export default function PricingAdmin() {
       ? plan.features.split("\n").map(f => f.trim()).filter(Boolean)
       : plan.features;
     await supabaseBrowser.from("pricing_plans").update({
-      name: plan.name,
-      description: plan.description,
-      price: plan.price,
-      cents: plan.cents,
-      featured: plan.featured,
-      badge: plan.badge,
-      cta: plan.cta,
-      features: features
+      name: plan.name, description: plan.description, price: plan.price,
+      cents: plan.cents, featured: plan.featured, badge: plan.badge,
+      cta: plan.cta, features: features
     }).eq("id", plan.id);
-    setMsg("Plan saved!");
-    setEditPlan(null);
-    load();
-    setTimeout(() => setMsg(""), 2000);
+    setMsg("Plan saved!"); setEditPlan(null); load(); setTimeout(() => setMsg(""), 2000);
   }
 
   async function saveAddon(addon) {
     await supabaseBrowser.from("pricing_addons").update({
-      label: addon.label,
-      sub: addon.sub,
-      price: addon.price,
-      unit: addon.unit
+      label: addon.label, sub: addon.sub, price: addon.price, unit: addon.unit
     }).eq("id", addon.id);
-    setMsg("Add-on saved!");
-    setEditAddon(null);
-    load();
-    setTimeout(() => setMsg(""), 2000);
+    setMsg("Add-on saved!"); setEditAddon(null); load(); setTimeout(() => setMsg(""), 2000);
   }
 
   const inputStyle = { width:"100%", padding:"9px 12px", border:"1px solid #e2e8f0", borderRadius:8, fontSize:13, boxSizing:"border-box", fontFamily:"inherit" };
@@ -60,7 +50,10 @@ export default function PricingAdmin() {
       <div style={{ maxWidth:900, margin:"0 auto" }}>
 
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:32 }}>
-          <h1 style={{ fontFamily:"serif", fontSize:28, fontWeight:900, color:"#0F172A", letterSpacing:-1 }}>💰 Pricing Manager</h1>
+          <div>
+            {logo ? <img src={logo} alt="Logo" style={{ height:44, display:'block' }} />
+              : <h1 style={{ fontFamily:"serif", fontSize:28, fontWeight:900, color:"#0F172A", letterSpacing:-1 }}>💰 Pricing Manager</h1>}
+          </div>
           <Link href="/admin" style={{ padding:"8px 18px", background:"#0F172A", color:"white", borderRadius:8, fontSize:13, fontWeight:600, textDecoration:"none" }}>← Back to Admin</Link>
         </div>
 
@@ -78,7 +71,7 @@ export default function PricingAdmin() {
                       <div><label style={labelStyle}>CTA Button Text</label><input value={editPlan.cta} onChange={e=>setEditPlan({...editPlan,cta:e.target.value})} style={inputStyle} /></div>
                       <div><label style={labelStyle}>Price (e.g. 39)</label><input value={editPlan.price} onChange={e=>setEditPlan({...editPlan,price:e.target.value})} style={inputStyle} /></div>
                       <div><label style={labelStyle}>Cents (e.g. .99)</label><input value={editPlan.cents} onChange={e=>setEditPlan({...editPlan,cents:e.target.value})} style={inputStyle} /></div>
-                      <div><label style={labelStyle}>Badge (leave empty for none)</label><input value={editPlan.badge || ""} onChange={e=>setEditPlan({...editPlan,badge:e.target.value})} style={inputStyle} placeholder="e.g. Most Popular" /></div>
+                      <div><label style={labelStyle}>Badge</label><input value={editPlan.badge || ""} onChange={e=>setEditPlan({...editPlan,badge:e.target.value})} style={inputStyle} placeholder="e.g. Most Popular" /></div>
                       <div style={{ display:"flex", alignItems:"center", gap:8, paddingTop:20 }}>
                         <input type="checkbox" id={"feat-"+plan.id} checked={editPlan.featured} onChange={e=>setEditPlan({...editPlan,featured:e.target.checked})} />
                         <label htmlFor={"feat-"+plan.id} style={{ fontSize:13, color:"#0F172A", fontWeight:500 }}>Featured (dark card)</label>
@@ -87,11 +80,7 @@ export default function PricingAdmin() {
                     <div style={{ marginBottom:12 }}><label style={labelStyle}>Description</label><input value={editPlan.description} onChange={e=>setEditPlan({...editPlan,description:e.target.value})} style={inputStyle} /></div>
                     <div style={{ marginBottom:16 }}>
                       <label style={labelStyle}>Features (one per line)</label>
-                      <textarea
-                        value={Array.isArray(editPlan.features) ? editPlan.features.join("\n") : editPlan.features}
-                        onChange={e=>setEditPlan({...editPlan,features:e.target.value})}
-                        style={{ ...inputStyle, height:120, resize:"vertical" }}
-                      />
+                      <textarea value={Array.isArray(editPlan.features) ? editPlan.features.join("\n") : editPlan.features} onChange={e=>setEditPlan({...editPlan,features:e.target.value})} style={{ ...inputStyle, height:120, resize:"vertical" }} />
                     </div>
                     <div style={{ display:"flex", gap:8 }}>
                       <button onClick={() => savePlan(editPlan)} style={{ padding:"9px 20px", background:"#0F172A", color:"white", border:"none", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer" }}>Save</button>

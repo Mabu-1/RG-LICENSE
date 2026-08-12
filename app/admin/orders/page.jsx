@@ -16,8 +16,13 @@ export default function OrdersPage() {
   const [loading, setLoading]     = useState(true);
   const [editOrder, setEditOrder] = useState(null);
   const [msg, setMsg]             = useState("");
+  const [logo, setLogo]           = useState("");
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
+      .then(({ data }) => { if (data?.value) setLogo(data.value) })
+  }, []);
 
   async function load() {
     setLoading(true);
@@ -120,7 +125,10 @@ export default function OrdersPage() {
       <div style={{ maxWidth: 1300, margin: "0 auto" }}>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
-          <h1 style={{ fontFamily: "serif", fontSize: 28, fontWeight: 900, color: "#0F172A", letterSpacing: -1 }}>📋 Orders</h1>
+          <div>
+            {logo ? <img src={logo} alt="Logo" style={{ height:44, display:'block' }} />
+              : <h1 style={{ fontFamily: "serif", fontSize: 28, fontWeight: 900, color: "#0F172A", letterSpacing: -1 }}>📋 Orders</h1>}
+          </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
             {msg && <span style={{ fontSize: 13, color: msg.includes('fail') ? '#dc2626' : "#10B981", fontWeight: 600 }}>{msg}</span>}
             <button onClick={load} style={{ padding: "8px 16px", background: "#f1f5f9", border: "none", borderRadius: 8, fontSize: 12, cursor: "pointer" }}>Refresh</button>
@@ -135,50 +143,28 @@ export default function OrdersPage() {
                 <h2 style={{ fontFamily:'serif', fontSize:20, fontWeight:700, color:'#0F172A' }}>Edit Order</h2>
                 <button onClick={()=>setEditOrder(null)} style={{ background:'none', border:'none', fontSize:20, cursor:'pointer', color:'#64748b' }}>✕</button>
               </div>
-
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14, marginBottom:14 }}>
-                <div>
-                  <label style={labelStyle}>Name</label>
-                  <input value={editOrder.name || ''} onChange={e=>setEditOrder({...editOrder,name:e.target.value})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Email</label>
-                  <input value={editOrder.email || ''} onChange={e=>setEditOrder({...editOrder,email:e.target.value})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Primary Domain</label>
-                  <input value={editOrder.domain || ''} onChange={e=>setEditOrder({...editOrder,domain:e.target.value})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Plan</label>
+                <div><label style={labelStyle}>Name</label><input value={editOrder.name || ''} onChange={e=>setEditOrder({...editOrder,name:e.target.value})} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Email</label><input value={editOrder.email || ''} onChange={e=>setEditOrder({...editOrder,email:e.target.value})} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Primary Domain</label><input value={editOrder.domain || ''} onChange={e=>setEditOrder({...editOrder,domain:e.target.value})} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Plan</label>
                   <select value={editOrder.plan || ''} onChange={e=>setEditOrder({...editOrder,plan:e.target.value})} style={selectStyle}>
                     <option value="Starter">Starter</option>
                     <option value="Growth">Growth</option>
                     <option value="Studio">Studio</option>
                   </select>
                 </div>
-                <div>
-                  <label style={labelStyle}>Total ($)</label>
-                  <input type="number" value={editOrder.total || ''} onChange={e=>setEditOrder({...editOrder,total:e.target.value})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Status</label>
+                <div><label style={labelStyle}>Total ($)</label><input type="number" value={editOrder.total || ''} onChange={e=>setEditOrder({...editOrder,total:e.target.value})} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Status</label>
                   <select value={editOrder.status || 'pending'} onChange={e=>setEditOrder({...editOrder,status:e.target.value})} style={selectStyle}>
                     <option value="pending">Pending</option>
                     <option value="active">Active</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
                 </div>
-                <div>
-                  <label style={labelStyle}>Setup Date</label>
-                  <input type="date" value={editOrder.setup_date || ''} onChange={e=>setEditOrder({...editOrder,setup_date:e.target.value})} style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Setup Time</label>
-                  <input type="time" value={editOrder.setup_time || ''} onChange={e=>setEditOrder({...editOrder,setup_time:e.target.value})} style={inputStyle} />
-                </div>
+                <div><label style={labelStyle}>Setup Date</label><input type="date" value={editOrder.setup_date || ''} onChange={e=>setEditOrder({...editOrder,setup_date:e.target.value})} style={inputStyle} /></div>
+                <div><label style={labelStyle}>Setup Time</label><input type="time" value={editOrder.setup_time || ''} onChange={e=>setEditOrder({...editOrder,setup_time:e.target.value})} style={inputStyle} /></div>
               </div>
-
               <div style={{ marginBottom:16, padding:16, background:'#f8f7f4', borderRadius:12, border:'1px solid #e2e8f0' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
                   <label style={{ ...labelStyle, marginBottom:0, fontSize:12 }}>Design Styles</label>
@@ -199,7 +185,6 @@ export default function OrdersPage() {
                   </div>
                 ))}
               </div>
-
               <div style={{ marginBottom:16, padding:16, background:'#f8f7f4', borderRadius:12, border:'1px solid #e2e8f0' }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
                   <label style={{ ...labelStyle, marginBottom:0, fontSize:12 }}>Extra Domains</label>
@@ -214,12 +199,10 @@ export default function OrdersPage() {
                   </div>
                 ))}
               </div>
-
               <div style={{ marginBottom:20 }}>
                 <label style={labelStyle}>Notes</label>
                 <textarea value={editOrder.notes || ''} onChange={e=>setEditOrder({...editOrder,notes:e.target.value})} style={{ ...inputStyle, height:70, resize:'vertical' }} />
               </div>
-
               <div style={{ display:'flex', gap:10 }}>
                 <button onClick={saveEdit} style={{ padding:'10px 24px', background:'#0F172A', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>Save Changes</button>
                 <button onClick={()=>setEditOrder(null)} style={{ padding:'10px 24px', background:'#f1f5f9', color:'#64748b', border:'none', borderRadius:8, fontSize:13, cursor:'pointer' }}>Cancel</button>
@@ -279,10 +262,8 @@ export default function OrdersPage() {
                         </td>
                         <td style={{ padding: "14px 16px" }}>
                           <div style={{ display:'flex', gap:6 }}>
-                            <button onClick={() => openEdit(o)}
-                              style={{ padding: "5px 10px", background: "#f1f5f9", color: "#0F172A", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>✏️</button>
-                            <button onClick={() => deleteOrder(o.id)}
-                              style={{ padding: "5px 10px", background: "#fff5f5", color: "#dc2626", border: "1px solid #fee2e2", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>🗑</button>
+                            <button onClick={() => openEdit(o)} style={{ padding: "5px 10px", background: "#f1f5f9", color: "#0F172A", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>✏️</button>
+                            <button onClick={() => deleteOrder(o.id)} style={{ padding: "5px 10px", background: "#fff5f5", color: "#dc2626", border: "1px solid #fee2e2", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>🗑</button>
                           </div>
                         </td>
                       </tr>
