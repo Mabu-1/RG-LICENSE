@@ -24,7 +24,7 @@ export default function Hero() {
             </p>
             <div className="rgl-cta-group">
               <a href="#pricing" className="rgl-btn-hero">Get Your License — $39.99</a>
-              <a href="#features" className="rgl-btn-ghost">Explore Features ↓</a>
+             
             </div>
             <div className="rgl-trust">
               {['One-time payment', 'Domain-locked', 'No subscriptions', 'We install it'].map(t => (
