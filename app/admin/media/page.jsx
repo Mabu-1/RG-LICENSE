@@ -2,18 +2,15 @@
 import { supabaseBrowser } from "@/lib/supabase";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useBranding } from "../hooks/useBranding";
 
 export default function MediaPage() {
   const [uploads, setUploads]     = useState([]);
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg]             = useState('');
-  const [logo, setLogo]           = useState('');
+  const { logo, logoHeight }      = useBranding();
 
-  useEffect(() => {
-    loadMedia();
-    supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
-      .then(({ data }) => { if (data?.value) setLogo(data.value) })
-  }, []);
+  useEffect(() => { loadMedia(); }, []);
 
   async function loadMedia() {
     const { data, error } = await supabaseBrowser.from('media').select('*').order('created_at', { ascending: false });
@@ -54,7 +51,7 @@ export default function MediaPage() {
 
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
           <div>
-            {logo ? <img src={logo} alt="Logo" style={{ height:44, display:'block' }} />
+            {logo ? <img src={logo} alt="Logo" style={{ height:logoHeight, display:'block' }} />
               : <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>📸 Media Upload</h1>}
           </div>
           <Link href="/admin" style={{ padding:'8px 18px', background:'#0F172A', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>← Back to Admin</Link>
@@ -81,7 +78,7 @@ export default function MediaPage() {
               <div key={u.id} style={{ background:'#f8f7f4', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden' }}>
                 <div style={{ width:'100%', aspectRatio:'16/9', background:'#e2e8f0', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center' }}>
                   {u.type && u.type.startsWith('image') ? (
-                    <img src={u.url} alt={u.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} onError={e => { e.target.style.display='none'; }} />
+                    <img src={u.url} alt={u.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} />
                   ) : (
                     <div style={{ fontSize:36 }}>🎬</div>
                   )}

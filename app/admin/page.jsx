@@ -5,30 +5,33 @@ import Link from 'next/link'
 
 const TOKEN_KEY = 'rg_admin_token'
 
-async function fetchLogo() {
-  const { data } = await supabaseBrowser.from('settings').select('value').eq('key', 'branding_logo').single()
-  return data?.value || ''
-}
-
 export default function AdminPage() {
-  const [authed, setAuthed]       = useState(false)
-  const [checking, setChecking]   = useState(true)
-  const [username, setUsername]   = useState('')
-  const [password, setPassword]   = useState('')
-  const [sites, setSites]         = useState([])
-  const [loading, setLoading]     = useState(false)
-  const [form, setForm]           = useState({ domain: '', label: '', notes: '' })
-  const [editId, setEditId]       = useState(null)
-  const [msg, setMsg]             = useState('')
-  const [logo, setLogo]           = useState('')
+  const [authed, setAuthed]             = useState(false)
+  const [checking, setChecking]         = useState(true)
+  const [username, setUsername]         = useState('')
+  const [password, setPassword]         = useState('')
+  const [sites, setSites]               = useState([])
+  const [loading, setLoading]           = useState(false)
+  const [form, setForm]                 = useState({ domain: '', label: '', notes: '' })
+  const [editId, setEditId]             = useState(null)
+  const [msg, setMsg]                   = useState('')
+  const [logo, setLogo]                 = useState('')
+  const [logoHeight, setLogoHeight]     = useState(44)
   const [logoUploading, setLogoUploading] = useState(false)
-  const [brandMsg, setBrandMsg]   = useState('')
+  const [brandMsg, setBrandMsg]         = useState('')
 
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY)
     if (token) { validateToken(token) } else { setChecking(false) }
-    fetchLogo().then(setLogo)
+    loadBranding()
   }, [])
+
+  async function loadBranding() {
+    const { data: logoData } = await supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
+    const { data: heightData } = await supabaseBrowser.from('settings').select('value').eq('key','branding_logo_height').single()
+    if (logoData?.value) setLogo(logoData.value)
+    if (heightData?.value) setLogoHeight(parseInt(heightData.value))
+  }
 
   async function validateToken(token) {
     try {
@@ -94,22 +97,26 @@ export default function AdminPage() {
   async function uploadLogo(e) {
     const file = e.target.files[0]
     if (!file) return
-    setLogoUploading(true)
-    setBrandMsg('')
+    setLogoUploading(true); setBrandMsg('')
     const ext = file.name.split('.').pop()
-    const fileName = 'branding_logo_' + Date.now() + '.' + ext
+    const fileName = 'branding_logo.' + ext
     const { error: storageError } = await supabaseBrowser.storage
       .from('review-images')
       .upload(fileName, file, { contentType: file.type, upsert: true })
     if (storageError) { setBrandMsg('Upload failed: ' + storageError.message); setLogoUploading(false); return }
     const { data: urlData } = supabaseBrowser.storage.from('review-images').getPublicUrl(fileName)
-    const newUrl = urlData.publicUrl
+    const newUrl = urlData.publicUrl + '?t=' + Date.now()
     await supabaseBrowser.from('settings').upsert({ key: 'branding_logo', value: newUrl })
     setLogo(newUrl)
     setLogoUploading(false)
     setBrandMsg('Logo updated!')
     setTimeout(() => setBrandMsg(''), 3000)
     e.target.value = ''
+  }
+
+  async function saveLogoHeight(h) {
+    setLogoHeight(h)
+    await supabaseBrowser.from('settings').upsert({ key: 'branding_logo_height', value: String(h) })
   }
 
   async function removeLogo() {
@@ -131,7 +138,9 @@ export default function AdminPage() {
   if (!authed) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'#f8f7f4' }}>
       <div style={{ background:'white', padding:40, borderRadius:16, boxShadow:'0 4px 24px rgba(0,0,0,0.08)', width:360 }}>
-        {logo ? <img src={logo} alt="Logo" style={{ height:48, marginBottom:24, display:'block' }} /> : <h2 style={{ fontFamily:'serif', fontSize:24, fontWeight:700, marginBottom:24, color:'#0F172A' }}>★ RG Admin</h2>}
+        {logo
+          ? <img src={logo} alt="Logo" style={{ height:logoHeight, marginBottom:24, display:'block' }} />
+          : <h2 style={{ fontFamily:'serif', fontSize:24, fontWeight:700, marginBottom:24, color:'#0F172A' }}>★ RG Admin</h2>}
         <input placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()} style={{ ...inputStyle, marginBottom:12 }} />
         <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()} style={{ ...inputStyle, marginBottom:12 }} />
         <button onClick={login} style={{ ...btnStyle, width:'100%', padding:11 }}>Login</button>
@@ -147,9 +156,8 @@ export default function AdminPage() {
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
           <div>
             {logo
-              ? <img src={logo} alt="Logo" style={{ height:44, display:'block' }} />
-              : <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>
-            }
+              ? <img src={logo} alt="Logo" style={{ height:logoHeight, display:'block' }} />
+              : <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>}
           </div>
           <div style={{ display:'flex', gap:10 }}>
             <Link href="/admin/orders" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#6366F1', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📋 Orders</Link>
@@ -162,18 +170,26 @@ export default function AdminPage() {
         {/* BRANDING */}
         <div style={{ background:'white', borderRadius:16, padding:28, marginBottom:24, border:'1px solid #e2e8f0' }}>
           <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A', marginBottom:20 }}>🎨 Branding</h2>
-          <div style={{ display:'flex', alignItems:'center', gap:24 }}>
-            <div style={{ width:120, height:60, background:'#f1f5f9', borderRadius:10, border:'1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-              {logo ? <img src={logo} alt="Logo" style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain' }} /> : <span style={{ fontSize:12, color:'#94a3b8' }}>No logo</span>}
+          <div style={{ display:'flex', alignItems:'flex-start', gap:24, flexWrap:'wrap' }}>
+            <div style={{ width:160, height:80, background:'#f1f5f9', borderRadius:10, border:'1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', flexShrink:0 }}>
+              {logo
+                ? <img src={logo} alt="Logo" style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain' }} />
+                : <span style={{ fontSize:12, color:'#94a3b8' }}>No logo</span>}
             </div>
-            <div>
-              <label style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'9px 20px', background:'#0F172A', color:'white', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>
-                {logoUploading ? '⏳ Uploading...' : '📁 Upload Logo'}
-                <input type="file" accept="image/*" onChange={uploadLogo} style={{ display:'none' }} disabled={logoUploading} />
-              </label>
-              {logo && <button onClick={removeLogo} style={{ marginLeft:10, padding:'9px 16px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:8, fontSize:13, cursor:'pointer' }}>Remove</button>}
-              {brandMsg && <div style={{ marginTop:8, fontSize:13, color: brandMsg.includes('fail') ? '#dc2626' : '#10B981', fontWeight:600 }}>{brandMsg}</div>}
-              <div style={{ fontSize:12, color:'#94a3b8', marginTop:6 }}>PNG, SVG or JPG. Shows on all admin pages and login screen.</div>
+            <div style={{ flex:1 }}>
+              <div style={{ display:'flex', gap:10, marginBottom:12, flexWrap:'wrap' }}>
+                <label style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'9px 20px', background:'#0F172A', color:'white', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>
+                  {logoUploading ? '⏳ Uploading...' : '📁 Upload Logo'}
+                  <input type="file" accept="image/*" onChange={uploadLogo} style={{ display:'none' }} disabled={logoUploading} />
+                </label>
+                {logo && <button onClick={removeLogo} style={{ padding:'9px 16px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:8, fontSize:13, cursor:'pointer' }}>Remove</button>}
+              </div>
+              <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
+                <span style={{ fontSize:12, fontWeight:600, color:'#64748b', whiteSpace:'nowrap' }}>Logo Height: {logoHeight}px</span>
+                <input type="range" min={24} max={120} value={logoHeight} onChange={e=>saveLogoHeight(parseInt(e.target.value))} style={{ flex:1, maxWidth:200 }} />
+              </div>
+              {brandMsg && <div style={{ fontSize:13, color: brandMsg.includes('fail') ? '#dc2626' : '#10B981', fontWeight:600, marginBottom:6 }}>{brandMsg}</div>}
+              <div style={{ fontSize:12, color:'#94a3b8' }}>PNG, SVG or JPG. Shows on all admin pages and login screen.</div>
             </div>
           </div>
         </div>
