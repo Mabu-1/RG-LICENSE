@@ -1,5 +1,8 @@
 import CardLayouts from './features/CardLayouts'
 import GoogleSheets from './features/GoogleSheets'
+import Lightbox from './features/Lightbox'
+import SearchFilter from './features/SearchFilter'
+import ThemeSettings from './features/ThemeSettings'
 
 const feats = [
   { icon: '📊', title: 'Google Sheet Backend', desc: 'Your spreadsheet is your database. Add a row, save, done — reviews appear instantly.' },
@@ -47,6 +50,9 @@ export default function Features() {
       </section>
       <GoogleSheets />
       <CardLayouts />
+      <Lightbox/>
+      <SearchFilter/>
+      <ThemeSettings/>
     </>
   )
 }
