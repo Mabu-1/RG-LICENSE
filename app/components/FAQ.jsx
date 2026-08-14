@@ -15,18 +15,18 @@ export default function FAQ() {
   return (
     <>
       <style>{`
-        .rgl-faq { padding: 100px 0; background: #f8f7f4; }
+        .rgl-faq { padding: 100px 0; background: #0F172A; }
         .rgl-faq-header { text-align: center; margin-bottom: 60px; }
-        .rgl-faq .rgl-section-title { color: #0f172a; }
+        .rgl-faq .rgl-section-title { color: #fff; }
         .rgl-faq-list { max-width: 720px; margin: 0 auto; }
-        .rgl-faq-item { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; margin-bottom: 10px; overflow: hidden; }
-        .rgl-faq-q { width: 100%; background: none; border: none; text-align: left; padding: 20px 22px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #0f172a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-        .rgl-faq-q:hover { background: #f8f7f4; }
-        .rgl-faq-icon { width: 26px; height: 26px; background: #f8f7f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #64748b; flex-shrink: 0; transition: all 0.25s; line-height: 1; }
-        .rgl-faq-icon.open { background: #f59e0b; color: #fff; transform: rotate(45deg); }
+        .rgl-faq-item { background: rgba(255,255,255,0.04); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; overflow: hidden; }
+        .rgl-faq-q { width: 100%; background: none; border: none; text-align: left; padding: 20px 22px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .rgl-faq-q:hover { background: rgba(255,255,255,0.04); }
+        .rgl-faq-icon { width: 26px; height: 26px; background: rgba(255,255,255,0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: rgba(255,255,255,0.4); flex-shrink: 0; transition: all 0.25s; line-height: 1; }
+        .rgl-faq-icon.open { background: #F59E0B; color: #fff; transform: rotate(45deg); }
         .rgl-faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
         .rgl-faq-a.open { max-height: 300px; }
-        .rgl-faq-a-inner { padding: 16px 22px 22px; font-size: 14px; color: #64748b; line-height: 1.7; border-top: 1px solid #e2e8f0; }
+        .rgl-faq-a-inner { padding: 16px 22px 22px; font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; border-top: 1px solid rgba(255,255,255,0.08); }
         @media (max-width: 620px) { .rgl-faq { padding: 70px 0; } }
       `}</style>
       <section className="rgl-faq" id="faq">
