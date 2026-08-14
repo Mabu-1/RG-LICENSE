@@ -8,6 +8,7 @@ export default function Pricing() {
 
   useEffect(() => {
     async function load() {
+      if (!supabaseBrowser) return
       const { data: p } = await supabaseBrowser.from("pricing_plans").select("*").order("sort_order");
       const { data: a } = await supabaseBrowser.from("pricing_addons").select("*").order("sort_order");
       setPlans(p || []);

@@ -7,6 +7,7 @@ export default function Footer() {
   const [logoHeight, setLogoHeight] = useState(44)
 
   useEffect(() => {
+    if (!supabaseBrowser) return
     supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
       .then(({ data }) => { if (data?.value) setLogo(data.value) })
     supabaseBrowser.from('settings').select('value').eq('key','branding_logo_height').single()
