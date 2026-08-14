@@ -12,7 +12,7 @@ export default function GoogleSheets() {
         .gs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
         .gs-split > * { min-width: 0; }
         .gs-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
-        .gs-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
+        .gs-h2 { font-family: 'Fraunces', serif; font-size: clamp(20px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
         .gs-h2 em { font-style: normal; color: #F59E0B; }
         .gs-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: #64748B; }
         .gs-list { list-style: none; padding: 0; margin: 0; }
