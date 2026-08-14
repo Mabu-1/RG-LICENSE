@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState } from 'react'
 
 const allCards = [
@@ -17,60 +17,57 @@ const allCards = [
 ]
 
 export default function SearchFilter() {
-  const [search, setSearch]   = useState('')
-  const [filter, setFilter]   = useState('all')
-  const [sort, setSort]       = useState('recent')
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('all')
+  const [sort, setSort]     = useState('recent')
 
   let results = [...allCards]
-
-  if(search.trim()) {
+  if (search.trim()) {
     const t = search.toLowerCase()
     results = results.filter(c => c.b.toLowerCase().includes(t) || c.n.toLowerCase().includes(t))
   }
-
-  if(filter !== 'all') {
-    results = results.filter(c => c.s === parseInt(filter))
-  }
-
-  if(sort === 'highest') results.sort((a,b) => b.s - a.s)
-  if(sort === 'lowest')  results.sort((a,b) => a.s - b.s)
+  if (filter !== 'all') results = results.filter(c => c.s === parseInt(filter))
+  if (sort === 'highest') results.sort((a,b) => b.s - a.s)
+  if (sort === 'lowest')  results.sort((a,b) => a.s - b.s)
 
   return (
     <>
       <style>{`
-        .sf { padding: 100px 0; background: #fff; }
+        .sf { padding: 100px 0; background: #0F172A; }
         .sf-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
         .sf-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
-        .sf-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
-        .sf-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: #64748B; }
+        .sf-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #fff; }
+        .sf-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: rgba(255,255,255,0.55); }
         .sf-list { list-style: none; margin-bottom: 0; }
-        .sf-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .sf-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.06); }
         .sf-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
 
-        .sf-mock { background: #F8F7F4; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; }
-        .sf-mock-controls { padding: 16px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; }
-        .sf-mock-input { width: 100%; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; color: #0F172A; background: #F8F7F4; outline: none; transition: border 0.2s; box-sizing: border-box; font-family: inherit; }
-        .sf-mock-input:focus { border-color: #F59E0B; background: #fff; }
+        .sf-mock { background: #1e293b; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+        .sf-mock-controls { padding: 16px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 10px; }
+        .sf-mock-input { width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-size: 13px; color: #fff; background: rgba(255,255,255,0.06); outline: none; transition: border 0.2s; box-sizing: border-box; font-family: inherit; }
+        .sf-mock-input::placeholder { color: rgba(255,255,255,0.3); }
+        .sf-mock-input:focus { border-color: #F59E0B; background: rgba(255,255,255,0.08); }
         .sf-mock-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .sf-mock-btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0; background: #fff; color: #64748B; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-        .sf-mock-btn:hover { border-color: #0F172A; color: #0F172A; }
-        .sf-mock-btn.sf-active { background: #0F172A; color: #F59E0B; border-color: #0F172A; }
-        .sf-mock-select { padding: 7px 12px; border-radius: 8px; font-size: 12px; border: 1px solid #e2e8f0; background: #fff; color: #64748B; cursor: pointer; font-family: inherit; margin-left: auto; }
+        .sf-mock-btn { padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .sf-mock-btn:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+        .sf-mock-btn.sf-active { background: #F59E0B; color: #0F172A; border-color: #F59E0B; font-weight: 700; }
+        .sf-mock-select { padding: 7px 12px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); cursor: pointer; font-family: inherit; margin-left: auto; }
         .sf-mock-select:focus { outline: none; border-color: #F59E0B; }
+        .sf-mock-select option { background: #1e293b; color: #fff; }
 
-        .sf-results-bar { padding: 10px 16px; font-size: 12px; color: #64748B; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .sf-results-count { font-weight: 600; color: #0F172A; }
+        .sf-results-bar { padding: 10px 16px; font-size: 12px; color: rgba(255,255,255,0.4); background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .sf-results-count { font-weight: 600; color: #F59E0B; }
 
         .sf-cards-wrap { padding: 12px; max-height: 340px; overflow-y: auto; }
         .sf-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .sf-card { background: #fff; border-radius: 10px; padding: 12px; border: 1px solid #e2e8f0; transition: all 0.2s; }
-        .sf-card:hover { border-color: #F59E0B; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .sf-card { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px; border: 1px solid rgba(255,255,255,0.07); transition: all 0.2s; }
+        .sf-card:hover { border-color: rgba(245,158,11,0.4); background: rgba(255,255,255,0.07); }
         .sf-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .sf-card-star { color: #F59E0B; font-size: 10px; }
-        .sf-card-name { font-size: 11px; font-weight: 700; color: #0F172A; }
-        .sf-card-body { font-size: 10px; color: #64748B; line-height: 1.5; }
+        .sf-card-name { font-size: 11px; font-weight: 700; color: #fff; }
+        .sf-card-body { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.5; }
 
-        .sf-empty { text-align: center; padding: 40px 20px; color: #94a3b8; font-size: 14px; }
+        .sf-empty { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.3); font-size: 14px; }
         .sf-empty-icon { font-size: 32px; margin-bottom: 8px; }
 
         @media (max-width: 900px) { .sf { padding: 70px 0; } .sf-split { grid-template-columns: 1fr; gap: 48px; } }
@@ -80,7 +77,6 @@ export default function SearchFilter() {
       <section className="sf" id="feat-search">
         <div className="rgl-container">
           <div className="sf-split">
-
             <div>
               <div className="sf-eyebrow">Search, Filter & Sort</div>
               <h2 className="sf-h2">Customers find exactly what they need</h2>
@@ -96,39 +92,24 @@ export default function SearchFilter() {
             <div>
               <div className="sf-mock">
                 <div className="sf-mock-controls">
-                  <input
-                    className="sf-mock-input"
-                    placeholder="Search reviews..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                  />
+                  <input className="sf-mock-input" placeholder="Search reviews..." value={search} onChange={e => setSearch(e.target.value)} />
                   <div className="sf-mock-row">
                     {['all','5','4','3'].map(f => (
-                      <button
-                        key={f}
-                        className={'sf-mock-btn' + (filter===f?' sf-active':'')}
-                        onClick={() => setFilter(f)}
-                      >
-                        {f==='all'?'All':f+' ★'}
+                      <button key={f} className={'sf-mock-btn' + (filter===f?' sf-active':'')} onClick={() => setFilter(f)}>
+                        {f==='all' ? 'All' : f+' ★'}
                       </button>
                     ))}
-                    <select
-                      className="sf-mock-select"
-                      value={sort}
-                      onChange={e => setSort(e.target.value)}
-                    >
+                    <select className="sf-mock-select" value={sort} onChange={e => setSort(e.target.value)}>
                       <option value="recent">Original Order</option>
                       <option value="highest">Highest First</option>
                       <option value="lowest">Lowest First</option>
                     </select>
                   </div>
                 </div>
-
                 <div className="sf-results-bar">
                   <span>Showing results</span>
                   <span className="sf-results-count">{results.length} review{results.length!==1?'s':''}</span>
                 </div>
-
                 <div className="sf-cards-wrap">
                   {results.length > 0 ? (
                     <div className="sf-cards">
@@ -151,7 +132,6 @@ export default function SearchFilter() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
