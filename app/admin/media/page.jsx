@@ -76,15 +76,24 @@ export default function MediaPage() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:16 }}>
             {uploads.map((u) => (
               <div key={u.id} style={{ background:'#f8f7f4', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden' }}>
-                <div style={{ width:'100%', aspectRatio:'16/9', background:'#e2e8f0', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  {u.type && u.type.startsWith('image') ? (
+                <div style={{ width:'100%', aspectRatio:'16/9', background:'#e2e8f0', overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
+                  {u.type && u.type.startsWith('video') ? (
+                    <video
+                      src={u.url + '#t=0.1'}
+                      preload="metadata"
+                      muted
+                      playsInline
+                      style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
+                    />
+                  ) : u.type && u.type.startsWith('image') ? (
                     <img src={u.url} alt={u.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} />
                   ) : (
-                    <div style={{ fontSize:36 }}>🎬</div>
+                    <div style={{ fontSize:36 }}>📄</div>
                   )}
                 </div>
                 <div style={{ padding:10 }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:'#0F172A', marginBottom:8, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
+                  <div style={{ fontSize:11, fontWeight:600, color:'#0F172A', marginBottom:4, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name}</div>
+                  <div style={{ fontSize:10, color:'#94a3b8', marginBottom:8 }}>{u.type}</div>
                   <div style={{ display:'flex', gap:6 }}>
                     <button onClick={() => copyUrl(u.url)} style={{ flex:1, padding:'6px 0', background:'#0F172A', color:'white', border:'none', borderRadius:6, fontSize:11, fontWeight:600, cursor:'pointer' }}>Copy URL</button>
                     <button onClick={() => deleteMedia(u.id, u.url)} style={{ padding:'6px 10px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:6, fontSize:11, cursor:'pointer' }}>🗑</button>
