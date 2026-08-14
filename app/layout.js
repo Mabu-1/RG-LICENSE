@@ -1,8 +1,8 @@
-﻿import './styles/landing.css'
+import './globals.css'
 
 export const metadata = {
-  title: 'Shop Review — Beautiful Review Sections for Shopify',
-  description: 'Domain-locked Shopify review gallery powered by Google Sheets. One-time license. No monthly fees.',
+  title: 'Shop Review — Shopify Review Gallery',
+  description: 'One-time Shopify review gallery powered by Google Sheets',
 }
 
 export default function RootLayout({ children }) {
