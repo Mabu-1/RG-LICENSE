@@ -3,6 +3,7 @@ import Hero       from './components/Hero'
 import StatsBar   from './components/StatsBar'
 import Features   from './components/Features'
 import HowItWorks from './components/HowItWorks'
+import WhySwitch  from './components/WhySwitch'
 import Pricing    from './components/Pricing'
 import FAQ        from './components/FAQ'
 import CTABanner  from './components/CTABanner'
@@ -16,6 +17,7 @@ export default function Page() {
       <StatsBar />
       <Features />
       <HowItWorks />
+      <WhySwitch />
       <Pricing />
       <FAQ />
       <CTABanner />
