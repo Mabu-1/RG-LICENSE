@@ -41,7 +41,7 @@ export default function SearchFilter() {
         .sf { padding: 100px 0; background: #fff; }
         .sf-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
         .sf-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
-        .sf-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
+        .sf-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; }
         .sf-p { font-size: 16px; line-height: 1.7; margin-bottom: 24px; color: #64748B; }
         .sf-list { list-style: none; margin-bottom: 0; }
         .sf-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: #334155; border-bottom: 1px solid rgba(0,0,0,0.06); }

@@ -13,7 +13,7 @@ export default function Features() {
       <SearchFilter />
       <Lightbox />
       <ThemeSettings />
-      <DomainLock />
+    
     </>
   )
 }

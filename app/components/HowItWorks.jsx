@@ -6,7 +6,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="rgl-how" id="how">
+    <section className="rgl-how" id="how" background="#0F172A">
       <div className="rgl-container">
         <div className="rgl-how-header">
           <div className="rgl-section-eyebrow">How It Works</div>

@@ -7,8 +7,7 @@ import { Suspense, useState } from "react";
 const PLANS = {
   starter: {
     name: "Starter",
-    price: 39.99,
-    desc: "1 Gallery Design Style + 1 Licensed Domain",
+    price: 34 Gallery Design Style + 1 Licensed Domain",
     features: [
       "1 Gallery Design Style",
       "1 Licensed Domain",

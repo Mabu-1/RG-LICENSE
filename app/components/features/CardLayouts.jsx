@@ -30,7 +30,7 @@ export default function CardLayouts() {
       <style>{`
         .cl { padding: 100px 0; background: #0F172A; text-align: center; }
         .cl-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
-        .cl-h2 { font-family: 'Fraunces', serif; font-size: clamp(28px,3.5vw,44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #fff; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .cl-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #fff; max-width: 600px; margin-left: auto; margin-right: auto; }
         .cl-p { font-size: 16px; line-height: 1.7; margin-bottom: 16px; color: rgba(255,255,255,0.55); max-width: 540px; margin-left: auto; margin-right: auto; }
         .cl-list { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; margin-bottom: 48px; }
         .cl-list li { font-size: 14px; display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.7); }
