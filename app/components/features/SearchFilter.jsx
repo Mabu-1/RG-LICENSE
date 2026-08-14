@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 const allCards = [
   { n:'Sarah M.',  s:5, b:'Absolutely love this product. Quality is amazing and it arrived perfectly packaged!' },
@@ -21,14 +21,17 @@ export default function SearchFilter() {
   const [filter, setFilter] = useState('all')
   const [sort, setSort]     = useState('recent')
 
-  let results = [...allCards]
-  if (search.trim()) {
-    const t = search.toLowerCase()
-    results = results.filter(c => c.b.toLowerCase().includes(t) || c.n.toLowerCase().includes(t))
-  }
-  if (filter !== 'all') results = results.filter(c => c.s === parseInt(filter))
-  if (sort === 'highest') results.sort((a,b) => b.s - a.s)
-  if (sort === 'lowest')  results.sort((a,b) => a.s - b.s)
+  const results = useMemo(() => {
+    let r = [...allCards]
+    if (search.trim()) {
+      const t = search.toLowerCase()
+      r = r.filter(c => c.b.toLowerCase().includes(t) || c.n.toLowerCase().includes(t))
+    }
+    if (filter !== 'all') r = r.filter(c => c.s === parseInt(filter))
+    if (sort === 'highest') r = [...r].sort((a,b) => b.s - a.s)
+    if (sort === 'lowest')  r = [...r].sort((a,b) => a.s - b.s)
+    return r
+  }, [search, filter, sort])
 
   return (
     <>
@@ -41,7 +44,6 @@ export default function SearchFilter() {
         .sf-list { list-style: none; margin-bottom: 0; }
         .sf-list li { font-size: 14px; padding: 9px 0; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.06); }
         .sf-list li::before { content: '★'; color: #F59E0B; font-size: 10px; flex-shrink: 0; }
-
         .sf-mock { background: #1e293b; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
         .sf-mock-controls { padding: 16px; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 10px; }
         .sf-mock-input { width: 100%; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-size: 13px; color: #fff; background: rgba(255,255,255,0.06); outline: none; transition: border 0.2s; box-sizing: border-box; font-family: inherit; }
@@ -54,10 +56,8 @@ export default function SearchFilter() {
         .sf-mock-select { padding: 7px 12px; border-radius: 8px; font-size: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); cursor: pointer; font-family: inherit; margin-left: auto; }
         .sf-mock-select:focus { outline: none; border-color: #F59E0B; }
         .sf-mock-select option { background: #1e293b; color: #fff; }
-
         .sf-results-bar { padding: 10px 16px; font-size: 12px; color: rgba(255,255,255,0.4); background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
         .sf-results-count { font-weight: 600; color: #F59E0B; }
-
         .sf-cards-wrap { padding: 12px; max-height: 340px; overflow-y: auto; }
         .sf-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .sf-card { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px; border: 1px solid rgba(255,255,255,0.07); transition: all 0.2s; }
@@ -66,10 +66,8 @@ export default function SearchFilter() {
         .sf-card-star { color: #F59E0B; font-size: 10px; }
         .sf-card-name { font-size: 11px; font-weight: 700; color: #fff; }
         .sf-card-body { font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.5; }
-
         .sf-empty { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.3); font-size: 14px; }
         .sf-empty-icon { font-size: 32px; margin-bottom: 8px; }
-
         @media (max-width: 900px) { .sf { padding: 70px 0; } .sf-split { grid-template-columns: 1fr; gap: 48px; } }
         @media (max-width: 480px) { .sf-cards { grid-template-columns: 1fr; } }
       `}</style>
@@ -88,7 +86,6 @@ export default function SearchFilter() {
                 <li>All three controls work together simultaneously</li>
               </ul>
             </div>
-
             <div>
               <div className="sf-mock">
                 <div className="sf-mock-controls">
