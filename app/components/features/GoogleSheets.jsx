@@ -41,7 +41,7 @@ export default function GoogleSheets() {
               <div className="gs-eyebrow">Google Sheets Powered</div>
               <h2 className="gs-h2">
                 No Reviews Yet? Start Building<br />
-                <em>Social Proof</em>
+                Social Proof
               </h2>
               <p className="gs-p">
                 Whether you're launching your first Shopify store or already have thousands of customer reviews, manage and display your social proof beautifully — all from one simple Google Sheet.

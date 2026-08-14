@@ -52,12 +52,12 @@ export default function CardLayouts() {
           <p className="cl-p">
             Every store has a different aesthetic. Switch between three distinct layout modes from the Shopify theme editor — no code, no rebuilds, instant preview.
           </p>
-          <ul className="cl-list">
+          {/* <ul className="cl-list">
             <li>Natural, Equal Height, and Masonry modes</li>
             <li>2 to 6 columns on desktop, 1 to 2 on mobile</li>
             <li>Fully responsive breakpoints built in</li>
             <li>Switch layouts any time without losing settings</li>
-          </ul>
+          </ul> */}
           <div className="cl-tab-wrap">
             <div className="cl-tab-bar">
               {tabs.map((t) => (
