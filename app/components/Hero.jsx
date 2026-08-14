@@ -173,8 +173,8 @@ export default function Hero() {
 
       <section className="rgl-hero" id="hero">
         <div className="rgl-container">
-
-          <div className="rgl-hero-eyebrow">★ Shopify Review Gallery</div>
+{/* 
+          <div className="rgl-hero-eyebrow">★ Shopify Review Gallery</div> */}
 
           <h1 className="rgl-hero-h1">
             Stop Paying Monthly<br />
