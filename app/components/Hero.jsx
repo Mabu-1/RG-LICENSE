@@ -166,7 +166,7 @@ export default function Hero() {
         @media (max-width: 768px) {
           .rgl-hero { padding: 70px 0 60px; }
           .rgl-hero-h1 { font-size: 36px; letter-spacing: -1px; }
-          .rgl-hero-sub { font-size: 16px; }
+          .rgl-hero-sub { font-size: 14px; }
           .rgl-hero-points { flex-direction: column; align-items: center; }
         }
       `}</style>
@@ -187,8 +187,9 @@ export default function Hero() {
 
           <ul className="rgl-hero-points">
             <li>One-time setup</li>
-            <li>Google Sheet management</li>
+            
             <li>We install it for you</li>
+            <li>Google Sheet management</li>
           </ul>
 
           <div className="rgl-hero-video-wrap">
