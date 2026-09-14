@@ -1,16 +1,25 @@
 const rows = [
-  { feature: 'One-Time Payment',       us: true,              loox: false,             other: false            },
-  { feature: 'Monthly Fees',           us: false,             loox: true,              other: true             },
-  { feature: 'Unlimited Reviews',      us: true,              loox: 'Limited by Plan', other: 'Limited by Plan'},
-  { feature: 'Google Sheet Management',us: true,              loox: false,             other: false            },
-  { feature: 'Personal Setup Included',us: true,              loox: false,             other: false            },
-  { feature: 'Multiple Layouts',       us: true,              loox: true,              other: true             },
-]
+  { feature: "One-Time Payment", us: true, loox: false, other: false },
+  { feature: "Monthly Fees", us: false, loox: true, other: true },
+  {
+    feature: "Unlimited Reviews",
+    us: true,
+    loox: "Limited by Plan",
+    other: "Limited by Plan",
+  },
+  { feature: "Google Sheet Management", us: true, loox: false, other: false },
+  { feature: "Personal Setup Included", us: true, loox: false, other: false },
+  { feature: "Multiple Layouts", us: true, loox: true, other: true },
+];
 
 function Cell({ val }) {
-  if (val === true)  return <span style={{ fontSize:20 }}>✅</span>
-  if (val === false) return <span style={{ fontSize:20 }}>❌</span>
-  return <span style={{ fontSize:13, color:'#94a3b8', fontWeight:500 }}>{val}</span>
+  if (val === true) return <span style={{ fontSize: 20 }}>✅</span>;
+  if (val === false) return <span style={{ fontSize: 20 }}>❌</span>;
+  return (
+    <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 500 }}>
+      {val}
+    </span>
+  );
 }
 
 export default function WhySwitch() {
@@ -47,8 +56,9 @@ export default function WhySwitch() {
         <div className="rgl-container">
           <div className="ws-header">
             <div className="ws-eyebrow">Comparison</div>
-            <h2 className="ws-h2">Why Store Owners <em>Switch</em></h2>
-            <p className="ws-sub">See how we compare to other review apps — no monthly fees, no limits, no headaches.</p>
+            <h2 className="ws-h2">
+              Why Store Owners <em>Switch</em>
+            </h2>
           </div>
 
           <div className="ws-wrap">
@@ -65,9 +75,15 @@ export default function WhySwitch() {
                 {rows.map((row, i) => (
                   <tr key={i}>
                     <td>{row.feature}</td>
-                    <td className="ws-us-col"><Cell val={row.us} /></td>
-                    <td><Cell val={row.loox} /></td>
-                    <td><Cell val={row.other} /></td>
+                    <td className="ws-us-col">
+                      <Cell val={row.us} />
+                    </td>
+                    <td>
+                      <Cell val={row.loox} />
+                    </td>
+                    <td>
+                      <Cell val={row.other} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -76,5 +92,5 @@ export default function WhySwitch() {
         </div>
       </section>
     </>
-  )
+  );
 }
