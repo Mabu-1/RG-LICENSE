@@ -6,7 +6,7 @@ export default function Hero() {
       <style>{`
         .rgl-hero {
           background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%);
-          padding: 100px 0 80px;
+          padding: 120px 0 80px;
           position: relative;
           overflow: hidden;
           text-align: center;
@@ -21,13 +21,6 @@ export default function Hero() {
           pointer-events: none;
         }
 
-        .rgl-hero-annotation-row {
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
-          gap: 6px;
-          margin-bottom: 12px;
-        }
         .rgl-hero-annotation-pill {
           background: #fff;
           border: 1.5px solid #BFDBFE;
@@ -38,19 +31,33 @@ export default function Hero() {
           color: #64748B;
           box-shadow: 0 2px 8px rgba(37,99,235,0.08);
           white-space: nowrap;
+          display: inline-block;
         }
 
         .rgl-hero-h1 {
           font-family: 'Fraunces', serif;
           font-size: clamp(36px, 5vw, 64px);
           font-weight: 900;
-          line-height: 1.15;
+          line-height: 1.2;
           letter-spacing: -2px;
           color: #0F172A;
           margin-bottom: 24px;
           max-width: 760px;
           margin-left: auto;
           margin-right: auto;
+          position: relative;
+        }
+
+        /* Annotation absolutely positioned inside h1 */
+        .rgl-hero-ann {
+          position: absolute;
+          top: -68px;
+          left: 50%;
+          transform: translateX(-200px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          pointer-events: none;
         }
 
         .rgl-hero-wave {
@@ -156,35 +163,43 @@ export default function Hero() {
           box-shadow: 0 12px 40px rgba(37,99,235,0.45);
         }
 
+        @media (max-width: 900px) {
+          .rgl-hero-ann { transform: translateX(-160px); top: -64px; }
+        }
         @media (max-width: 768px) {
-          .rgl-hero { padding: 70px 0 60px; }
-          .rgl-hero-h1 { font-size: clamp(28px, 8vw, 42px); letter-spacing: -1px; }
+          .rgl-hero { padding: 100px 0 60px; }
+          .rgl-hero-h1 { font-size: clamp(28px, 8vw, 44px); letter-spacing: -1px; }
           .rgl-hero-sub { font-size: 15px; }
           .rgl-hero-points { flex-direction: row; justify-content: center; gap: 8px 12px; }
           .rgl-hero-points li { font-size: 12px; }
           .rgl-hero-btn { padding: 15px 28px; font-size: 15px; }
+          .rgl-hero-ann { transform: translateX(-120px); top: -60px; }
+          .rgl-hero-annotation-pill { font-size: 11px; padding: 4px 10px; }
         }
         @media (max-width: 480px) {
+          .rgl-hero { padding: 90px 0 50px; }
+          .rgl-hero-h1 { font-size: clamp(26px, 8vw, 36px); }
           .rgl-hero-points { flex-direction: column; align-items: center; }
-          .rgl-hero-annotation-pill { font-size: 11px; }
+          .rgl-hero-ann { transform: translateX(-90px); top: -56px; }
+          .rgl-hero-btn { width: 100%; justify-content: center; padding: 15px 20px; }
         }
       `}</style>
 
       <section className="rgl-hero" id="hero">
         <div className="rgl-container">
 
-          {/* Annotation pill + arrow pointing down */}
-          <div className="rgl-hero-annotation-row">
-            <span className="rgl-hero-annotation-pill">Fake review apps</span>
-            <svg width="24" height="32" viewBox="0 0 24 32" fill="none">
-              <path d="M12 2 C12 2 18 12 12 28" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
-              <path d="M8 24 L12 29 L16 24" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
-            </svg>
-          </div>
-
           <h1 className="rgl-hero-h1">
 
-            {/* "Stop Paying Monthly" — wavy underline */}
+            {/* Annotation: pill above + arrow curving down to "Stop" */}
+            <span className="rgl-hero-ann">
+              <span className="rgl-hero-annotation-pill">Fake review apps</span>
+              <svg width="56" height="52" viewBox="0 0 56 52" fill="none">
+                <path d="M8 4 C8 4 44 18 50 48" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+                <path d="M44 46 L50 48 L48 41" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
+              </svg>
+            </span>
+
+            {/* "Stop Paying Monthly" wavy underline */}
             <span className="rgl-hero-wave">
               Stop Paying Monthly
               <svg viewBox="0 0 480 10" fill="none" preserveAspectRatio="none">
@@ -194,7 +209,7 @@ export default function Hero() {
 
             <br />
 
-            {/* "for" — wavy underline */}
+            {/* "for" wavy underline */}
             <span className="rgl-hero-wave">
               for
               <svg viewBox="0 0 60 10" fill="none" preserveAspectRatio="none">
@@ -203,7 +218,7 @@ export default function Hero() {
             </span>
             {' '}
 
-            {/* "Review Apps" — blue + wavy underline */}
+            {/* "Review Apps" blue + wavy underline */}
             <span className="rgl-hero-em">
               <span className="rgl-hero-wave">
                 Review Apps
