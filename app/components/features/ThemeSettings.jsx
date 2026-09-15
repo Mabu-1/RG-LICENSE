@@ -29,7 +29,6 @@ const INITIAL_SHOW = 8
 export default function ThemeSettings() {
   const [expanded, setExpanded] = useState(false)
   const visible = expanded ? settings : settings.slice(0, INITIAL_SHOW)
-  const cols = 4
 
   return (
     <>
@@ -44,14 +43,19 @@ export default function ThemeSettings() {
 
         .ts-item { background: #fff; padding: 16px 18px; display: flex; align-items: center; gap: 12px; border-right: 1px solid #EFF6FF; border-bottom: 1px solid #EFF6FF; transition: background 0.15s; cursor: default; }
         .ts-item:hover { background: #F8FAFF; }
+
+        /* Desktop: 4 cols — remove right border on 4th, remove bottom on last row */
         .ts-item:nth-child(4n) { border-right: none; }
-        .ts-item.no-border-bottom { border-bottom: none; }
+        .ts-item:last-child { border-bottom: none; }
+        .ts-item:nth-last-child(-n+4) { border-bottom: none; }
+        .ts-item:nth-last-child(-n+4) ~ .ts-item { border-bottom: 1px solid #EFF6FF; }
+
         .ts-icon { font-size: 18px; flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .ts-label { font-size: 14px; font-weight: 600; color: #0F172A; flex: 1; text-align: left; line-height: 1.3; }
         .ts-val { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; border: 1.5px solid; }
 
         /* Fade overlay when collapsed */
-        .ts-fade { position: absolute; bottom: 44px; left: 0; right: 0; height: 80px; background: linear-gradient(to bottom, transparent, rgba(239,246,255,0.95)); border-radius: 0 0 18px 18px; pointer-events: none; display: block; }
+        .ts-fade { position: absolute; bottom: 44px; left: 0; right: 0; height: 80px; background: linear-gradient(to bottom, transparent, rgba(239,246,255,0.95)); border-radius: 0 0 18px 18px; pointer-events: none; }
         .ts-fade.hidden { display: none; }
 
         /* Toggle button */
@@ -60,16 +64,24 @@ export default function ThemeSettings() {
         .ts-toggle svg { width: 16px; height: 16px; stroke: #2563EB; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s; }
         .ts-toggle svg.flipped { transform: rotate(180deg); }
 
+        /* Tablet: 2 cols */
         @media (max-width: 900px) {
           .ts-grid { grid-template-columns: repeat(2,1fr); }
           .ts-item:nth-child(4n) { border-right: 1px solid #EFF6FF; }
           .ts-item:nth-child(2n) { border-right: none; }
+          .ts-item:nth-last-child(-n+4) { border-bottom: 1px solid #EFF6FF; }
+          .ts-item:nth-last-child(-n+2) { border-bottom: none; }
+          .ts-item:last-child { border-bottom: none; }
         }
+
+        /* Mobile: 1 col */
         @media (max-width: 480px) {
           .ts { padding: 60px 0; }
           .ts-grid { grid-template-columns: 1fr; border-radius: 14px; }
-          .ts-item { border-right: none !important; }
-          .ts-item.no-border-bottom { border-bottom: none; }
+          .ts-item { border-right: none !important; border-bottom: 1px solid #EFF6FF; }
+          .ts-item:nth-last-child(-n+4) { border-bottom: 1px solid #EFF6FF; }
+          .ts-item:nth-last-child(-n+2) { border-bottom: 1px solid #EFF6FF; }
+          .ts-item:last-child { border-bottom: none; }
           .ts-label { font-size: 13px; }
           .ts-val { font-size: 11px; padding: 3px 10px; }
         }
@@ -83,24 +95,16 @@ export default function ThemeSettings() {
 
             <div className="ts-wrap">
               <div className="ts-grid">
-                {visible.map((s, i) => {
-                  const isLastRow = i >= visible.length - cols
-                  return (
-                    <div
-                      key={i}
-                      className={`ts-item${isLastRow ? ' no-border-bottom' : ''}`}
-                    >
-                      <div className="ts-icon" style={{ background: s.color + '18' }}>
-                        <span>{s.icon}</span>
-                      </div>
-                      <div className="ts-label">{s.label}</div>
-                      <div className="ts-val" style={{ background: s.color + '15', color: s.color, borderColor: s.color + '55' }}>{s.val}</div>
+                {visible.map((s, i) => (
+                  <div key={i} className="ts-item">
+                    <div className="ts-icon" style={{ background: s.color + '18' }}>
+                      <span>{s.icon}</span>
                     </div>
-                  )
-                })}
+                    <div className="ts-label">{s.label}</div>
+                    <div className="ts-val" style={{ background: s.color + '15', color: s.color, borderColor: s.color + '55' }}>{s.val}</div>
+                  </div>
+                ))}
               </div>
-
-              {/* Fade only when collapsed */}
               <div className={`ts-fade${expanded ? ' hidden' : ''}`} />
             </div>
 
