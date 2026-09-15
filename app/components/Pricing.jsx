@@ -31,32 +31,37 @@ export default function Pricing() {
         .rgl-pricing .rgl-section-title { color: #0F172A; }
         .rgl-pricing .rgl-section-sub { color: #64748B; margin: 0 auto; text-align: center; }
 
-        /* Main open grid with white panel */
         .rgl-px { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; align-items: start; background: #fff; border-radius: 28px; padding: 56px 52px; border: 1px solid #BFDBFE; box-shadow: 0 8px 48px rgba(37,99,235,0.08); }
 
         /* Left */
         .rgl-px-left { padding-right: 56px; display: flex; flex-direction: column; align-items: flex-start; }
-        .rgl-px-plan-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #2563EB; margin-bottom: 24px; }
+        .rgl-px-plan-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #2563EB; margin-bottom: 28px; }
 
-        /* Giant $1 */
-        .rgl-px-price-row { display: flex; align-items: flex-start; gap: 0; margin-bottom: 12px; }
-        .rgl-px-dollar { font-family: 'Fraunces', serif; font-size: 44px; font-weight: 900; color: #2563EB; line-height: 1; margin-top: 14px; }
-        .rgl-px-one { font-family: 'Fraunces', serif; font-size: 140px; font-weight: 900; color: #0F172A; letter-spacing: -8px; line-height: 0.9; }
+        /* $1 with green circle */
+        .rgl-px-price-hero { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+        .rgl-px-one-wrap { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .rgl-px-one-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid #22C55E; box-shadow: 0 0 0 6px rgba(34,197,94,0.1), 0 0 0 12px rgba(34,197,94,0.05); }
+        .rgl-px-one-ring-inner { position: absolute; inset: 10px; border-radius: 50%; border: 1px dashed rgba(34,197,94,0.3); }
+        .rgl-px-dollar { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 900; color: #22C55E; line-height: 1; align-self: flex-start; margin-top: 28px; margin-right: -4px; }
+        .rgl-px-one { font-family: 'Fraunces', serif; font-size: 110px; font-weight: 900; color: #22C55E; letter-spacing: -6px; line-height: 1; }
+        .rgl-px-price-right { display: flex; flex-direction: column; gap: 6px; }
+        .rgl-px-was-row { display: flex; align-items: center; gap: 6px; }
+        .rgl-px-was-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; }
+        .rgl-px-was-price { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: #CBD5E1; text-decoration: line-through; }
+        .rgl-px-green-badge { display: inline-flex; align-items: center; gap: 6px; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 100px; padding: 4px 12px; }
+        .rgl-px-green-dot { width: 6px; height: 6px; background: #22C55E; border-radius: 50%; }
+        .rgl-px-green-text { font-size: 12px; font-weight: 700; color: #15803D; }
 
-        .rgl-px-was-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-        .rgl-px-was-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; }
-        .rgl-px-was-price { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: #CBD5E1; text-decoration: line-through; }
-
-        /* One-time highlight */
-        .rgl-px-onetime { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .rgl-px-onetime-text { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 900; color: #2563EB; letter-spacing: -0.5px; }
-        .rgl-px-onetime-badge { background: #2563EB; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 100px; letter-spacing: 0.3px; flex-shrink: 0; }
-        .rgl-px-trial-note { font-size: 13px; color: #64748B; margin-bottom: 36px; line-height: 1.6; }
+        /* One-time */
+        .rgl-px-onetime { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+        .rgl-px-onetime-text { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 900; color: #2563EB; letter-spacing: -0.5px; }
+        .rgl-px-onetime-badge { background: #2563EB; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 12px; border-radius: 100px; flex-shrink: 0; }
+        .rgl-px-trial-note { font-size: 13px; color: #64748B; margin-bottom: 32px; line-height: 1.6; }
 
         /* CTA */
-        .rgl-px-cta { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 0; background: #0F172A; color: #fff; border-radius: 14px; font-weight: 700; font-size: 16px; text-decoration: none; transition: all 0.25s; width: 100%; margin-bottom: 12px; }
+        .rgl-px-cta { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 0; background: #0F172A; color: #fff; border-radius: 14px; font-weight: 700; font-size: 15px; text-decoration: none; transition: all 0.25s; width: 100%; margin-bottom: 10px; }
         .rgl-px-cta:hover { background: #2563EB; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.3); }
-        .rgl-px-cta-note { font-size: 12px; color: #94a3b8; text-align: center; width: 100%; }
+        .rgl-px-cta-note { font-size: 11px; color: #94a3b8; text-align: center; width: 100%; }
 
         /* Divider */
         .rgl-px-divider { background: #EFF6FF; align-self: stretch; width: 1px; }
@@ -64,61 +69,82 @@ export default function Pricing() {
         /* Right */
         .rgl-px-right { padding-left: 56px; display: flex; flex-direction: column; }
         .rgl-px-feats-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 20px; }
-        .rgl-feat { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid #F1F5F9; }
+        .rgl-feat { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid #F1F5F9; }
         .rgl-feat:first-of-type { border-top: 1px solid #F1F5F9; }
-        .rgl-feat-check { width: 28px; height: 28px; background: #2563EB; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .rgl-feat-check svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+        .rgl-feat-check { width: 26px; height: 26px; background: #2563EB; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .rgl-feat-check svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
         .rgl-feat-text { font-size: 14px; color: #0F172A; font-weight: 500; line-height: 1.4; }
 
-        /* Addon inside right */
-        .rgl-px-addon { margin-top: 24px; padding-top: 20px; border-top: 2px dashed #BFDBFE; display: flex; align-items: center; gap: 14px; background: #F8FAFF; border-radius: 14px; padding: 16px; }
-        .rgl-px-addon-icon { width: 40px; height: 40px; background: #EFF6FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        /* Addon */
+        .rgl-px-addon { margin-top: 20px; display: flex; align-items: center; gap: 12px; background: #F8FAFF; border-radius: 14px; padding: 14px 16px; border: 1px solid #BFDBFE; }
+        .rgl-px-addon-icon { width: 38px; height: 38px; background: #EFF6FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
         .rgl-px-addon-info { flex: 1; }
-        .rgl-px-addon-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 2px; }
+        .rgl-px-addon-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 1px; }
         .rgl-px-addon-sub { font-size: 11px; color: #64748B; }
-        .rgl-px-addon-price { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: #2563EB; white-space: nowrap; }
+        .rgl-px-addon-price { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 900; color: #2563EB; white-space: nowrap; }
         .rgl-px-addon-price small { font-family: inherit; font-size: 11px; font-weight: 500; color: #64748B; }
         .rgl-px-addon-tag { font-size: 10px; font-weight: 700; color: #2563EB; background: #EFF6FF; padding: 3px 10px; border-radius: 100px; border: 1px solid #BFDBFE; white-space: nowrap; flex-shrink: 0; }
 
+        /* Mobile */
         @media (max-width: 860px) {
-          .rgl-px { grid-template-columns: 1fr; padding: 36px 28px; }
-          .rgl-px-left { padding-right: 0; padding-bottom: 40px; border-bottom: 1px solid #EFF6FF; }
+          .rgl-px { grid-template-columns: 1fr; padding: 40px 28px; gap: 0; }
+          .rgl-px-left { padding-right: 0; padding-bottom: 40px; border-bottom: 1px solid #EFF6FF; align-items: center; text-align: center; width: 100%; }
           .rgl-px-divider { display: none; }
-          .rgl-px-right { padding-left: 0; padding-top: 40px; }
-          .rgl-px-one { font-size: 110px; letter-spacing: -6px; }
-          .rgl-px-dollar { font-size: 36px; margin-top: 10px; }
-          .rgl-px-onetime-text { font-size: 22px; }
+          .rgl-px-right { padding-left: 0; padding-top: 36px; }
+          .rgl-px-price-hero { justify-content: center; gap: 16px; }
+          .rgl-px-one-wrap { width: 130px; height: 130px; }
+          .rgl-px-one { font-size: 88px; }
+          .rgl-px-dollar { font-size: 22px; margin-top: 22px; }
+          .rgl-px-onetime { justify-content: center; }
+          .rgl-px-trial-note { text-align: center; }
+          .rgl-px-cta-note { text-align: center; }
+          .rgl-px-was-row { justify-content: center; }
+          .rgl-px-green-badge { align-self: center; }
+          .rgl-px-plan-name { text-align: center; }
         }
         @media (max-width: 480px) {
-          .rgl-pricing { padding: 70px 0; }
-          .rgl-px { padding: 28px 20px; }
-          .rgl-px-one { font-size: 90px; letter-spacing: -4px; }
+          .rgl-pricing { padding: 60px 0; }
+          .rgl-px { padding: 28px 18px; border-radius: 20px; }
+          .rgl-px-one-wrap { width: 110px; height: 110px; }
+          .rgl-px-one { font-size: 72px; letter-spacing: -4px; }
+          .rgl-px-dollar { font-size: 20px; margin-top: 18px; }
+          .rgl-px-onetime-text { font-size: 20px; }
           .rgl-px-addon { flex-wrap: wrap; }
         }
       `}</style>
 
       <section className="rgl-pricing" id="pricing">
         <div className="rgl-container">
-          <div className="rgl-pricing-header">
-            <div className="rgl-section-eyebrow">Pricing</div>
-            <h2 className="rgl-section-title">One-time. Forever yours.</h2>
-           
-          </div>
-
+       <div className="rgl-pricing-header">
+  <div className="rgl-section-eyebrow">Pricing</div>
+  <h2 className="rgl-section-title">
+    <span style={{ color: '#22C55E' }}>One-time.</span> Forever yours.
+  </h2>
+</div>
           <div className="rgl-px">
 
-            {/* Left — price */}
+            {/* Left */}
             <div className="rgl-px-left">
               <div className="rgl-px-plan-name">{plan.name}</div>
 
-              <div className="rgl-px-price-row">
-                <span className="rgl-px-dollar">$</span>
-                <span className="rgl-px-one">1</span>
-              </div>
-
-              <div className="rgl-px-was-row">
-                <span className="rgl-px-was-label">Was</span>
-                <span className="rgl-px-was-price">${plan.price}{plan.cents}</span>
+              {/* $1 with green circles */}
+              <div className="rgl-px-price-hero">
+                <div className="rgl-px-one-wrap">
+                  <div className="rgl-px-one-ring" />
+                  <div className="rgl-px-one-ring-inner" />
+                  <span className="rgl-px-dollar">$</span>
+                  <span className="rgl-px-one">1</span>
+                </div>
+                <div className="rgl-px-price-right">
+                  <div className="rgl-px-was-row">
+                    <span className="rgl-px-was-label">Was</span>
+                    <span className="rgl-px-was-price">${plan.price}{plan.cents}</span>
+                  </div>
+                  <div className="rgl-px-green-badge">
+                    <div className="rgl-px-green-dot" />
+                    <span className="rgl-px-green-text">3-Day Trial</span>
+                  </div>
+                </div>
               </div>
 
               <div className="rgl-px-onetime">
@@ -136,7 +162,7 @@ export default function Pricing() {
             {/* Divider */}
             <div className="rgl-px-divider" />
 
-            {/* Right — features + addon */}
+            {/* Right */}
             <div className="rgl-px-right">
               <div className="rgl-px-feats-label">Everything included</div>
               {(Array.isArray(plan.features) ? plan.features : []).map((f, i) => (
