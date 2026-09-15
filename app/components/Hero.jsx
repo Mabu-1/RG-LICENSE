@@ -181,7 +181,7 @@ export default function Hero() {
         @media (max-width: 480px) {
           .rgl-hero { padding: 90px 0 50px; }
           .rgl-hero-h1 { font-size: clamp(26px, 8vw, 36px); }
-          .rgl-hero-points { flex-direction: column; align-items: center; }
+          .rgl-hero-points { flex-direction: row; align-items: center; }
           .rgl-hero-ann { transform: translateX(-120px); top: -70px; }
           .rgl-hero-btn { width: 100%; justify-content: center; padding: 15px 20px; }
 
