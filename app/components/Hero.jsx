@@ -21,19 +21,21 @@ export default function Hero() {
           pointer-events: none;
         }
 
-        .rgl-hero-annotation-pill {
-          background: #fff;
-          border: 1.5px solid #BFDBFE;
-          border-radius: 100px;
-          padding: 5px 14px;
-          font-size: 12px;
-          font-weight: 700;
-          color: #64748B;
-          box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-          white-space: nowrap;
-          display: inline-block;
-        }
-
+   .rgl-hero-annotation-pill {
+  background: #fff;
+  border: 1.5px solid #BFDBFE;
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  white-space: nowrap;
+  display: inline-block;
+  letter-spacing: normal;
+  word-spacing: normal;
+  font-family: 'Inter', sans-serif;
+}
         .rgl-hero-h1 {
           font-family: 'Fraunces', serif;
           font-size: clamp(36px, 5vw, 64px);
@@ -180,9 +182,12 @@ export default function Hero() {
           .rgl-hero { padding: 90px 0 50px; }
           .rgl-hero-h1 { font-size: clamp(26px, 8vw, 36px); }
           .rgl-hero-points { flex-direction: column; align-items: center; }
-          .rgl-hero-ann { transform: translateX(-90px); top: -56px; }
+          .rgl-hero-ann { transform: translateX(-120px); top: -70px; }
           .rgl-hero-btn { width: 100%; justify-content: center; padding: 15px 20px; }
+
+        
         }
+              
       `}</style>
 
       <section className="rgl-hero" id="hero">
@@ -192,7 +197,7 @@ export default function Hero() {
 
             {/* Annotation: pill above + arrow curving down to "Stop" */}
             <span className="rgl-hero-ann">
-              <span className="rgl-hero-annotation-pill">Fake review apps</span>
+              <span className="rgl-hero-annotation-pill">Fake review apps for your shopify store</span>
               <svg width="56" height="52" viewBox="0 0 56 52" fill="none">
                 <path d="M8 4 C8 4 44 18 50 48" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
                 <path d="M44 46 L50 48 L48 41" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
@@ -209,14 +214,6 @@ export default function Hero() {
 
             <br />
 
-            {/* "for" wavy underline */}
-            <span className="rgl-hero-wave">
-              for
-              <svg viewBox="0 0 60 10" fill="none" preserveAspectRatio="none">
-                <path d="M0 6 Q15 1 30 6 Q45 11 60 6" stroke="#0F172A" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.2"/>
-              </svg>
-            </span>
-            {' '}
 
             {/* "Review Apps" blue + wavy underline */}
             <span className="rgl-hero-em">
