@@ -1,73 +1,79 @@
-const settings = [
-  { icon: "🎨", label: "Section Background", val: "Color" },
-  { icon: "🃏", label: "Card Background", val: "Color" },
-  { icon: "✏️", label: "Text Color", val: "Color" },
-  { icon: "⭐", label: "Star Color", val: "Color" },
-  { icon: "✅", label: "Verified Badge Color", val: "Color" },
-  { icon: "🖱️", label: "Button Background", val: "Color" },
-  { icon: "📐", label: "Card Layout Style", val: "Select" },
-  { icon: "🖥️", label: "Desktop Columns", val: "2 – 6" },
-  { icon: "📱", label: "Mobile Columns", val: "1 – 2" },
-  { icon: "📏", label: "Section Max Width", val: "px range" },
-  { icon: "↕️", label: "Padding Top / Bottom", val: "px range" },
-  { icon: "🔢", label: "Initial Load Count", val: "4 – 60" },
-  { icon: "➕", label: "Load More Count", val: "4 – 60" },
-  { icon: "🔍", label: "Show Search Bar", val: "Toggle" },
-  { icon: "⭐", label: "Show Star Filters", val: "Toggle" },
-  { icon: "🔀", label: "Show Sort Dropdown", val: "Toggle" },
-  { icon: "✅", label: "Show Verified Badge", val: "Toggle" },
-  { icon: "🖼️", label: "Enable Lightbox", val: "Toggle" },
-  { icon: "📋", label: "Show Load More", val: "Toggle" },
-  { icon: "🔗", label: "CSV / Sheet URL", val: "Text" },
+"use client";
+import { useEffect, useRef, useState } from "react";
+
+const stats = [
+  { num: 0, suffix: "", symbol: "$0", label: "Monthly Fees" },
+  { num: 999, suffix: "", symbol: "∞", label: "Reviews Supported" },
+  { num: 24, suffix: "h", symbol: null, label: "Setup Time" },
+  { num: 1, suffix: "×", symbol: null, label: "One-Time Payment" },
 ];
 
-export default function ThemeSettings() {
+function useCountUp(target, duration, started) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (!started || target === 0 || target === 999) {
+      setVal(target);
+      return;
+    }
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      setVal(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [started, target, duration]);
+  return val;
+}
+
+function Stat({ stat, started, index }) {
+  const val = useCountUp(stat.num, 1000 + index * 150, started);
+  const display = stat.symbol ? stat.symbol : val + stat.suffix;
+  return (
+    <div className="rgl-stat">
+      <div className="rgl-stat-num">{display}</div>
+      <div className="rgl-stat-label">{stat.label}</div>
+    </div>
+  );
+}
+
+export default function StatsBar() {
+  const ref = useRef(null);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setStarted(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <>
       <style>{`
-        .ts { padding: 100px 0; background: #F8F7F4; }
-        .ts-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .ts-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 14px; }
-        .ts-h2 { font-family: 'Fraunces', serif; font-size: clamp(30px, 4vw, 52px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 40px; color: #0F172A; }
-        .ts-wrap { width: 100%; max-width: 820px; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.08); overflow: hidden; border: 1px solid #e2e8f0; }
-        .ts-header { background: #0F172A; padding: 14px 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); }
-        .ts-dot { width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; flex-shrink: 0; }
-        .ts-body { padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-        .ts-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 8px; transition: background 0.2s; gap: 8px; }
-        .ts-item:hover { background: #f8f7f4; }
-        .ts-item-label { font-size: 11px; color: #334155; font-weight: 500; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-        .ts-item-val { font-size: 10px; color: #F59E0B; font-weight: 700; background: #FFFBEB; padding: 2px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-        @media (max-width: 640px) {
-          .ts { padding: 70px 0; }
-          .ts-body { grid-template-columns: 1fr; }
-          .ts-wrap { max-width: 100%; }
-        }
+        .rgl-stats { background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); padding: 50px 0; border-top: 1px solid #BFDBFE; border-bottom: 1px solid #BFDBFE; }
+        .rgl-stats-inner { display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; }
+        .rgl-stat { text-align: center; }
+        .rgl-stat-num { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 900; color: #2563EB; letter-spacing: -2px; line-height: 1; margin-bottom: 6px; }
+        .rgl-stat-label { font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
+        @media (max-width: 960px) { .rgl-stats-inner { gap: 40px; } }
+        @media (max-width: 480px) { .rgl-stats-inner { gap: 32px; } .rgl-stat-num { font-size: 36px; } }
       `}</style>
-      <section className="ts" id="feat-settings">
-        <div className="rgl-container">
-          <div className="ts-center">
-            <div className="ts-eyebrow">20+ Theme Editor Settings</div>
-            <h2 className="ts-h2">What You Can Change</h2>
-            <div className="ts-wrap">
-              <div className="ts-header">
-                <div className="ts-dot" />
-                What You Can Change
-              </div>
-              <div className="ts-body">
-                {settings.map((s, i) => (
-                  <div key={i} className="ts-item">
-                    <div className="ts-item-label">
-                      <span>{s.icon}</span>
-                      {s.label}
-                    </div>
-                    <div className="ts-item-val">{s.val}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <div className="rgl-stats" ref={ref}>
+        <div className="rgl-stats-inner">
+          {stats.map((s, i) => (
+            <Stat key={s.label} stat={s} started={started} index={i} />
+          ))}
         </div>
-      </section>
+      </div>
     </>
   );
 }
