@@ -37,8 +37,8 @@ export default function ThemeSettings() {
         .ts-icon { font-size: 18px; flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .ts-label { font-size: 14px; font-weight: 600; color: #0F172A; flex: 1; text-align: left; line-height: 1.3; }
         .ts-val { font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; border: 1.5px solid; }
-        @media (max-width: 900px) { .ts-grid { grid-template-columns: repeat(3,1fr); } .ts-item:nth-child(4n) { border-right: 1px solid #EFF6FF; } .ts-item:nth-child(3n) { border-right: none; } }
-        @media (max-width: 640px) { .ts { padding: 70px 0; } .ts-grid { grid-template-columns: repeat(2,1fr); } .ts-item:nth-child(3n) { border-right: 1px solid #EFF6FF; } .ts-item:nth-child(2n) { border-right: none; } .ts-label { font-size: 13px; } .ts-val { font-size: 11px; padding: 3px 8px; } }
+       @media (max-width: 900px) { .ts-grid { grid-template-columns: repeat(2,1fr); } .ts-item:nth-child(4n) { border-right: 1px solid #EFF6FF; } .ts-item:nth-child(2n) { border-right: none; } .ts-item:nth-last-child(-n+2) { border-bottom: none; } .ts-item:nth-last-child(-n+4) { border-bottom: 1px solid #EFF6FF; } }
+@media (max-width: 480px) { .ts { padding: 60px 0; } .ts-grid { grid-template-columns: 1fr; border-radius: 14px; } .ts-item { border-right: none !important; } .ts-item:nth-last-child(1) { border-bottom: none; } .ts-item:nth-last-child(-n+2) { border-bottom: 1px solid #EFF6FF; } .ts-label { font-size: 13px; } .ts-val { font-size: 11px; padding: 3px 10px; } }
       `}</style>
       <section className="ts" id="feat-settings">
         <div className="rgl-container">
