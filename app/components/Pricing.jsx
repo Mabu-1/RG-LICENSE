@@ -6,18 +6,28 @@ export default function Pricing() {
   const [plan, setPlan]   = useState(null)
   const [addon, setAddon] = useState(null)
 
-  useEffect(() => {
-    async function load() {
-      if (!supabaseBrowser) return
-      const { data: p } = await supabaseBrowser.from('pricing_plans').select('*').order('sort_order').limit(1).single()
-      const { data: a } = await supabaseBrowser.from('pricing_addons').select('*').ilike('label', '%domain%').single()
-      setPlan(p || null)
-      setAddon(a || null)
-    }
-    load()
-  }, [])
+useEffect(() => {
+  async function load() {
+    if (!supabaseBrowser) return
+    const { data: p } = await supabaseBrowser
+      .from('pricing_plans')
+      .select('*')
+      .order('sort_order')
+    const { data: a } = await supabaseBrowser
+      .from('pricing_addons')
+      .select('*')
+      .ilike('label', '%domain%')
+    setPlan(p && p.length > 0 ? p[0] : null)
+    setAddon(a && a.length > 0 ? a[0] : null)
+  }
+  load()
+}, [])
 
-  if (!plan) return null
+if (!plan) return (
+  <section id="pricing" style={{ padding: '100px 0', textAlign: 'center', color: '#64748b' }}>
+    Loading pricing...
+  </section>
+)
 
   return (
     <>
