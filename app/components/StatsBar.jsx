@@ -18,8 +18,13 @@ export default function StatsBar() {
         .rgl-stat-label { font-size: 12px; color: #64748B; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
         @media (max-width: 960px) { .rgl-stats-inner { gap: 40px; } }
         @media (max-width: 480px) {
-          .rgl-stats-inner { flex-direction: column; align-items: center; gap: 0; }
-          .rgl-stat { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 280px; padding: 14px 0; border-bottom: 1px solid #BFDBFE; }
+        .rgl-stats 
+        {
+        padding:0px;
+        }
+       
+          .rgl-stats-inner { flex-direction: column; align-items: center; gap: 0;  }
+          .rgl-stat { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 280px; padding: 10px 0; border-bottom: 1px solid #BFDBFE; }
           .rgl-stat:last-child { border-bottom: none; }
           .rgl-stat-num { font-size: 32px; margin-bottom: 0; }
           .rgl-stat-label { font-size: 11px; text-align: right; }

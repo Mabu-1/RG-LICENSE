@@ -58,7 +58,7 @@ export default function CardLayouts() {
 @media (max-width: 640px) {
   .cl { padding: 60px 0; }
   .cl-tab-wrap { border-radius: 16px; }
-  .cl-tab-bar { padding: 12px 12px 0; gap: 6px; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+  .cl-tab-bar { padding: 12px 9px; gap: 6px; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
   .cl-tab-bar::-webkit-scrollbar { display: none; }
   .cl-tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
   .cl-tab-btn.active { background: #fff; color: #2563EB; box-shadow: 0 -2px 0 #2563EB inset; }
