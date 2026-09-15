@@ -8,12 +8,29 @@ function CheckoutContent() {
   const router = useRouter();
   const [plan, setPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
-  const [domains, setDomains] = useState([""]);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    whatsapp: "",
-    message: "",
+  const [domains, setDomains] = useState(() => {
+    if (typeof window === "undefined") return [""];
+    try {
+      return JSON.parse(sessionStorage.getItem("co_domains") || '[""]');
+    } catch {
+      return [""];
+    }
+  });
+  const [form, setForm] = useState(() => {
+    if (typeof window === "undefined")
+      return { name: "", email: "", whatsapp: "", message: "" };
+    try {
+      return (
+        JSON.parse(sessionStorage.getItem("co_form") || "{}") || {
+          name: "",
+          email: "",
+          whatsapp: "",
+          message: "",
+        }
+      );
+    } catch {
+      return { name: "", email: "", whatsapp: "", message: "" };
+    }
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -133,6 +150,8 @@ function CheckoutContent() {
       setLoading(false);
       return;
     }
+    sessionStorage.setItem("co_form", JSON.stringify(form));
+    sessionStorage.setItem("co_domains", JSON.stringify(domains));
     router.push(
       `/checkout/book?name=${encodeURIComponent(form.name)}&total=${fullTotal.toFixed(2)}`,
     );
