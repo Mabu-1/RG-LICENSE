@@ -27,7 +27,7 @@ export default function Pricing() {
     <>
       <style>{`
         .rgl-pricing { padding: 100px 0; background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); overflow: hidden; }
-        .rgl-pricing-header { text-align: center; margin-bottom: 80px; }
+        .rgl-pricing-header { text-align: center;; }
         .rgl-pricing .rgl-section-title { color: #0F172A; }
         .rgl-pricing .rgl-section-sub { color: #64748B; margin: 0 auto; text-align: center; }
 
