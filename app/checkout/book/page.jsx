@@ -89,9 +89,14 @@ function BookContent() {
           <div className="bk-then">
             then <strong>${total}</strong> one-time after trial
           </div>
-          href="https://tidycal.com/mahdi/shop-review" target="_blank"
-          rel="noopener noreferrer" className="bk-cta"
-          <a>📅 Book Your Setup Call →</a>
+          <a
+            href="https://tidycal.com/mahdi/shop-review"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bk-cta"
+          >
+            📅 Book Your Setup Call →
+          </a>
           <div className="bk-note">
             🔒 No payment now — we invoice after setup
           </div>
