@@ -102,7 +102,7 @@ export default function Pricing() {
           <div className="rgl-pricing-header">
             <div className="rgl-section-eyebrow">Pricing</div>
             <h2 className="rgl-section-title">One-time. Forever yours.</h2>
-            <p className="rgl-section-sub">No subscriptions. No renewals. Pay once and use it for as long as you run your store.</p>
+           
           </div>
 
           <div className="rgl-px">
