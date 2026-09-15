@@ -86,42 +86,54 @@ export default function Pricing() {
         .rgl-px-addon-tag { font-size: 10px; font-weight: 700; color: #2563EB; background: #EFF6FF; padding: 3px 10px; border-radius: 100px; border: 1px solid #BFDBFE; white-space: nowrap; flex-shrink: 0; }
 
         /* Tablet */
-        @media (max-width: 860px) {
-          .rgl-px { grid-template-columns: 1fr; padding: 40px 28px; }
-          .rgl-px-left { padding-right: 0; padding-bottom: 40px; border-bottom: 1px solid #EFF6FF; align-items: center; text-align: center; width: 100%; }
-          .rgl-px-divider { display: none; }
-          .rgl-px-right { padding-left: 0; padding-top: 36px; }
-          .rgl-px-price-hero { justify-content: center; gap: 16px; }
-          .rgl-px-one-wrap { width: 130px; height: 130px; }
-          .rgl-px-one { font-size: 88px; }
-          .rgl-px-dollar { font-size: 22px; margin-top: 22px; }
-          .rgl-px-onetime { justify-content: center; }
-          .rgl-px-trial-note { text-align: center; }
-          .rgl-px-cta-note { text-align: center; }
-          .rgl-px-was-row { justify-content: center; }
-          .rgl-px-green-badge { align-self: center; }
-          .rgl-px-plan-name { text-align: center; }
-        }
+       /* Tablet */
+@media (max-width: 860px) {
+  .rgl-px { grid-template-columns: 1fr; padding: 40px 28px; }
+  .rgl-px-left { padding-right: 0; padding-bottom: 40px; border-bottom: 1px solid #EFF6FF; align-items: center; text-align: center; width: 100%; }
+  .rgl-px-divider { display: none; }
+  .rgl-px-right { padding-left: 0; padding-top: 36px; }
+  .rgl-px-price-hero { justify-content: center; gap: 16px; }
+  .rgl-px-one-wrap { width: 130px; height: 130px; }
+  .rgl-px-one { font-size: 88px; }
+  .rgl-px-dollar { font-size: 22px; margin-top: 22px; }
+  .rgl-px-onetime { justify-content: center; }
+  .rgl-px-trial-note { text-align: center; }
+  .rgl-px-cta-note { text-align: center; }
+  .rgl-px-was-row { justify-content: center; }
+  .rgl-px-green-badge { align-self: center; }
+  .rgl-px-plan-name { text-align: center; }
+}
 
-        /* Mobile */
-        @media (max-width: 480px) {
-          .rgl-pricing { padding: 60px 0; }
-          .rgl-px { padding: 28px 18px; border-radius: 20px; }
-          .rgl-px-one-wrap { width: 110px; height: 110px; }
-          .rgl-px-one { font-size: 72px; letter-spacing: -4px; }
-          .rgl-px-dollar { font-size: 20px; margin-top: 18px; }
-          .rgl-px-onetime-text { font-size: 18px; }
-          .rgl-px-onetime-badge { font-size: 9px; }
-          .rgl-px-trial-note { font-size: 12px; }
-          .rgl-px-cta { font-size: 14px; padding: 14px 0; }
-          .rgl-feat-text { font-size: 13px; }
-          .rgl-px-addon { gap: 10px; padding: 12px 14px; }
-          .rgl-px-addon-icon { width: 32px; height: 32px; font-size: 16px; }
-          .rgl-px-addon-title { font-size: 12px; }
-          .rgl-px-addon-sub { font-size: 10px; }
-          .rgl-px-addon-price { font-size: 16px; }
-          .rgl-px-addon-tag { display: none; }
-        }
+/* Mobile */
+@media (max-width: 480px) {
+  .rgl-pricing { padding: 60px 0; }
+  .rgl-px { padding: 28px 18px; border-radius: 20px; }
+
+  /* Stack price hero vertically */
+  .rgl-px-price-hero { flex-direction: column; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .rgl-px-one-wrap { width: 120px; height: 120px; }
+  .rgl-px-one { font-size: 80px; letter-spacing: -4px; }
+  .rgl-px-dollar { font-size: 22px; margin-top: 20px; }
+  .rgl-px-price-right { align-items: center; gap: 8px; }
+  .rgl-px-was-row { justify-content: center; }
+  .rgl-px-green-badge { align-self: center; }
+
+  .rgl-px-onetime { flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .rgl-px-onetime-text { font-size: 20px; }
+  .rgl-px-onetime-badge { font-size: 9px; }
+  .rgl-px-trial-note { font-size: 12px; margin-bottom: 24px; }
+  .rgl-px-cta { font-size: 14px; padding: 14px 0; border-radius: 12px; }
+  .rgl-feat-text { font-size: 13px; }
+  .rgl-px-feats-label { text-align: center; }
+
+  /* Addon */
+  .rgl-px-addon { gap: 10px; padding: 12px 14px; }
+  .rgl-px-addon-icon { width: 32px; height: 32px; font-size: 15px; flex-shrink: 0; }
+  .rgl-px-addon-title { font-size: 12px; }
+  .rgl-px-addon-sub { font-size: 10px; }
+  .rgl-px-addon-price { font-size: 15px; }
+  .rgl-px-addon-tag { display: none; }
+}
       `}</style>
 
       <section className="rgl-pricing" id="pricing">
