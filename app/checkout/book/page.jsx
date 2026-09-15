@@ -1,13 +1,11 @@
 "use client";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-
 function BookContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const name = searchParams.get("name") || "there";
   const total = searchParams.get("total") || "49.99";
-
   return (
     <>
       <style>{`
@@ -41,12 +39,19 @@ function BookContent() {
       `}</style>
 
       <div className="bk-header">
-        <Link
-          href="/"
-          style={{ fontSize: 13, color: "#64748b", textDecoration: "none" }}
+        <button
+          onClick={() => router.back()}
+          style={{
+            fontSize: 13,
+            color: "#64748b",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+          }}
         >
-          ← Home
-        </Link>
+          ← Back
+        </button>
         <img
           src="https://cdn.shopify.com/s/files/1/0673/0275/2339/files/main_logo_d9a41a64-87f3-442f-bfa0-3b8cf7e16514.png?v=1786536373"
           alt="Logo"
