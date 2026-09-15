@@ -39,7 +39,7 @@ export default function Nav() {
               Pricing
             </a>
             <a href="#pricing" className="rgl-btn-primary">
-              Get License →
+              Get For Your Shop →
             </a>
           </div>
         </div>
