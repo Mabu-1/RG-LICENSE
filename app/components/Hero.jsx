@@ -163,12 +163,13 @@ export default function Hero() {
           transform: translateY(-2px);
           box-shadow: 0 12px 40px rgba(37,99,235,0.45);
         }
-        @media (max-width: 768px) {
-          .rgl-hero { padding: 70px 0 60px; }
-          .rgl-hero-h1 { font-size: 36px; letter-spacing: -1px; }
-          .rgl-hero-sub { font-size: 14px; }
-          .rgl-hero-points { flex-direction: column; align-items: center; }
-        }
+      @media (max-width: 768px) {
+  .rgl-hero { padding: 70px 0 60px; }
+  .rgl-hero-h1 { font-size: 36px; letter-spacing: -1px; }
+  .rgl-hero-sub { font-size: 14px; }
+  .rgl-hero-points { flex-direction: row; justify-content: center; gap: 8px 12px; }
+  .rgl-hero-points li { font-size: 12px; }
+}
       `}</style>
 
       <section className="rgl-hero" id="hero">
