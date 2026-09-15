@@ -28,16 +28,17 @@ export default function ThemeSettings() {
         .ts { padding: 100px 0; background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); }
         .ts-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .ts-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #2563EB; margin-bottom: 14px; }
-        .ts-h2 { font-family: 'Fraunces', serif; font-size: clamp(30px,4vw,52px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 48px; color: #0F172A; }
-        .ts-grid { width: 100%; max-width: 920px; display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-        .ts-item { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; padding: 20px 16px 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; transition: all 0.2s; cursor: default; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .ts-item:hover { border-color: #BFDBFE; box-shadow: 0 8px 24px rgba(37,99,235,0.1); transform: translateY(-2px); }
-        .ts-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-        .ts-label { font-size: 12px; font-weight: 600; color: #0F172A; line-height: 1.4; text-align: left; }
-        .ts-val { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-top: auto; letter-spacing: 0.3px; }
-        @media (max-width: 900px) { .ts-grid { grid-template-columns: repeat(3,1fr); } }
-        @media (max-width: 640px) { .ts { padding: 70px 0; } .ts-grid { grid-template-columns: repeat(2,1fr); gap: 10px; } .ts-item { padding: 16px 12px; } }
-        @media (max-width: 380px) { .ts-grid { grid-template-columns: 1fr; } }
+        .ts-h2 { font-family: 'Fraunces', serif; font-size: clamp(30px,4vw,52px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 40px; color: #0F172A; }
+        .ts-grid { width: 100%; max-width: 920px; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; border: 2px solid #BFDBFE; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 32px rgba(37,99,235,0.08); outline: 4px solid #EFF6FF; outline-offset: -6px; }
+        .ts-item { background: #fff; padding: 14px 16px; display: flex; align-items: center; gap: 12px; border-right: 1px solid #EFF6FF; border-bottom: 1px solid #EFF6FF; transition: background 0.15s; cursor: default; }
+        .ts-item:hover { background: #F8FAFF; }
+        .ts-item:nth-child(4n) { border-right: none; }
+        .ts-item:nth-last-child(-n+4) { border-bottom: none; }
+        .ts-icon { font-size: 16px; flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .ts-label { font-size: 12px; font-weight: 600; color: #334155; flex: 1; text-align: left; line-height: 1.3; }
+        .ts-val { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+        @media (max-width: 900px) { .ts-grid { grid-template-columns: repeat(3,1fr); } .ts-item:nth-child(4n) { border-right: 1px solid #EFF6FF; } .ts-item:nth-child(3n) { border-right: none; } }
+        @media (max-width: 640px) { .ts { padding: 70px 0; } .ts-grid { grid-template-columns: repeat(2,1fr); } .ts-item:nth-child(3n) { border-right: 1px solid #EFF6FF; } .ts-item:nth-child(2n) { border-right: none; } }
       `}</style>
       <section className="ts" id="feat-settings">
         <div className="rgl-container">
