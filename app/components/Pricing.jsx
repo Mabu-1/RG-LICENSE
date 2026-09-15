@@ -118,7 +118,7 @@ export default function Pricing() {
        <div className="rgl-pricing-header">
   <div className="rgl-section-eyebrow">Pricing</div>
   <h2 className="rgl-section-title">
-    <span style={{ color: '#22C55E' }}>One-time.</span> Forever yours.
+    <span style={{ color: '#2563EB' }}>One-time.</span> Forever yours.
   </h2>
 </div>
 
