@@ -60,11 +60,7 @@ export default function CardLayouts() {
         <div className="rgl-container">
           <div className="cl-eyebrow">Three Card Layouts</div>
           <h2 className="cl-h2">Pick the layout that fits your store</h2>
-          <p className="cl-p">
-            Every store has a different aesthetic. Switch between three distinct
-            layout modes from the Shopify theme editor — no code, no rebuilds,
-            instant preview.
-          </p>
+       
           <div className="cl-tab-wrap">
             <div className="cl-tab-bar">
               {tabs.map((t) => (
