@@ -54,8 +54,19 @@ export default function CardLayouts() {
         .cl-skeleton { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(90deg, #f0f7ff 25%, #dbeafe 50%, #f0f7ff 75%); background-size: 200% 100%; animation: cl-shimmer 1.2s infinite; }
         @keyframes cl-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         .cl-tab-desc { text-align: center; margin-top: 16px; font-size: 14px; color: #64748B; }
-        @media (max-width: 900px) { .cl { padding: 70px 0; } .cl-tab-btn { padding: 8px 16px; font-size: 12px; } }
-        @media (max-width: 480px) { .cl-tab-bar { gap: 4px; } .cl-tab-btn { padding: 7px 12px; font-size: 11px; } }
+       @media (max-width: 900px) { .cl { padding: 70px 0; } .cl-tab-btn { padding: 8px 16px; font-size: 12px; } }
+@media (max-width: 640px) {
+  .cl { padding: 60px 0; }
+  .cl-tab-wrap { border-radius: 16px; }
+  .cl-tab-bar { padding: 12px 12px 0; gap: 6px; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+  .cl-tab-bar::-webkit-scrollbar { display: none; }
+  .cl-tab-btn { padding: 10px 20px; font-size: 13px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+  .cl-tab-btn.active { background: #fff; color: #2563EB; box-shadow: 0 -2px 0 #2563EB inset; }
+  .cl-tab-content { padding: 16px; }
+  .cl-tab-img { border-radius: 8px; }
+  .cl-tab-desc { font-size: 13px; margin-top: 12px; padding: 0 8px; }
+  .cl-h2 { font-size: 22px; margin-bottom: 28px; }
+}
       `}</style>
       <section className="cl" id="feat-layouts">
         <div className="rgl-container">

@@ -14,43 +14,12 @@ export default function Hero() {
         .rgl-hero::before {
           content: '';
           position: absolute;
-          top: -200px;
-          left: 50%;
+          top: -200px; left: 50%;
           transform: translateX(-50%);
-          width: 800px;
-          height: 600px;
+          width: 800px; height: 600px;
           background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%);
           pointer-events: none;
         }
-
-        /* No fake reviews badge */
-        .rgl-hero-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: #fff;
-          border: 1.5px solid #BFDBFE;
-          border-radius: 100px;
-          padding: 6px 16px;
-          margin-bottom: 28px;
-          box-shadow: 0 2px 12px rgba(37,99,235,0.08);
-        }
-        .rgl-hero-badge-strike {
-          font-size: 12px;
-          font-weight: 700;
-          color: #94a3b8;
-          text-decoration: line-through;
-        }
-        .rgl-hero-badge-arrow {
-          font-size: 13px;
-          color: #2563EB;
-        }
-        .rgl-hero-badge-text {
-          font-size: 12px;
-          font-weight: 700;
-          color: #0F172A;
-        }
-
         .rgl-hero-h1 {
           font-family: 'Fraunces', serif;
           font-size: clamp(36px, 5vw, 64px);
@@ -62,18 +31,47 @@ export default function Hero() {
           max-width: 760px;
           margin-left: auto;
           margin-right: auto;
+          position: relative;
         }
 
-        /* "Stop Paying Monthly" with arrow underline */
+        /* Line 1 wrapper — underline + annotation */
         .rgl-hero-line1 {
-          display: block;
+          display: inline-block;
           position: relative;
-          margin-bottom: 4px;
+          margin-bottom: 8px;
         }
-        .rgl-hero-line1-arrow {
+
+        /* Full underline under "Stop Paying Monthly" */
+        .rgl-hero-line1-underline {
           display: block;
-          margin: 2px auto 0;
-          width: 220px;
+          width: 100%;
+          margin-top: 2px;
+        }
+
+        /* Fake reviews annotation — floats top right of line1 */
+        .rgl-hero-annotation {
+          position: absolute;
+          top: -48px;
+          right: -20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          pointer-events: none;
+        }
+        .rgl-hero-annotation-label {
+          background: #fff;
+          border: 1.5px solid #BFDBFE;
+          border-radius: 100px;
+          padding: 4px 12px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #94a3b8;
+          text-decoration: line-through;
+          white-space: nowrap;
+          box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+        }
+        .rgl-hero-annotation-arrow {
+          margin-top: 2px;
         }
 
         /* "Review Apps" with wavy underline */
@@ -83,11 +81,12 @@ export default function Hero() {
           position: relative;
           display: inline-block;
         }
-        .rgl-hero-em svg {
+        .rgl-hero-em-wave {
           position: absolute;
           bottom: -10px;
           left: 0;
           width: 100%;
+          height: 10px;
         }
 
         .rgl-hero-sub {
@@ -117,17 +116,13 @@ export default function Hero() {
         }
         .rgl-hero-points li::before {
           content: '✓';
-          width: 20px;
-          height: 20px;
+          width: 20px; height: 20px;
           background: rgba(37,99,235,0.1);
           border: 1px solid rgba(37,99,235,0.25);
           border-radius: 50%;
           color: #2563EB;
-          font-size: 10px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          font-size: 10px; font-weight: 700;
+          display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
         }
         .rgl-hero-video-wrap {
@@ -142,39 +137,23 @@ export default function Hero() {
         }
         .rgl-hero-video-wrap::before {
           content: '';
-          position: absolute;
-          inset: 0;
+          position: absolute; inset: 0;
           background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4) 100%);
-          z-index: 1;
-          pointer-events: none;
+          z-index: 1; pointer-events: none;
         }
-        .rgl-hero-video {
-          width: 100%;
-          display: block;
-          border-radius: 20px;
-        }
+        .rgl-hero-video { width: 100%; display: block; border-radius: 20px; }
         .rgl-hero-video-badge {
-          position: absolute;
-          bottom: 20px;
-          left: 20px;
-          z-index: 2;
+          position: absolute; bottom: 20px; left: 20px; z-index: 2;
           background: rgba(255,255,255,0.15);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255,255,255,0.25);
-          color: #fff;
-          font-size: 12px;
-          font-weight: 600;
-          padding: 8px 14px;
-          border-radius: 100px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
+          color: #fff; font-size: 12px; font-weight: 600;
+          padding: 8px 14px; border-radius: 100px;
+          display: flex; align-items: center; gap: 6px;
         }
         .rgl-hero-video-dot {
-          width: 8px;
-          height: 8px;
-          background: #2563EB;
-          border-radius: 50%;
+          width: 8px; height: 8px;
+          background: #2563EB; border-radius: 50%;
           animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
@@ -182,16 +161,11 @@ export default function Hero() {
           50% { opacity: 0.5; transform: scale(0.8); }
         }
         .rgl-hero-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
+          display: inline-flex; align-items: center; gap: 8px;
           padding: 18px 40px;
-          background: #2563EB;
-          color: #fff;
-          font-size: 16px;
-          font-weight: 700;
-          border-radius: 100px;
-          text-decoration: none;
+          background: #2563EB; color: #fff;
+          font-size: 16px; font-weight: 700;
+          border-radius: 100px; text-decoration: none;
           transition: all 0.25s;
           box-shadow: 0 8px 32px rgba(37,99,235,0.35);
         }
@@ -202,45 +176,54 @@ export default function Hero() {
         }
 
         @media (max-width: 768px) {
-          .rgl-hero { padding: 60px 0 50px; }
-          .rgl-hero-h1 { font-size: clamp(30px, 8vw, 42px); letter-spacing: -1px; }
+          .rgl-hero { padding: 80px 0 60px; }
+          .rgl-hero-h1 { font-size: clamp(30px, 8vw, 44px); letter-spacing: -1px; }
           .rgl-hero-sub { font-size: 15px; }
           .rgl-hero-points { flex-direction: row; justify-content: center; gap: 8px 12px; }
           .rgl-hero-points li { font-size: 12px; }
-          .rgl-hero-line1-arrow { width: 160px; }
           .rgl-hero-btn { padding: 15px 28px; font-size: 15px; }
+          .rgl-hero-annotation { top: -44px; right: -8px; }
+          .rgl-hero-annotation-label { font-size: 11px; padding: 3px 10px; }
         }
         @media (max-width: 480px) {
-          .rgl-hero-badge { flex-wrap: wrap; justify-content: center; }
           .rgl-hero-points { flex-direction: column; align-items: center; }
+          .rgl-hero-annotation { top: -40px; right: 0px; }
         }
       `}</style>
 
       <section className="rgl-hero" id="hero">
         <div className="rgl-container">
 
-          {/* No fake reviews badge */}
-          <div className="rgl-hero-badge">
-            <span className="rgl-hero-badge-strike">Fake reviews</span>
-            <span className="rgl-hero-badge-arrow">→</span>
-            <span className="rgl-hero-badge-text">Real reviews for your Shopify store</span>
-          </div>
-
           <h1 className="rgl-hero-h1">
-            {/* Line 1 with curved arrow underline */}
+
+            {/* "Stop Paying Monthly" with full underline + annotation */}
             <span className="rgl-hero-line1">
+
+              {/* Fake reviews annotation top right */}
+              <span className="rgl-hero-annotation">
+                <span className="rgl-hero-annotation-label">Fake reviews</span>
+                <svg className="rgl-hero-annotation-arrow" width="24" height="20" viewBox="0 0 24 20" fill="none">
+                  <path d="M12 2 Q6 8 4 16" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+                  <path d="M2 14 L4 16 L7 13" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
+                </svg>
+              </span>
+
               Stop Paying Monthly
-              <svg className="rgl-hero-line1-arrow" viewBox="0 0 220 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 10 Q55 2 110 8 Q165 14 218 6" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.4"/>
-                <path d="M210 3 L218 6 L212 11" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.4"/>
+
+              {/* Full underline under all 3 words */}
+              <svg className="rgl-hero-line1-underline" viewBox="0 0 400 10" fill="none" preserveAspectRatio="none" style={{ height: 8 }}>
+                <path d="M0 5 L400 5" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" opacity="0.35"/>
               </svg>
             </span>
-            {/* Line 2 with wavy underline on em */}
+
+            <br />
+
+            {/* "for Review Apps" */}
             for{' '}
             <span className="rgl-hero-em">
               Review Apps
-              <svg viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ height: 10 }}>
-                <path d="M2 6 Q25 1 50 6 Q75 11 100 6 Q125 1 150 6 Q175 11 198 6" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+              <svg className="rgl-hero-em-wave" viewBox="0 0 200 10" fill="none" preserveAspectRatio="none">
+                <path d="M0 6 Q25 1 50 6 Q75 11 100 6 Q125 1 150 6 Q175 11 200 6" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
               </svg>
             </span>
           </h1>
@@ -259,10 +242,7 @@ export default function Hero() {
             <video
               className="rgl-hero-video"
               src="https://cdn.shopify.com/videos/c/o/v/02994640c893463e8c6d2f261fb75caa.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
+              autoPlay muted loop playsInline
             />
             <div className="rgl-hero-video-badge">
               <div className="rgl-hero-video-dot" />
