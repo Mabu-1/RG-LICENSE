@@ -1,5 +1,5 @@
-"use client";
-import { useState, useEffect } from "react";
+﻿"use client";
+import { useEffect, useState } from "react";
 
 const tabs = [
   {
@@ -23,37 +23,36 @@ const tabs = [
 ];
 
 export default function CardLayouts() {
-  const [active, setActive]   = useState("natural");
-  const [loaded, setLoaded]   = useState({});
+  const [active, setActive] = useState("natural");
+  const [loaded, setLoaded] = useState({});
   const current = tabs.find((t) => t.id === active);
 
-  // preload all images on mount
   useEffect(() => {
-    tabs.forEach(t => {
-      const img = new Image()
-      img.src = t.img
-      img.onload = () => setLoaded(prev => ({ ...prev, [t.id]: true }))
-    })
-  }, [])
+    tabs.forEach((t) => {
+      const img = new Image();
+      img.src = t.img;
+      img.onload = () => setLoaded((prev) => ({ ...prev, [t.id]: true }));
+    });
+  }, []);
 
   return (
     <>
       <style>{`
-        .cl { padding: 100px 0; background: #0F172A; text-align: center; }
-        .cl-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; margin-bottom: 12px; }
-        .cl-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #fff; max-width: 600px; margin-left: auto; margin-right: auto; }
-        .cl-p { font-size: 16px; line-height: 1.7; margin-bottom: 48px; color: rgba(255,255,255,0.55); max-width: 540px; margin-left: auto; margin-right: auto; }
-        .cl-tab-wrap { background: #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 960px; margin: 0 auto; }
-        .cl-tab-bar { display: flex; justify-content: center; padding: 16px 16px 0; gap: 6px; }
-        .cl-tab-btn { padding: 10px 28px; border-radius: 10px 10px 0 0; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
-        .cl-tab-btn.active { background: #0F172A; color: #F59E0B; }
-        .cl-tab-content { background: #0F172A; padding: 24px; position: relative; min-height: 200px; }
+        .cl { padding: 100px 0; background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); text-align: center; }
+        .cl-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #2563EB; margin-bottom: 12px; }
+        .cl-h2 { font-family: 'Fraunces', serif; font-size: clamp(22px,3.5vw,34px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px; color: #0F172A; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .cl-p { font-size: 16px; line-height: 1.7; margin-bottom: 48px; color: #64748B; max-width: 540px; margin-left: auto; margin-right: auto; }
+        .cl-tab-wrap { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(37,99,235,0.1); border: 1px solid #BFDBFE; max-width: 960px; margin: 0 auto; }
+        .cl-tab-bar { display: flex; justify-content: center; padding: 16px 16px 0; gap: 6px; background: #EFF6FF; }
+        .cl-tab-btn { padding: 10px 28px; border-radius: 10px 10px 0 0; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; background: rgba(37,99,235,0.06); color: #64748B; }
+        .cl-tab-btn.active { background: #fff; color: #2563EB; }
+        .cl-tab-content { background: #fff; padding: 24px; position: relative; min-height: 200px; }
         .cl-img-wrap { position: relative; width: 100%; }
         .cl-tab-img { width: 100%; border-radius: 12px; display: block; object-fit: contain; transition: opacity 0.2s; }
         .cl-tab-img.hidden { opacity: 0; }
-        .cl-skeleton { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%); background-size: 200% 100%; animation: cl-shimmer 1.2s infinite; }
+        .cl-skeleton { position: absolute; inset: 0; border-radius: 12px; background: linear-gradient(90deg, #f0f7ff 25%, #dbeafe 50%, #f0f7ff 75%); background-size: 200% 100%; animation: cl-shimmer 1.2s infinite; }
         @keyframes cl-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        .cl-tab-desc { text-align: center; margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.45); }
+        .cl-tab-desc { text-align: center; margin-top: 16px; font-size: 14px; color: #64748B; }
         @media (max-width: 900px) { .cl { padding: 70px 0; } .cl-tab-btn { padding: 8px 16px; font-size: 12px; } }
         @media (max-width: 480px) { .cl-tab-bar { gap: 4px; } .cl-tab-btn { padding: 7px 12px; font-size: 11px; } }
       `}</style>
@@ -62,7 +61,9 @@ export default function CardLayouts() {
           <div className="cl-eyebrow">Three Card Layouts</div>
           <h2 className="cl-h2">Pick the layout that fits your store</h2>
           <p className="cl-p">
-            Every store has a different aesthetic. Switch between three distinct layout modes from the Shopify theme editor — no code, no rebuilds, instant preview.
+            Every store has a different aesthetic. Switch between three distinct
+            layout modes from the Shopify theme editor — no code, no rebuilds,
+            instant preview.
           </p>
           <div className="cl-tab-wrap">
             <div className="cl-tab-bar">
@@ -78,13 +79,20 @@ export default function CardLayouts() {
             </div>
             <div className="cl-tab-content">
               <div className="cl-img-wrap">
-                {!loaded[current.id] && <div className="cl-skeleton" style={{ aspectRatio: '16/9' }} />}
+                {!loaded[current.id] && (
+                  <div
+                    className="cl-skeleton"
+                    style={{ aspectRatio: "16/9" }}
+                  />
+                )}
                 <img
                   key={current.id}
                   src={current.img}
                   alt={current.label}
-                  className={`cl-tab-img${loaded[current.id] ? '' : ' hidden'}`}
-                  onLoad={() => setLoaded(prev => ({ ...prev, [current.id]: true }))}
+                  className={`cl-tab-img${loaded[current.id] ? "" : " hidden"}`}
+                  onLoad={() =>
+                    setLoaded((prev) => ({ ...prev, [current.id]: true }))
+                  }
                 />
               </div>
               <div className="cl-tab-desc">{current.desc}</div>
