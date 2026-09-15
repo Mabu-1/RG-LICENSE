@@ -56,8 +56,8 @@ export default function AboutPage() {
               marginBottom: 20,
             }}
           >
-            We built ShopReview because review apps were charging too much for
-            too little.
+            We built ShopRevewbecause review apps were charging too much for too
+            little.
           </h1>
           <p style={{ fontSize: 17, color: "#64748B", lineHeight: 1.8 }}>
             Every month, thousands of Shopify store owners pay $15, $30, even
@@ -98,8 +98,8 @@ export default function AboutPage() {
               marginBottom: 20,
             }}
           >
-            ShopReview started as a simple idea: what if you could manage all
-            your customer reviews inside a Google Sheet, and have them display
+            ShopRevewstarted as a simple idea: what if you could manage all your
+            customer reviews inside a Google Sheet, and have them display
             beautifully on your Shopify store — without paying a monthly fee
             ever again?
           </p>
@@ -116,7 +116,7 @@ export default function AboutPage() {
             — and a one-time price that pays for itself in the first month.
           </p>
           <p style={{ fontSize: 15, color: "#475569", lineHeight: 1.85 }}>
-            Today ShopReview powers review galleries on Shopify stores across
+            Today ShopRevewpowers review galleries on Shopify stores across
             multiple countries. Every customer gets a personal installation — we
             set it up for you, test it, and make sure it works perfectly before
             we hand it over.
@@ -166,7 +166,7 @@ export default function AboutPage() {
               {
                 icon: "⚡",
                 title: "Built for Real Stores.",
-                desc: "ShopReview is designed for Shopify stores that need speed, reliability, and a layout that actually converts.",
+                desc: "ShopRevewis designed for Shopify stores that need speed, reliability, and a layout that actually converts.",
               },
             ].map((v, i) => (
               <div

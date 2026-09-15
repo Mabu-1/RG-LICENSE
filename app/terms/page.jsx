@@ -59,7 +59,7 @@ export default function TermsPage() {
             Terms & Conditions
           </h1>
           <p style={{ fontSize: 14, color: "#94a3b8" }}>
-            Effective date: September 15, 2026 · ShopReview by Brands Bro LLC
+            Effective date: September 15, 2026 · ShopRevewby Brands Bro LLC
           </p>
         </div>
 
@@ -94,15 +94,15 @@ export default function TermsPage() {
           {[
             {
               title: "1. About ShopReview",
-              body: "ShopReview is a Shopify review gallery product developed and operated by Brands Bro LLC. It allows Shopify store owners to display customer reviews (photo, video, and star ratings) using a Google Sheet as the data source. The product is delivered as a Shopify Liquid section installed directly on your store theme.",
+              body: "ShopRevewis a Shopify review gallery product developed and operated by Brands Bro LLC. It allows Shopify store owners to display customer reviews (photo, video, and star ratings) using a Google Sheet as the data source. The product is delivered as a Shopify Liquid section installed directly on your store theme.",
             },
             {
               title: "2. License Grant",
-              body: "Upon successful purchase, Brands Bro LLC grants you a lifetime, non-exclusive, non-transferable license to use the ShopReview script on the single Shopify store domain you provided at checkout. This license does not expire as long as you continue to operate that domain. Additional domains require separate license purchases or the Extra Domain add-on.",
+              body: "Upon successful purchase, Brands Bro LLC grants you a lifetime, non-exclusive, non-transferable license to use the ShopRevewscript on the single Shopify store domain you provided at checkout. This license does not expire as long as you continue to operate that domain. Additional domains require separate license purchases or the Extra Domain add-on.",
             },
             {
               title: "3. One-Time Payment & Pricing",
-              body: "ShopReview is sold as a one-time payment product. There are no monthly fees, annual renewals, or hidden charges. The price you pay at checkout is the total cost for your selected plan and any chosen add-ons. Prices are displayed in US dollars and are subject to change for future purchases — your existing license is not affected by price changes.",
+              body: "ShopRevewis sold as a one-time payment product. There are no monthly fees, annual renewals, or hidden charges. The price you pay at checkout is the total cost for your selected plan and any chosen add-ons. Prices are displayed in US dollars and are subject to change for future purchases — your existing license is not affected by price changes.",
             },
             {
               title: "4. $1 Trial",
@@ -110,19 +110,19 @@ export default function TermsPage() {
             },
             {
               title: "5. Installation Service",
-              body: "All plans include a personal installation service. After booking your setup call via TidyCal, our team will install the ShopReview section on your Shopify theme within 24 hours of the scheduled meeting. You are required to provide temporary collaborator or staff access to your Shopify store during the installation window. We will not store your credentials or access your store beyond the scope of the installation.",
+              body: "All plans include a personal installation service. After booking your setup call via TidyCal, our team will install the ShopRevewsection on your Shopify theme within 24 hours of the scheduled meeting. You are required to provide temporary collaborator or staff access to your Shopify store during the installation window. We will not store your credentials or access your store beyond the scope of the installation.",
             },
             {
               title: "6. Google Sheets & Data",
-              body: "ShopReview fetches review data from a publicly shared Google Sheet CSV URL that you provide. You are solely responsible for the accuracy, legality, and authenticity of the review data you display on your store. Brands Bro LLC is not responsible for any reviews, claims, or content published through the ShopReview section on your store.",
+              body: "ShopRevewfetches review data from a publicly shared Google Sheet CSV URL that you provide. You are solely responsible for the accuracy, legality, and authenticity of the review data you display on your store. Brands Bro LLC is not responsible for any reviews, claims, or content published through the ShopRevewsection on your store.",
             },
             {
               title: "7. Prohibited Uses",
-              body: "You may not: (a) resell, sublicense, or redistribute the ShopReview script or any part of it; (b) use the license on more domains than permitted by your plan; (c) reverse engineer, decompile, or modify the script for redistribution; (d) use the product to display false, misleading, or defamatory reviews; or (e) transfer the license to another party without written consent from Brands Bro LLC.",
+              body: "You may not: (a) resell, sublicense, or redistribute the ShopRevewscript or any part of it; (b) use the license on more domains than permitted by your plan; (c) reverse engineer, decompile, or modify the script for redistribution; (d) use the product to display false, misleading, or defamatory reviews; or (e) transfer the license to another party without written consent from Brands Bro LLC.",
             },
             {
               title: "8. Refund Policy",
-              body: "Due to the digital and service-based nature of ShopReview — which includes personal installation — all sales are final and non-refundable once the installation has been completed. If installation has not yet taken place, refund requests submitted within 48 hours of purchase will be considered on a case-by-case basis. If you experience technical issues with the product post-installation, contact us and we will resolve them at no additional cost.",
+              body: "Due to the digital and service-based nature of ShopRevew— which includes personal installation — all sales are final and non-refundable once the installation has been completed. If installation has not yet taken place, refund requests submitted within 48 hours of purchase will be considered on a case-by-case basis. If you experience technical issues with the product post-installation, contact us and we will resolve them at no additional cost.",
             },
             {
               title: "9. Support & Updates",
@@ -130,7 +130,7 @@ export default function TermsPage() {
             },
             {
               title: "10. Intellectual Property",
-              body: "All code, design, and materials associated with ShopReview remain the intellectual property of Brands Bro LLC. Your license grants you the right to use the product — it does not transfer ownership of any intellectual property to you.",
+              body: "All code, design, and materials associated with ShopRevewremain the intellectual property of Brands Bro LLC. Your license grants you the right to use the product — it does not transfer ownership of any intellectual property to you.",
             },
             {
               title: "11. Limitation of Liability",
