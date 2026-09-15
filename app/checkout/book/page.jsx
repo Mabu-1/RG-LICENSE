@@ -1,16 +1,18 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+
 function BookContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const name = searchParams.get("name") || "there";
   const total = searchParams.get("total") || "49.99";
+
   return (
     <>
       <style>{`
         .bk-wrap { min-height: 100vh; background: linear-gradient(135deg,#fff 0%,#EFF6FF 60%,#DBEAFE 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px 60px; text-align: center; }
-        .bk-header { position: fixed; top: 0; left: 0; right: 0; display: flex; align-items: center; padding: 18px 32px; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #BFDBFE; z-index: 10; }
+        .bk-header { position: fixed; top: 0; left: 0; right: 0; display: flex; align-items: center; padding: 18px 32px; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #BFDBFE; z-index: 10; }
         .bk-check { width: 64px; height: 64px; background: #F0FDF4; border: 2px solid #86EFAC; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
         .bk-check svg { width: 30px; height: 30px; stroke: #22C55E; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .bk-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #22C55E; margin-bottom: 10px; }
@@ -18,8 +20,8 @@ function BookContent() {
         .bk-sub { font-size: 15px; color: #64748b; margin-bottom: 40px; line-height: 1.7; max-width: 460px; }
         .bk-box { background: white; border-radius: 24px; padding: 40px 36px; border: 1px solid #BFDBFE; box-shadow: 0 8px 40px rgba(37,99,235,0.08); max-width: 400px; width: 100%; }
         .bk-trial-badge { display: inline-flex; align-items: center; gap: 6px; background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 100px; padding: 4px 14px; margin-bottom: 16px; }
-        .bk-trial-dot { width: 6px; height: 6px; background: #22C55E; border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+        .bk-trial-dot { width: 6px; height: 6px; background: #22C55E; border-radius: 50%; animation: bkpulse 1.5s infinite; }
+        @keyframes bkpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
         .bk-trial-label { font-size: 11px; font-weight: 700; color: #15803D; }
         .bk-price-row { display: flex; align-items: baseline; justify-content: center; gap: 2px; margin-bottom: 6px; }
         .bk-dollar { font-family: serif; font-size: 28px; font-weight: 900; color: #22C55E; }
@@ -38,6 +40,7 @@ function BookContent() {
         }
       `}</style>
 
+      {/* Fixed header */}
       <div className="bk-header">
         <button
           onClick={() => router.back()}
@@ -78,26 +81,17 @@ function BookContent() {
             <div className="bk-trial-dot" />
             <span className="bk-trial-label">3-Day Trial</span>
           </div>
-
           <div className="bk-price-row">
             <span className="bk-dollar">$</span>
             <span className="bk-amount">1</span>
           </div>
-
           <div className="bk-divider" />
-
           <div className="bk-then">
             then <strong>${total}</strong> one-time after trial
           </div>
-
-          <a
-            href="https://tidycal.com/mahdi/shop-review"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bk-cta"
-          >
-            📅 Book Your Setup Call →
-          </a>
+          href="https://tidycal.com/mahdi/shop-review" target="_blank"
+          rel="noopener noreferrer" className="bk-cta"
+          <a>📅 Book Your Setup Call →</a>
           <div className="bk-note">
             🔒 No payment now — we invoice after setup
           </div>
