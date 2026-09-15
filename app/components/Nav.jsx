@@ -23,7 +23,7 @@ export default function Nav() {
           .rgl-logo img { height: ${LOGO_HEIGHT_MOBILE}px; }
           .rgl-btn-primary
           {
-          font-size:11px;
+          font-size:10px;
           }
         }
       `}</style>
