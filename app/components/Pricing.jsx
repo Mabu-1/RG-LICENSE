@@ -36,17 +36,24 @@ export default function Pricing() {
         .rgl-plan.featured { background: #0F172A; border-color: #0F172A; }
         .rgl-plan.featured:hover { border-color: #2563EB; }
         .rgl-plan-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:#2563EB; color:#fff; font-size:10px; font-weight:700; padding:4px 16px; border-radius:100px; text-transform:uppercase; letter-spacing:0.8px; white-space:nowrap; }
+        .rgl-trial-banner { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 8px 14px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .rgl-plan.featured .rgl-trial-banner { background: rgba(37,99,235,0.15); border-color: rgba(37,99,235,0.3); }
+        .rgl-trial-banner-text { font-size: 12px; font-weight: 700; color: #2563EB; }
+        .rgl-plan.featured .rgl-trial-banner-text { color: #93C5FD; }
+        .rgl-trial-banner-pill { background: #2563EB; color: #fff; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; white-space: nowrap; }
         .rgl-plan-name { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:#0F172A; margin-bottom:6px; }
         .rgl-plan-desc { font-size:13px; color:#64748B; margin-bottom:22px; line-height:1.5; }
         .rgl-plan.featured .rgl-plan-name { color:#fff; }
         .rgl-plan.featured .rgl-plan-desc { color:rgba(255,255,255,0.45); }
-        .rgl-price { display:flex; align-items:baseline; gap:2px; margin-bottom:22px; }
+        .rgl-price { display:flex; align-items:baseline; gap:6px; margin-bottom:6px; }
         .rgl-price-cur { font-size:19px; font-weight:600; color:#0F172A; margin-top:8px; }
         .rgl-price-amt { font-family:'Fraunces',serif; font-size:54px; font-weight:900; color:#0F172A; letter-spacing:-3px; line-height:1; }
         .rgl-price-cents { font-size:20px; font-weight:700; color:#0F172A; align-self:flex-start; margin-top:10px; }
-        .rgl-price-note { font-size:12px; color:#64748B; align-self:flex-end; padding-bottom:4px; margin-left:4px; }
+        .rgl-price-original { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:#94a3b8; text-decoration: line-through; align-self:center; }
         .rgl-plan.featured .rgl-price-cur,.rgl-plan.featured .rgl-price-amt,.rgl-plan.featured .rgl-price-cents { color:#fff; }
-        .rgl-plan.featured .rgl-price-note { color:rgba(255,255,255,0.45); }
+        .rgl-plan.featured .rgl-price-original { color:rgba(255,255,255,0.3); }
+        .rgl-price-note { font-size:15px; font-weight:700; color:#2563EB; margin-bottom:18px; }
+        .rgl-plan.featured .rgl-price-note { color:#93C5FD; }
         .rgl-plan-divider { height:1px; background:#BFDBFE; margin-bottom:18px; }
         .rgl-plan.featured .rgl-plan-divider { background:rgba(255,255,255,0.1); }
         .rgl-plan-includes { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:#64748B; margin-bottom:12px; }
@@ -59,7 +66,7 @@ export default function Pricing() {
         .rgl-plan-cta:hover { background:#2563EB; color:#fff; }
         .rgl-plan.featured .rgl-plan-cta { background:#2563EB; border-color:#2563EB; color:#fff; }
         .rgl-plan.featured .rgl-plan-cta:hover { background:#1D4ED8; border-color:#1D4ED8; }
-        .rgl-addons { background:#fff; border-radius:20px; padding:32px; border:1px solid #BFDBFE; box-shadow: 0 8px 32px rgba(37,99,235,0.08); }
+        .rgl-addons { background:#fff; border-radius:20px; padding:32px; border:1px solid #BFDBFE; box-shadow:0 8px 32px rgba(37,99,235,0.08); }
         .rgl-addons-title { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:#0F172A; margin-bottom:6px; }
         .rgl-addons-sub { font-size:13px; color:#64748B; margin-bottom:20px; }
         .rgl-addons-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
@@ -91,14 +98,31 @@ export default function Pricing() {
                 className={`rgl-plan${p.featured ? " featured" : ""}`}
               >
                 {p.badge && <div className="rgl-plan-badge">{p.badge}</div>}
+
+                {/* Trial banner */}
+                <div className="rgl-trial-banner">
+                  <span className="rgl-trial-banner-text">
+                    🎉 $1 Trial For 3 Days
+                  </span>
+                  <span className="rgl-trial-banner-pill">Limited</span>
+                </div>
+
                 <div className="rgl-plan-name">{p.name}</div>
                 <div className="rgl-plan-desc">{p.description}</div>
+
+                {/* Price: $1 with strikethrough original */}
                 <div className="rgl-price">
                   <span className="rgl-price-cur">$</span>
-                  <span className="rgl-price-amt">{p.price}</span>
-                  <span className="rgl-price-cents">{p.cents}</span>
-                  <span className="rgl-price-note">one-time</span>
+                  <span className="rgl-price-amt">1</span>
+                  <span className="rgl-price-original">
+                    ${p.price}
+                    {p.cents}
+                  </span>
                 </div>
+                <div className="rgl-price-note">
+                  then one-time payment after trial
+                </div>
+
                 <div className="rgl-plan-divider" />
                 <div className="rgl-plan-includes">Includes</div>
                 <ul className="rgl-plan-feats">
@@ -110,7 +134,7 @@ export default function Pricing() {
                   href={`/checkout?plan=${p.name.toLowerCase()}`}
                   className="rgl-plan-cta"
                 >
-                  {p.cta} →
+                  Book A Call →
                 </a>
               </div>
             ))}
