@@ -21,6 +21,10 @@ export default function Nav() {
         @media (max-width: 620px) {
           .rgl-nav-links a:not(.rgl-btn-primary) { display: none; }
           .rgl-logo img { height: ${LOGO_HEIGHT_MOBILE}px; }
+          .rgl-btn-primary
+          {
+          font-size:11px;
+          }
         }
       `}</style>
       <nav className="rgl-nav">
