@@ -204,17 +204,11 @@ function CheckoutContent() {
           >
             ← Back
           </Link>
-          <div
-            style={{
-              fontFamily: "serif",
-              fontSize: 20,
-              fontWeight: 700,
-              color: "#0F172A",
-              marginLeft: "auto",
-            }}
-          >
-            ★ Shop Review
-          </div>
+          <img
+            src="https://cdn.shopify.com/s/files/1/0673/0275/2339/files/main_logo_d9a41a64-87f3-442f-bfa0-3b8cf7e16514.png?v=1786536373"
+            alt="Logo"
+            style={{ height: 36, display: "block", marginLeft: "auto" }}
+          />
         </div>
 
         <div
