@@ -107,7 +107,7 @@ export default function Pricing() {
 /* Mobile */
 @media (max-width: 480px) {
   .rgl-pricing { padding: 60px 0; }
-  .rgl-px { padding: 28px 18px; border-radius: 20px; }
+  .rgl-px { padding: 28px 7px; border-radius: 20px; }
 
   /* Stack price hero vertically */
   .rgl-px-price-hero { flex-direction: column; align-items: center; gap: 12px; margin-bottom: 12px; }
