@@ -2,6 +2,12 @@
 import { useEffect, useState } from "react";
 
 const tabs = [
+    {
+    id: "masonry",
+    label: "Masonry",
+    img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296628914_8t8v46l8yct.png",
+    desc: "Cards stack into columns filling gaps. Pinterest-style layout.",
+  },
   {
     id: "natural",
     label: "Natural",
@@ -14,12 +20,7 @@ const tabs = [
     img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786297480876_s6pt5bulk5g.png",
     desc: "All cards in a row match the tallest. Uniform, grid-like layout.",
   },
-  {
-    id: "masonry",
-    label: "Masonry",
-    img: "https://vdeubftebrtbkyjchjqh.supabase.co/storage/v1/object/public/review-images/1786296628914_8t8v46l8yct.png",
-    desc: "Cards stack into columns filling gaps. Pinterest-style layout.",
-  },
+
 ];
 
 export default function CardLayouts() {
