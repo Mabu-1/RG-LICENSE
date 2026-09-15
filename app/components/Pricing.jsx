@@ -121,11 +121,12 @@ export default function Pricing() {
     <span style={{ color: '#22C55E' }}>One-time.</span> Forever yours.
   </h2>
 </div>
+
           <div className="rgl-px">
 
             {/* Left */}
             <div className="rgl-px-left">
-              <div className="rgl-px-plan-name">{plan.name}</div>
+          
 
               {/* $1 with green circles */}
               <div className="rgl-px-price-hero">
