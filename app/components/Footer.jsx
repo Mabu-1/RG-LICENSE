@@ -23,13 +23,33 @@ export default function Footer() {
       <footer className="rgl-footer">
         <div className="rgl-container">
           <div className="rgl-footer-inner">
-            <div className="rgl-footer-logo">
-              <a href="/" className="rgl-logo">
-                <img src={LOGO_URL} alt="Logo" />
-              </a>{" "}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: 48,
+              }}
+            >
+              <Link
+                href="/"
+                style={{
+                  fontSize: 13,
+                  color: "#64748b",
+                  textDecoration: "none",
+                }}
+              >
+                ← Back
+              </Link>
+              <a href="/" style={{ marginLeft: "auto", display: "block" }}>
+                <img
+                  src={LOGO_URL}
+                  alt="ShopReview"
+                  style={{ height: 36, display: "block" }}
+                />
+              </a>
             </div>
             <div className="rgl-footer-copy">
-              © 2026 Shop Review. All rights reserved.
+              © 2026 ShopRevew. All rights reserved.
             </div>
             <div className="rgl-footer-links">
               <a href="/contact" className="rgl-footer-link">

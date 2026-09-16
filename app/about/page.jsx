@@ -54,8 +54,8 @@ export default function AboutPage() {
               marginBottom: 20,
             }}
           >
-            We built ShopRevewbecause review apps were charging too much for too
-            little.
+            We built ShopRevew because review apps were charging too much for
+            too little.
           </h1>
           <p style={{ fontSize: 17, color: "#64748B", lineHeight: 1.8 }}>
             Every month, thousands of Shopify store owners pay $15, $30, even
