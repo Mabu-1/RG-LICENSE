@@ -1,243 +1,287 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { supabaseBrowser } from '@/lib/supabase'
-import Link from 'next/link'
-
-const TOKEN_KEY = 'rg_admin_token'
+﻿"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { supabaseBrowser } from "@/lib/supabase";
+import { useBranding } from "./hooks/useBranding";
 
 export default function AdminPage() {
-  const [authed, setAuthed]             = useState(false)
-  const [checking, setChecking]         = useState(true)
-  const [username, setUsername]         = useState('')
-  const [password, setPassword]         = useState('')
-  const [sites, setSites]               = useState([])
-  const [loading, setLoading]           = useState(false)
-  const [form, setForm]                 = useState({ domain: '', label: '', notes: '' })
-  const [editId, setEditId]             = useState(null)
-  const [msg, setMsg]                   = useState('')
-  const [logo, setLogo]                 = useState('')
-  const [logoHeight, setLogoHeight]     = useState(44)
-  const [logoUploading, setLogoUploading] = useState(false)
-  const [brandMsg, setBrandMsg]         = useState('')
+  const router = useRouter();
+  const [authed, setAuthed] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [logging, setLogging] = useState(false);
+  const { logo, logoHeight, setLogo, setLogoHeight } = useBranding();
+  const [newLogo, setNewLogo] = useState("");
+  const [newHeight, setNewHeight] = useState("");
+  const [brandMsg, setBrandMsg] = useState("");
+  const [sites, setSites] = useState([]);
+  const [sitesLoading, setSitesLoading] = useState(false);
+  const [newSite, setNewSite] = useState({ domain: "", label: "", notes: "" });
+  const [siteMsg, setSiteMsg] = useState("");
+  const [editSite, setEditSite] = useState(null);
+  const [stats, setStats] = useState({ orders: 0, contacts: 0, sites: 0, revenue: 0, trials: 0 });
 
   useEffect(() => {
-    const token = localStorage.getItem(TOKEN_KEY)
-    if (token) { validateToken(token) } else { setChecking(false) }
-    loadBranding()
-  }, [])
-
-  async function loadBranding() {
-    const { data: logoData } = await supabaseBrowser.from('settings').select('value').eq('key','branding_logo').single()
-    const { data: heightData } = await supabaseBrowser.from('settings').select('value').eq('key','branding_logo_height').single()
-    if (logoData?.value) setLogo(logoData.value)
-    if (heightData?.value) setLogoHeight(parseInt(heightData.value))
-  }
+    const token = localStorage.getItem("rg_admin_token");
+    if (token) validateToken(token);
+    else setChecking(false);
+  }, []);
 
   async function validateToken(token) {
-    try {
-      const res = await fetch('/api/admin/login', { headers: { 'x-admin-token': token } })
-      if (res.ok) { setAuthed(true); loadSites(token) }
-      else localStorage.removeItem(TOKEN_KEY)
-    } catch(e) { localStorage.removeItem(TOKEN_KEY) }
-    setChecking(false)
+    const res = await fetch("/api/admin/login", { headers: { "x-admin-token": token } });
+    if (res.ok) { setAuthed(true); loadData(); }
+    setChecking(false);
   }
 
-  async function login() {
-    setMsg('')
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    })
-    const data = await res.json()
-    if (!res.ok) { setMsg(data.error || 'Invalid credentials'); return }
-    localStorage.setItem(TOKEN_KEY, data.token)
-    setAuthed(true)
-    loadSites(data.token)
+  async function loadData() {
+    setSitesLoading(true);
+    const { data: sitesData } = await supabaseBrowser.from("sites").select("*").order("created_at", { ascending: false });
+    setSites(sitesData || []);
+    setSitesLoading(false);
+
+    const { data: orders } = await supabaseBrowser.from("orders").select("id, total, trial_status");
+    const { data: contacts } = await supabaseBrowser.from("contacts").select("id");
+    const { data: sitesCount } = await supabaseBrowser.from("sites").select("id");
+
+    setStats({
+      orders: orders?.length || 0,
+      contacts: contacts?.length || 0,
+      sites: sitesCount?.length || 0,
+      revenue: orders?.reduce((s, o) => s + Number(o.total || 0), 0) || 0,
+      trials: orders?.filter(o => o.trial_status === "trial").length || 0,
+    });
   }
 
-  function logout() { localStorage.removeItem(TOKEN_KEY); setAuthed(false); setSites([]) }
-  function getToken() { return localStorage.getItem(TOKEN_KEY) }
-
-  async function loadSites(token) {
-    setLoading(true)
-    const res = await fetch('/api/sites', { headers: { 'x-admin-token': token || getToken() } })
-    const data = await res.json()
-    setSites(data || [])
-    setLoading(false)
+  async function handleLogin() {
+    setLogging(true); setError("");
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    if (res.ok) {
+      const { token } = await res.json();
+      localStorage.setItem("rg_admin_token", token);
+      setAuthed(true);
+      loadData();
+    } else {
+      setError("Invalid username or password");
+    }
+    setLogging(false);
   }
 
-  async function saveSite() {
-    const method = editId ? 'PATCH' : 'POST'
-    const body = editId ? { ...form, id: editId } : form
-    const res = await fetch('/api/sites', {
-      method,
-      headers: { 'x-admin-token': getToken(), 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-    if (res.ok) { setMsg('Saved!'); setForm({ domain: '', label: '', notes: '' }); setEditId(null); loadSites() }
-    else setMsg('Error saving')
+  function handleLogout() {
+    localStorage.removeItem("rg_admin_token");
+    setAuthed(false);
   }
 
-  async function toggleActive(site) {
-    await fetch('/api/sites', {
-      method: 'PATCH',
-      headers: { 'x-admin-token': getToken(), 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: site.id, active: !site.active })
-    })
-    loadSites()
+  async function saveBranding() {
+    const token = localStorage.getItem("rg_admin_token");
+    if (newLogo) {
+      await fetch("/api/sites", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ key: "branding_logo", value: newLogo }) });
+      setLogo(newLogo);
+    }
+    if (newHeight) {
+      await fetch("/api/sites", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ key: "branding_logo_height", value: newHeight }) });
+      setLogoHeight(parseInt(newHeight));
+    }
+    setBrandMsg("Saved!"); setTimeout(() => setBrandMsg(""), 2000);
+    setNewLogo(""); setNewHeight("");
+  }
+
+  async function addSite() {
+    if (!newSite.domain.trim()) return;
+    const token = localStorage.getItem("rg_admin_token");
+    await fetch("/api/sites", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify(newSite) });
+    setNewSite({ domain: "", label: "", notes: "" });
+    setSiteMsg("Site added!"); setTimeout(() => setSiteMsg(""), 2000);
+    loadData();
   }
 
   async function deleteSite(id) {
-    if (!confirm('Delete this site?')) return
-    await fetch('/api/sites?id=' + id, { method: 'DELETE', headers: { 'x-admin-token': getToken() } })
-    loadSites()
+    if (!confirm("Delete this site?")) return;
+    const token = localStorage.getItem("rg_admin_token");
+    await fetch(`/api/sites?id=${id}`, { method: "DELETE", headers: { "x-admin-token": token } });
+    loadData();
   }
 
-  async function uploadLogo(e) {
-    const file = e.target.files[0]
-    if (!file) return
-    setLogoUploading(true); setBrandMsg('')
-    const ext = file.name.split('.').pop()
-    const fileName = 'branding_logo.' + ext
-    const { error: storageError } = await supabaseBrowser.storage
-      .from('review-images')
-      .upload(fileName, file, { contentType: file.type, upsert: true })
-    if (storageError) { setBrandMsg('Upload failed: ' + storageError.message); setLogoUploading(false); return }
-    const { data: urlData } = supabaseBrowser.storage.from('review-images').getPublicUrl(fileName)
-    const newUrl = urlData.publicUrl + '?t=' + Date.now()
-    await supabaseBrowser.from('settings').upsert({ key: 'branding_logo', value: newUrl })
-    setLogo(newUrl)
-    setLogoUploading(false)
-    setBrandMsg('Logo updated!')
-    setTimeout(() => setBrandMsg(''), 3000)
-    e.target.value = ''
+  async function saveEditSite() {
+    const token = localStorage.getItem("rg_admin_token");
+    await fetch("/api/sites", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-token": token }, body: JSON.stringify({ id: editSite.id, domain: editSite.domain, label: editSite.label, notes: editSite.notes, active: editSite.active }) });
+    setEditSite(null); loadData();
   }
 
-  async function saveLogoHeight(h) {
-    setLogoHeight(h)
-    await supabaseBrowser.from('settings').upsert({ key: 'branding_logo_height', value: String(h) })
-  }
-
-  async function removeLogo() {
-    await supabaseBrowser.from('settings').upsert({ key: 'branding_logo', value: '' })
-    setLogo('')
-    setBrandMsg('Logo removed!')
-    setTimeout(() => setBrandMsg(''), 3000)
-  }
-
-  const inputStyle = { padding:'10px 14px', border:'1px solid #e2e8f0', borderRadius:8, fontSize:13, boxSizing:'border-box', width:'100%' }
-  const btnStyle   = { padding:'10px 24px', background:'#0F172A', color:'white', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }
+  const inp = { width: "100%", padding: "9px 12px", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, boxSizing: "border-box", fontFamily: "inherit", outline: "none" };
+  const lbl = { fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 4 };
+  const card = { background: "white", borderRadius: 14, padding: "24px", border: "1px solid #e2e8f0", marginBottom: 20 };
+  const navCard = { display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", background: "white", borderRadius: 12, border: "1px solid #e2e8f0", textDecoration: "none", transition: "all 0.2s", cursor: "pointer" };
 
   if (checking) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'#f8f7f4' }}>
-      <div style={{ color:'#64748b', fontSize:14 }}>Checking session...</div>
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f7f4" }}>
+      <div style={{ color: "#94a3b8" }}>Loading...</div>
     </div>
-  )
+  );
 
   if (!authed) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'#f8f7f4' }}>
-      <div style={{ background:'white', padding:40, borderRadius:16, boxShadow:'0 4px 24px rgba(0,0,0,0.08)', width:360 }}>
-        {logo
-          ? <img src={logo} alt="Logo" style={{ height:logoHeight, marginBottom:24, display:'block' }} />
-          : <h2 style={{ fontFamily:'serif', fontSize:24, fontWeight:700, marginBottom:24, color:'#0F172A' }}>★ RG Admin</h2>}
-        <input placeholder="Username" value={username} onChange={e=>setUsername(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()} style={{ ...inputStyle, marginBottom:12 }} />
-        <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()} style={{ ...inputStyle, marginBottom:12 }} />
-        <button onClick={login} style={{ ...btnStyle, width:'100%', padding:11 }}>Login</button>
-        {msg && <div style={{ marginTop:12, color:'red', fontSize:13 }}>{msg}</div>}
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#fff 0%,#EFF6FF 60%,#DBEAFE 100%)", padding: 24 }}>
+      <div style={{ background: "white", borderRadius: 20, padding: 40, width: "100%", maxWidth: 380, border: "1px solid #BFDBFE", boxShadow: "0 8px 40px rgba(37,99,235,0.08)" }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          {logo && <a href="/"><img src={logo} alt="Logo" style={{ height: logoHeight, display: "block", margin: "0 auto 20px" }} /></a>}
+          <h1 style={{ fontFamily: "serif", fontSize: 24, fontWeight: 900, color: "#0F172A", marginBottom: 6 }}>Admin Login</h1>
+          <p style={{ fontSize: 13, color: "#64748b" }}>ShopRevew dashboard</p>
+        </div>
+        <div style={{ marginBottom: 14 }}>
+          <label style={lbl}>Username</label>
+          <input value={username} onChange={e => setUsername(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="username" style={inp} />
+        </div>
+        <div style={{ marginBottom: 20 }}>
+          <label style={lbl}>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="••••••••" style={inp} />
+        </div>
+        {error && <div style={{ color: "#dc2626", fontSize: 12, marginBottom: 14, textAlign: "center" }}>{error}</div>}
+        <button onClick={handleLogin} disabled={logging} style={{ width: "100%", padding: "12px", background: logging ? "#94a3b8" : "#2563EB", color: "white", border: "none", borderRadius: 100, fontSize: 14, fontWeight: 700, cursor: logging ? "not-allowed" : "pointer" }}>
+          {logging ? "Logging in..." : "Login →"}
+        </button>
       </div>
     </div>
-  )
+  );
 
   return (
-    <div style={{ minHeight:'100vh', background:'#f8f7f4', padding:'40px 24px' }}>
-      <div style={{ maxWidth:1000, margin:'0 auto' }}>
+    <div style={{ minHeight: "100vh", background: "#f8f7f4", padding: "40px 24px" }}>
+      <div style={{ maxWidth: 960, margin: "0 auto" }}>
 
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32 }}>
-          <div>
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+          <a href="/">
             {logo
-              ? <img src={logo} alt="Logo" style={{ height:logoHeight, display:'block' }} />
-              : <h1 style={{ fontFamily:'serif', fontSize:28, fontWeight:900, color:'#0F172A', letterSpacing:-1 }}>★ ReviewGallery Admin</h1>}
-          </div>
-          <div style={{ display:'flex', gap:10 }}>
-            <Link href="/admin/orders" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#6366F1', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📋 Orders</Link>
-            <Link href="/admin/media" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#F59E0B', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>📸 Media</Link>
-            <Link href="/admin/pricing" style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'10px 20px', background:'#10B981', color:'white', borderRadius:8, fontSize:13, fontWeight:600, textDecoration:'none' }}>💰 Pricing</Link>
-            <button onClick={logout} style={{ padding:'10px 20px', background:'#fee2e2', color:'#dc2626', border:'none', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>Logout</button>
-          </div>
+              ? <img src={logo} alt="Logo" style={{ height: logoHeight, display: "block" }} />
+              : <h1 style={{ fontFamily: "serif", fontSize: 26, fontWeight: 900, color: "#0F172A" }}>Admin</h1>}
+          </a>
+          <button onClick={handleLogout} style={{ padding: "8px 18px", background: "white", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13, cursor: "pointer", color: "#64748b" }}>Logout</button>
         </div>
 
-        {/* BRANDING */}
-        <div style={{ background:'white', borderRadius:16, padding:28, marginBottom:24, border:'1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A', marginBottom:20 }}>🎨 Branding</h2>
-          <div style={{ display:'flex', alignItems:'flex-start', gap:24, flexWrap:'wrap' }}>
-            <div style={{ width:160, height:80, background:'#f1f5f9', borderRadius:10, border:'1px solid #e2e8f0', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', flexShrink:0 }}>
-              {logo
-                ? <img src={logo} alt="Logo" style={{ maxWidth:'100%', maxHeight:'100%', objectFit:'contain' }} />
-                : <span style={{ fontSize:12, color:'#94a3b8' }}>No logo</span>}
+        {/* Stats */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12, marginBottom: 28 }}>
+          {[
+            { label: "Orders", value: stats.orders, color: "#0F172A" },
+            { label: "Revenue", value: `$${stats.revenue.toFixed(2)}`, color: "#2563EB" },
+            { label: "Active Trials", value: stats.trials, color: "#D97706" },
+            { label: "Contacts", value: stats.contacts, color: "#7C3AED" },
+            { label: "Sites", value: stats.sites, color: "#059669" },
+          ].map(s => (
+            <div key={s.label} style={{ background: "white", borderRadius: 12, padding: "14px 16px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 900, color: s.color, fontFamily: "serif" }}>{s.value}</div>
             </div>
-            <div style={{ flex:1 }}>
-              <div style={{ display:'flex', gap:10, marginBottom:12, flexWrap:'wrap' }}>
-                <label style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'9px 20px', background:'#0F172A', color:'white', borderRadius:8, fontSize:13, fontWeight:600, cursor:'pointer' }}>
-                  {logoUploading ? '⏳ Uploading...' : '📁 Upload Logo'}
-                  <input type="file" accept="image/*" onChange={uploadLogo} style={{ display:'none' }} disabled={logoUploading} />
-                </label>
-                {logo && <button onClick={removeLogo} style={{ padding:'9px 16px', background:'#fff5f5', color:'#dc2626', border:'1px solid #fee2e2', borderRadius:8, fontSize:13, cursor:'pointer' }}>Remove</button>}
+          ))}
+        </div>
+
+        {/* Nav cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 28 }}>
+          {[
+            { href: "/admin/orders", icon: "📋", title: "Orders", sub: "View and manage all orders" },
+            { href: "/admin/contacts", icon: "📬", title: "Contacts", sub: "View contact form submissions" },
+            { href: "/admin/pricing", icon: "💰", title: "Pricing", sub: "Edit plan and addon pricing" },
+            { href: "/admin/media", icon: "🖼️", title: "Media", sub: "Upload and manage images & videos" },
+          ].map(n => (
+            <Link key={n.href} href={n.href} style={navCard}>
+              <span style={{ fontSize: 28 }}>{n.icon}</span>
+              <div>
+                <div style={{ fontWeight: 700, color: "#0F172A", fontSize: 14 }}>{n.title}</div>
+                <div style={{ fontSize: 12, color: "#64748b" }}>{n.sub}</div>
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:8 }}>
-                <span style={{ fontSize:12, fontWeight:600, color:'#64748b', whiteSpace:'nowrap' }}>Logo Height: {logoHeight}px</span>
-                <input type="range" min={24} max={120} value={logoHeight} onChange={e=>saveLogoHeight(parseInt(e.target.value))} style={{ flex:1, maxWidth:200 }} />
-              </div>
-              {brandMsg && <div style={{ fontSize:13, color: brandMsg.includes('fail') ? '#dc2626' : '#10B981', fontWeight:600, marginBottom:6 }}>{brandMsg}</div>}
-              <div style={{ fontSize:12, color:'#94a3b8' }}>PNG, SVG or JPG. Shows on all admin pages and login screen.</div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Branding */}
+        <div style={card}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 16 }}>🎨 Branding</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+            <div>
+              <label style={lbl}>Logo URL</label>
+              <input value={newLogo} onChange={e => setNewLogo(e.target.value)} placeholder={logo || "https://..."} style={inp} />
+            </div>
+            <div>
+              <label style={lbl}>Logo Height (px)</label>
+              <input type="number" value={newHeight} onChange={e => setNewHeight(e.target.value)} placeholder={logoHeight?.toString() || "40"} style={inp} />
             </div>
           </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button onClick={saveBranding} style={{ padding: "8px 20px", background: "#0F172A", color: "white", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Save Branding</button>
+            {brandMsg && <span style={{ fontSize: 13, color: "#10B981", fontWeight: 600 }}>{brandMsg}</span>}
+          </div>
         </div>
 
-        {/* ADD / EDIT FORM */}
-        <div style={{ background:'white', borderRadius:16, padding:28, marginBottom:24, border:'1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A', marginBottom:20 }}>{editId ? 'Edit Site' : 'Add New Site'}</h2>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:12 }}>
-            <input placeholder="Domain (e.g. store.myshopify.com)" value={form.domain} onChange={e=>setForm({...form,domain:e.target.value})} style={inputStyle} />
-            <input placeholder="Label (e.g. Client Store Name)" value={form.label} onChange={e=>setForm({...form,label:e.target.value})} style={inputStyle} />
-          </div>
-          <textarea placeholder="Notes..." value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} style={{ ...inputStyle, marginBottom:12, height:70, resize:'vertical' }} />
-          <div style={{ display:'flex', gap:10 }}>
-            <button onClick={saveSite} style={btnStyle}>{editId ? 'Update Site' : 'Add Site'}</button>
-            {editId && <button onClick={()=>{setEditId(null);setForm({domain:'',label:'',notes:''})}} style={{ padding:'10px 24px', background:'#f1f5f9', color:'#64748b', border:'none', borderRadius:8, fontSize:13, cursor:'pointer' }}>Cancel</button>}
-          </div>
-          {msg && <div style={{ marginTop:12, color:'#10B981', fontSize:13, fontWeight:500 }}>{msg}</div>}
-        </div>
+        {/* Sites */}
+        <div style={card}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", marginBottom: 16 }}>🌐 Licensed Sites</div>
 
-        {/* SITES LIST */}
-        <div style={{ background:'white', borderRadius:16, padding:28, border:'1px solid #e2e8f0' }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
-            <h2 style={{ fontSize:16, fontWeight:700, color:'#0F172A' }}>Licensed Sites ({sites.length})</h2>
-            <button onClick={()=>loadSites()} style={{ padding:'6px 14px', background:'#f1f5f9', color:'#64748b', border:'none', borderRadius:6, fontSize:12, cursor:'pointer' }}>Refresh</button>
+          {editSite && (
+            <div style={{ background: "#f8f7f4", borderRadius: 10, padding: 16, marginBottom: 16, border: "1px solid #e2e8f0" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 10 }}>
+                <div><label style={lbl}>Domain</label><input value={editSite.domain} onChange={e => setEditSite({ ...editSite, domain: e.target.value })} style={inp} /></div>
+                <div><label style={lbl}>Label</label><input value={editSite.label || ""} onChange={e => setEditSite({ ...editSite, label: e.target.value })} style={inp} /></div>
+                <div><label style={lbl}>Notes</label><input value={editSite.notes || ""} onChange={e => setEditSite({ ...editSite, notes: e.target.value })} style={inp} /></div>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={saveEditSite} style={{ padding: "7px 16px", background: "#0F172A", color: "white", border: "none", borderRadius: 7, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Save</button>
+                <button onClick={() => setEditSite(null)} style={{ padding: "7px 16px", background: "#f1f5f9", color: "#64748b", border: "none", borderRadius: 7, fontSize: 12, cursor: "pointer" }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr auto", gap: 10, marginBottom: 12 }}>
+            <input value={newSite.domain} onChange={e => setNewSite({ ...newSite, domain: e.target.value })} placeholder="Domain" style={inp} />
+            <input value={newSite.label} onChange={e => setNewSite({ ...newSite, label: e.target.value })} placeholder="Label" style={inp} />
+            <input value={newSite.notes} onChange={e => setNewSite({ ...newSite, notes: e.target.value })} placeholder="Notes" style={inp} />
+            <button onClick={addSite} style={{ padding: "9px 16px", background: "#2563EB", color: "white", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>+ Add</button>
           </div>
-          {loading ? <div style={{ color:'#64748b', fontSize:14 }}>Loading...</div> : (
-            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-              {sites.map(site => (
-                <div key={site.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 16px', background:'#f8f7f4', borderRadius:10, border:'1px solid #e2e8f0', flexWrap:'wrap' }}>
-                  <div style={{ flex:1, minWidth:200 }}>
-                    <div style={{ fontWeight:600, fontSize:14, color:'#0F172A' }}>{site.label || site.domain}</div>
-                    <div style={{ fontSize:12, color:'#64748b', fontFamily:'monospace' }}>{site.domain}</div>
-                    {site.notes && <div style={{ fontSize:12, color:'#94a3b8', marginTop:2 }}>{site.notes}</div>}
-                  </div>
-                  <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                    <span style={{ fontSize:11, fontWeight:700, padding:'3px 10px', borderRadius:20, background: site.active ? '#d1fae5' : '#fee2e2', color: site.active ? '#065f46' : '#991b1b' }}>{site.active ? 'Active' : 'Inactive'}</span>
-                    <button onClick={()=>toggleActive(site)} style={{ padding:'6px 12px', fontSize:12, border:'1px solid #e2e8f0', borderRadius:6, cursor:'pointer', background:'white' }}>{site.active ? 'Deactivate' : 'Activate'}</button>
-                    <button onClick={()=>{ setEditId(site.id); setForm({ domain:site.domain, label:site.label||'', notes:site.notes||'' }) }} style={{ padding:'6px 12px', fontSize:12, border:'1px solid #e2e8f0', borderRadius:6, cursor:'pointer', background:'white' }}>Edit</button>
-                    <button onClick={()=>deleteSite(site.id)} style={{ padding:'6px 12px', fontSize:12, border:'1px solid #fee2e2', borderRadius:6, cursor:'pointer', background:'#fff5f5', color:'#dc2626' }}>Delete</button>
-                  </div>
-                </div>
-              ))}
-              {sites.length === 0 && <div style={{ color:'#94a3b8', fontSize:14 }}>No sites added yet.</div>}
+          {siteMsg && <div style={{ fontSize: 12, color: "#10B981", fontWeight: 600, marginBottom: 10 }}>{siteMsg}</div>}
+
+          {sitesLoading ? (
+            <div style={{ color: "#94a3b8", fontSize: 13 }}>Loading...</div>
+          ) : sites.length === 0 ? (
+            <div style={{ color: "#94a3b8", fontSize: 13 }}>No sites yet.</div>
+          ) : (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "2px solid #f1f5f9" }}>
+                    {["Domain", "Label", "Notes", "Active", ""].map(h => (
+                      <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sites.map(s => (
+                    <tr key={s.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "10px 12px", fontSize: 13, fontFamily: "monospace", color: "#0F172A" }}>{s.domain}</td>
+                      <td style={{ padding: "10px 12px", fontSize: 13, color: "#64748b" }}>{s.label || "—"}</td>
+                      <td style={{ padding: "10px 12px", fontSize: 13, color: "#64748b" }}>{s.notes || "—"}</td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: s.active ? "#D1FAE5" : "#FEE2E2", color: s.active ? "#065F46" : "#991B1B" }}>
+                          {s.active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td style={{ padding: "10px 12px" }}>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button onClick={() => setEditSite(s)} style={{ padding: "4px 10px", background: "#f1f5f9", border: "none", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>✏️</button>
+                          <button onClick={() => deleteSite(s.id)} style={{ padding: "4px 10px", background: "#fff5f5", color: "#dc2626", border: "1px solid #fee2e2", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>🗑</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
 
       </div>
     </div>
-  )
+  );
 }
