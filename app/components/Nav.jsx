@@ -29,9 +29,9 @@ export default function Nav() {
       `}</style>
       <nav className="rgl-nav">
         <div className="rgl-nav-inner">
-          <div className="rgl-logo">
+          <a href="/" className="rgl-logo">
             <img src={LOGO_URL} alt="Logo" />
-          </div>
+          </a>
           <div className="rgl-nav-links">
             <a href="#feat-sheets" className="rgl-nav-link">
               Features

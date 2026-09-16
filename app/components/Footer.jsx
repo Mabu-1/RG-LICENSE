@@ -24,7 +24,9 @@ export default function Footer() {
         <div className="rgl-container">
           <div className="rgl-footer-inner">
             <div className="rgl-footer-logo">
-              <img src={LOGO_URL} alt="Logo" />
+              <a href="/" className="rgl-logo">
+                <img src={LOGO_URL} alt="Logo" />
+              </a>{" "}
             </div>
             <div className="rgl-footer-copy">
               © 2026 Shop Review. All rights reserved.

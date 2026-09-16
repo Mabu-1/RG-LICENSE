@@ -24,11 +24,9 @@ export default function AboutPage() {
           >
             ← Back
           </Link>
-          <img
-            src={LOGO_URL}
-            alt="ShopReview"
-            style={{ height: 36, display: "block", marginLeft: "auto" }}
-          />
+          <a href="/" className="rgl-logo">
+            <img src={LOGO_URL} alt="Logo" />
+          </a>
         </div>
 
         {/* Hero */}

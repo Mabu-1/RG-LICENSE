@@ -47,11 +47,9 @@ export default function ContactPage() {
           >
             ← Back
           </Link>
-          <img
-            src={LOGO_URL}
-            alt="ShopReview"
-            style={{ height: 36, display: "block", marginLeft: "auto" }}
-          />
+          <a href="/" className="rgl-logo">
+            <img src={LOGO_URL} alt="Logo" />
+          </a>
         </div>
 
         <div
