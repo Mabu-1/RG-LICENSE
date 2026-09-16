@@ -33,7 +33,7 @@ export default function Nav() {
             <img src={LOGO_URL} alt="Logo" />
           </a>
           <div className="rgl-nav-links">
-            <a href="#feat-sheets" className="rgl-nav-link">
+            <a href="#feat-settings" className="rgl-nav-link">
               Features
             </a>
             <a href="#how" className="rgl-nav-link">
