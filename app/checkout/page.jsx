@@ -157,7 +157,6 @@ function CheckoutContent() {
           <h1 style={{ fontFamily: "serif", fontSize: 28, fontWeight: 900, color: "#0F172A", marginBottom: 6, letterSpacing: -1 }}>Complete Your Order</h1>
           <p style={{ fontSize: 14, color: "#64748b", marginBottom: 28 }}>Fill in your details below. After submitting you will pay $1 to start your 3-day trial.</p>
 
-          {/* Details */}
           <div className="co-card">
             <div className="co-card-title">Your Details</div>
             <div className="co-2col">
@@ -183,7 +182,6 @@ function CheckoutContent() {
             </div>
           </div>
 
-          {/* Domains */}
           <div className="co-card">
             <div className="co-card-title">Your Shopify Store Domains</div>
             <p style={{ fontSize: 13, color: "#64748b", marginBottom: 20, marginTop: -12 }}>First 3 domains are free. Each additional domain is +$10.</p>
