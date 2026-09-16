@@ -1,28 +1,36 @@
 const LOGO_URL =
   "https://cdn.shopify.com/s/files/1/0673/0275/2339/files/main_logo_d9a41a64-87f3-442f-bfa0-3b8cf7e16514.png?v=1786536373";
-const LOGO_HEIGHT_DESKTOP = 36;
-const LOGO_HEIGHT_MOBILE = 28;
+const LOGO_HEIGHT = 34;
 
 export default function Footer() {
   return (
     <>
       <style>{`
-        .rgl-footer { background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); padding: 48px 0 32px; border-top: 1px solid #BFDBFE; }
-        .rgl-footer-top { display: grid; grid-template-columns: 1fr auto auto; gap: 48px; align-items: start; margin-bottom: 40px; }
-        .rgl-footer-logo img { height: ${LOGO_HEIGHT_DESKTOP}px; display: block; margin-bottom: 10px; }
-        .rgl-footer-tagline { font-size: 13px; color: #94a3b8; max-width: 220px; line-height: 1.6; }
+        .rgl-footer { background: linear-gradient(135deg, #ffffff 0%, #EFF6FF 60%, #DBEAFE 100%); padding: 56px 0 28px; border-top: 1px solid #BFDBFE; }
+        .rgl-footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 32px; margin-bottom: 40px; }
+        .rgl-footer-brand a { display: inline-block; margin-bottom: 10px; }
+        .rgl-footer-brand img { height: ${LOGO_HEIGHT}px; display: block; }
+        .rgl-footer-tagline { font-size: 13px; color: #94a3b8; line-height: 1.65; max-width: 200px; }
         .rgl-footer-col-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #0F172A; margin-bottom: 14px; }
         .rgl-footer-col { display: flex; flex-direction: column; gap: 10px; }
-        .rgl-footer-link { font-size: 13px; color: #64748B; transition: color 0.2s; text-decoration: none; }
+        .rgl-footer-link { font-size: 13px; color: #64748B; text-decoration: none; transition: color 0.2s; width: fit-content; }
         .rgl-footer-link:hover { color: #2563EB; }
-        .rgl-footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid #BFDBFE; flex-wrap: wrap; gap: 12px; }
+        .rgl-footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid #BFDBFE; }
         .rgl-footer-copy { font-size: 12px; color: #94a3b8; }
-        .rgl-footer-badges { display: flex; align-items: center; gap: 10px; }
-        .rgl-footer-badge { font-size: 11px; font-weight: 600; color: #64748b; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 3px 10px; border-radius: 100px; }
+        .rgl-footer-stripe { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #94a3b8; }
+        .rgl-footer-stripe svg { opacity: 0.5; }
+
         @media (max-width: 768px) {
-          .rgl-footer-top { grid-template-columns: 1fr; gap: 28px; }
-          .rgl-footer-logo img { height: ${LOGO_HEIGHT_MOBILE}px; }
-          .rgl-footer-bottom { flex-direction: column; text-align: center; }
+          .rgl-footer { padding: 40px 0 24px; }
+          .rgl-footer-top { grid-template-columns: 1fr 1fr; gap: 28px; }
+          .rgl-footer-brand { grid-column: 1 / -1; text-align: center; }
+          .rgl-footer-tagline { max-width: 100%; margin: 0 auto; }
+          .rgl-footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+          .rgl-footer-top { grid-template-columns: 1fr 1fr; }
+          .rgl-footer-col { align-items: flex-start; }
         }
       `}</style>
 
@@ -30,13 +38,14 @@ export default function Footer() {
         <div className="rgl-container">
           <div className="rgl-footer-top">
             {/* Brand */}
-            <div>
-              <a href="/" className="rgl-footer-logo">
+            <div className="rgl-footer-brand">
+              <a href="/">
                 <img src={LOGO_URL} alt="ShopRevew" />
               </a>
               <div className="rgl-footer-tagline">
-                One-time Shopify review gallery. No subscriptions. We install it
-                for you.
+                One-time Shopify review gallery.
+                <br />
+                No subscriptions. We install it for you.
               </div>
             </div>
 
@@ -83,9 +92,19 @@ export default function Footer() {
             <div className="rgl-footer-copy">
               © 2026 ShopRevew. All rights reserved.
             </div>
-            <div className="rgl-footer-badges">
-              <span className="rgl-footer-badge">🔒 Secured by Stripe</span>
-              <span className="rgl-footer-badge">✓ Shopify Compatible</span>
+            <div className="rgl-footer-stripe">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Secured by Stripe
             </div>
           </div>
         </div>
