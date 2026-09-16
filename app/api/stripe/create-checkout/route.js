@@ -10,33 +10,11 @@ export async function POST(req) {
 
     const customer = await stripe.customers.create({ name, email })
 
-    const session = await stripe.checkout.sessions.create({
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 100,
+      currency: 'usd',
       customer: customer.id,
-      payment_method_types: ['card'],
-      mode: 'payment',
-      payment_intent_data: {
-        setup_future_usage: 'off_session',
-        metadata: {
-          order_id: orderId,
-          customer_id: customer.id,
-          full_total: total.toString(),
-        },
-      },
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'ShopRevew — 3 Day Trial',
-              description: `Full amount $${total} will be charged after 3 days`,
-            },
-            unit_amount: 100,
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}&order_id=${orderId}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/book`,
+      setup_future_usage: 'off_session',
       metadata: {
         order_id: orderId,
         customer_id: customer.id,
@@ -44,7 +22,11 @@ export async function POST(req) {
       },
     })
 
-    return NextResponse.json({ url: session.url, sessionId: session.id, customerId: customer.id })
+    return NextResponse.json({
+      clientSecret: paymentIntent.client_secret,
+      customerId: customer.id,
+      paymentIntentId: paymentIntent.id,
+    })
   } catch (err) {
     console.error('Stripe error:', err)
     return NextResponse.json({ error: err.message }, { status: 500 })

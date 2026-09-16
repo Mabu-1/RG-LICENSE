@@ -1,6 +1,123 @@
 ﻿"use client";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+const CARD_STYLE = {
+  style: {
+    base: {
+      fontSize: "15px",
+      color: "#0F172A",
+      fontFamily: "inherit",
+      "::placeholder": { color: "#94a3b8" },
+    },
+    invalid: { color: "#ef4444" },
+  },
+};
+
+function PaymentForm({ name, email, orderId, total }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const router = useRouter();
+  const [clientSecret, setClientSecret] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [preparing, setPreparing] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        const res = await fetch("/api/stripe/create-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, orderId, total: parseFloat(total) }),
+        });
+        const data = await res.json();
+        if (data.error) { setError(data.error); setPreparing(false); return; }
+        setClientSecret(data.clientSecret);
+        setCustomerId(data.customerId);
+        setPreparing(false);
+      } catch (err) {
+        setError("Failed to prepare payment. Please refresh.");
+        setPreparing(false);
+      }
+    }
+    if (name && email) prepare();
+  }, [name, email, orderId, total]);
+
+  async function handlePay() {
+    if (!stripe || !elements || !clientSecret) return;
+    setLoading(true);
+    setError("");
+
+    const card = elements.getElement(CardElement);
+
+    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card,
+        billing_details: { name, email },
+      },
+    });
+
+    if (stripeError) {
+      setError(stripeError.message);
+      setLoading(false);
+      return;
+    }
+
+    if (paymentIntent.status === "succeeded") {
+      // Update order with stripe data
+      await fetch("/api/stripe/confirm-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId,
+          customerId,
+          paymentMethodId: paymentIntent.payment_method,
+          paymentIntentId: paymentIntent.id,
+        }),
+      });
+      // Redirect to TidyCal
+      window.location.href = "https://tidycal.com/mahdi/shop-review";
+    }
+  }
+
+  return (
+    <div>
+      {preparing ? (
+        <div style={{ textAlign: "center", color: "#64748b", fontSize: 13, padding: "20px 0" }}>⏳ Preparing payment...</div>
+      ) : (
+        <>
+          <div style={{ border: "1.5px solid #BFDBFE", borderRadius: 12, padding: "16px 18px", background: "#F8FAFF", marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Card Details</div>
+            <CardElement options={CARD_STYLE} />
+          </div>
+          {error && <div style={{ color: "#ef4444", fontSize: 12, marginBottom: 12, padding: "8px 12px", background: "#FEF2F2", borderRadius: 8, border: "1px solid #FCA5A5" }}>{error}</div>}
+          <button
+            onClick={handlePay}
+            disabled={loading || !stripe || !clientSecret}
+            style={{
+              width: "100%", padding: "16px", background: loading ? "#94a3b8" : "#2563EB",
+              color: "white", border: "none", borderRadius: 100, fontSize: 16, fontWeight: 700,
+              cursor: loading ? "not-allowed" : "pointer", transition: "all 0.2s",
+              boxShadow: loading ? "none" : "0 8px 28px rgba(37,99,235,0.3)", marginBottom: 10,
+            }}
+          >
+            {loading ? "⏳ Processing..." : "💳 Pay $1 & Book Call →"}
+          </button>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 11, color: "#94a3b8" }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Secured by Stripe — your card is never stored on our servers
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 function BookContent() {
   const searchParams = useSearchParams();
@@ -9,56 +126,26 @@ function BookContent() {
   const total = searchParams.get("total") || "49.99";
   const orderId = searchParams.get("order_id") || "";
   const email = searchParams.get("email") || "";
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handlePay() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/stripe/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, orderId, total: parseFloat(total) }),
-      });
-      const data = await res.json();
-      if (data.error) { setError(data.error); setLoading(false); return; }
-      window.location.href = data.url;
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-      setLoading(false);
-    }
-  }
 
   return (
     <>
       <style>{`
         .bk-wrap { min-height: 100vh; background: linear-gradient(135deg,#fff 0%,#EFF6FF 60%,#DBEAFE 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 24px 60px; text-align: center; }
         .bk-header { position: fixed; top: 0; left: 0; right: 0; display: flex; align-items: center; padding: 18px 32px; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #BFDBFE; z-index: 10; }
-        .bk-check { width: 64px; height: 64px; background: #F0FDF4; border: 2px solid #86EFAC; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .bk-check svg { width: 30px; height: 30px; stroke: #22C55E; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        .bk-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #22C55E; margin-bottom: 10px; }
-        .bk-h1 { font-family: serif; font-size: clamp(26px,5vw,40px); font-weight: 900; color: #0F172A; letter-spacing: -1.5px; margin-bottom: 10px; line-height: 1.1; }
-        .bk-sub { font-size: 15px; color: #64748b; margin-bottom: 32px; line-height: 1.7; max-width: 460px; }
-        .bk-box { background: white; border-radius: 24px; padding: 40px 36px; border: 1px solid #BFDBFE; box-shadow: 0 8px 40px rgba(37,99,235,0.08); max-width: 420px; width: 100%; }
+        .bk-box { background: white; border-radius: 24px; padding: 40px 36px; border: 1px solid #BFDBFE; box-shadow: 0 8px 40px rgba(37,99,235,0.08); max-width: 440px; width: 100%; text-align: left; }
         .bk-trial-badge { display: inline-flex; align-items: center; gap: 6px; background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 100px; padding: 4px 14px; margin-bottom: 16px; }
         .bk-trial-dot { width: 6px; height: 6px; background: #22C55E; border-radius: 50%; animation: bkpulse 1.5s infinite; }
         @keyframes bkpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
         .bk-trial-label { font-size: 11px; font-weight: 700; color: #15803D; }
-        .bk-price-row { display: flex; align-items: baseline; justify-content: center; gap: 2px; margin-bottom: 6px; }
+        .bk-price-row { display: flex; align-items: baseline; gap: 2px; margin-bottom: 4px; }
         .bk-dollar { font-family: serif; font-size: 28px; font-weight: 900; color: #22C55E; }
-        .bk-amount { font-family: serif; font-size: 96px; font-weight: 900; color: #22C55E; letter-spacing: -6px; line-height: 1; }
-        .bk-divider { height: 1px; background: #EFF6FF; margin: 16px 0; }
+        .bk-amount { font-family: serif; font-size: 80px; font-weight: 900; color: #22C55E; letter-spacing: -4px; line-height: 1; }
+        .bk-divider { height: 1px; background: #EFF6FF; margin: 20px 0; }
         .bk-then { font-size: 13px; color: #64748b; margin-bottom: 24px; }
-        .bk-then strong { color: #0F172A; font-size: 18px; font-family: serif; font-weight: 900; }
-        .bk-cta { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 0; background: #2563EB; color: white; border-radius: 100px; font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.25s; box-shadow: 0 8px 28px rgba(37,99,235,0.3); width: 100%; border: none; cursor: pointer; }
-        .bk-cta:hover { background: #1D4ED8; transform: translateY(-2px); }
-        .bk-cta:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
-        .bk-note { font-size: 12px; color: #94a3b8; margin-top: 12px; }
-        .bk-secure { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: #94a3b8; margin-top: 14px; }
+        .bk-then strong { color: #0F172A; font-weight: 700; }
         @media (max-width: 480px) {
           .bk-wrap { padding: 90px 16px 40px; }
-          .bk-amount { font-size: 72px; }
+          .bk-amount { font-size: 60px; }
           .bk-box { padding: 28px 20px; }
           .bk-header { padding: 16px 20px; }
         }
@@ -70,35 +157,24 @@ function BookContent() {
       </div>
 
       <div className="bk-wrap">
-        <div className="bk-check">
-          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg>
-        </div>
-        <div className="bk-eyebrow">Order Saved ✓</div>
-        <h1 className="bk-h1">Hey {name}, one last step!</h1>
-        <p className="bk-sub">Pay $1 to start your 3-day trial. After the trial we will charge the remaining amount automatically. No subscription — one-time only.</p>
+        <Elements stripe={stripePromise}>
+          <div className="bk-box">
+            <div className="bk-trial-badge">
+              <div className="bk-trial-dot" />
+              <span className="bk-trial-label">3-Day Trial</span>
+            </div>
 
-        <div className="bk-box">
-          <div className="bk-trial-badge">
-            <div className="bk-trial-dot" />
-            <span className="bk-trial-label">3-Day Trial</span>
-          </div>
-          <div className="bk-price-row">
-            <span className="bk-dollar">$</span>
-            <span className="bk-amount">1</span>
-          </div>
-          <div className="bk-divider" />
-          <div className="bk-then">then <strong>${total}</strong> one-time after trial</div>
+            <div className="bk-price-row">
+              <span className="bk-dollar">$</span>
+              <span className="bk-amount">1</span>
+            </div>
+            <div className="bk-then">then <strong>${total}</strong> one-time after 3 days — charged automatically</div>
 
-          <button onClick={handlePay} disabled={loading} className="bk-cta">
-            {loading ? "⏳ Redirecting to payment..." : "💳 Pay $1 & Book Your Call →"}
-          </button>
-          {error && <div style={{ color: "#ef4444", fontSize: 12, marginTop: 8 }}>{error}</div>}
-          <div className="bk-note">🔒 Card saved securely via Stripe</div>
-          <div className="bk-secure">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Powered by Stripe — 100% secure
+            <div className="bk-divider" />
+
+            <PaymentForm name={name} email={email} orderId={orderId} total={total} />
           </div>
-        </div>
+        </Elements>
       </div>
     </>
   );
