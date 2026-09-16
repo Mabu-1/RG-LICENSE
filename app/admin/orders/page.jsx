@@ -10,16 +10,59 @@ const STATUS_COLORS = {
   cancelled: { bg: "#FEE2E2", color: "#991B1B" },
 };
 
+const TRIAL_COLORS = {
+  trial: { bg: "#FEF3C7", color: "#92400E", label: "🟡 Trial" },
+  converted: { bg: "#D1FAE5", color: "#065F46", label: "✅ Converted" },
+  cancelled: { bg: "#FEE2E2", color: "#991B1B", label: "❌ Cancelled" },
+};
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editOrder, setEditOrder] = useState(null);
   const [msg, setMsg] = useState("");
   const { logo, logoHeight } = useBranding();
 
+  const [filters, setFilters] = useState({
+    status: "all",
+    trial_status: "all",
+    plan: "all",
+    search: "",
+    date_from: "",
+    date_to: "",
+  });
+
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    let result = [...orders];
+    if (filters.status !== "all")
+      result = result.filter((o) => o.status === filters.status);
+    if (filters.trial_status !== "all")
+      result = result.filter((o) => o.trial_status === filters.trial_status);
+    if (filters.plan !== "all")
+      result = result.filter((o) => o.plan === filters.plan);
+    if (filters.search) {
+      const s = filters.search.toLowerCase();
+      result = result.filter(
+        (o) =>
+          o.name?.toLowerCase().includes(s) ||
+          o.email?.toLowerCase().includes(s) ||
+          o.domain?.toLowerCase().includes(s) ||
+          o.whatsapp?.toLowerCase().includes(s),
+      );
+    }
+    if (filters.date_from)
+      result = result.filter((o) => o.created_at >= filters.date_from);
+    if (filters.date_to)
+      result = result.filter(
+        (o) => o.created_at <= filters.date_to + "T23:59:59",
+      );
+    setFiltered(result);
+  }, [orders, filters]);
 
   async function load() {
     setLoading(true);
@@ -34,6 +77,16 @@ export default function OrdersPage() {
 
   async function updateStatus(id, status) {
     await supabaseBrowser.from("orders").update({ status }).eq("id", id);
+    setMsg("Updated!");
+    setTimeout(() => setMsg(""), 2000);
+    load();
+  }
+
+  async function updateTrialStatus(id, trial_status) {
+    const updates = { trial_status };
+    if (trial_status === "converted") updates.is_trial = false;
+    if (trial_status === "trial") updates.is_trial = true;
+    await supabaseBrowser.from("orders").update(updates).eq("id", id);
     setMsg("Updated!");
     setTimeout(() => setMsg(""), 2000);
     load();
@@ -66,6 +119,9 @@ export default function OrdersPage() {
         total: parseFloat(editOrder.total),
         notes: editOrder.notes,
         status: editOrder.status,
+        trial_status: editOrder.trial_status || "trial",
+        is_trial: editOrder.trial_status !== "converted",
+        trial_start_date: editOrder.trial_start_date || "",
         setup_date: editOrder.setup_date || "",
         setup_time: editOrder.setup_time || "",
         addon_domain_list: (editOrder.addon_domain_list || []).filter(Boolean),
@@ -85,6 +141,8 @@ export default function OrdersPage() {
     setEditOrder({
       ...o,
       whatsapp: o.whatsapp || "",
+      trial_status: o.trial_status || "trial",
+      trial_start_date: o.trial_start_date || "",
       addon_domain_list:
         Array.isArray(o.addon_domain_list) && o.addon_domain_list.length
           ? o.addon_domain_list
@@ -118,6 +176,15 @@ export default function OrdersPage() {
     });
   }
 
+  function trialDaysLeft(startDate) {
+    if (!startDate) return null;
+    const start = new Date(startDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 3);
+    const diff = Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
   const inp = {
     width: "100%",
     padding: "8px 10px",
@@ -146,6 +213,20 @@ export default function OrdersPage() {
     cursor: "pointer",
   };
 
+  // Stats
+  const totalRevenue = filtered.reduce((s, o) => s + Number(o.total || 0), 0);
+  const activeTrials = filtered.filter(
+    (o) => o.trial_status === "trial",
+  ).length;
+  const converted = filtered.filter(
+    (o) => o.trial_status === "converted",
+  ).length;
+  const cancelled = filtered.filter(
+    (o) => o.trial_status === "cancelled",
+  ).length;
+
+  const uniquePlans = [...new Set(orders.map((o) => o.plan).filter(Boolean))];
+
   return (
     <div
       style={{
@@ -154,14 +235,14 @@ export default function OrdersPage() {
         padding: "40px 24px",
       }}
     >
-      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1500, margin: "0 auto" }}>
         {/* Header */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 32,
+            marginBottom: 28,
           }}
         >
           <div>
@@ -208,7 +289,7 @@ export default function OrdersPage() {
                 cursor: "pointer",
               }}
             >
-              Refresh
+              ↻ Refresh
             </button>
             <Link
               href="/admin"
@@ -225,6 +306,177 @@ export default function OrdersPage() {
               ← Back
             </Link>
           </div>
+        </div>
+
+        {/* Stats */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4,1fr)",
+            gap: 12,
+            marginBottom: 24,
+          }}
+        >
+          {[
+            { label: "Total Orders", value: filtered.length, color: "#0F172A" },
+            {
+              label: "Revenue",
+              value: `$${totalRevenue.toFixed(2)}`,
+              color: "#2563EB",
+            },
+            { label: "Active Trials", value: activeTrials, color: "#D97706" },
+            { label: "Converted", value: converted, color: "#059669" },
+          ].map((s) => (
+            <div
+              key={s.label}
+              style={{
+                background: "white",
+                borderRadius: 12,
+                padding: "16px 20px",
+                border: "1px solid #e2e8f0",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#94a3b8",
+                  textTransform: "uppercase",
+                  letterSpacing: 1,
+                  marginBottom: 6,
+                }}
+              >
+                {s.label}
+              </div>
+              <div
+                style={{
+                  fontSize: 24,
+                  fontWeight: 900,
+                  color: s.color,
+                  fontFamily: "serif",
+                }}
+              >
+                {s.value}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Filters */}
+        <div
+          style={{
+            background: "white",
+            borderRadius: 12,
+            padding: "16px 20px",
+            border: "1px solid #e2e8f0",
+            marginBottom: 16,
+            display: "flex",
+            gap: 12,
+            flexWrap: "wrap",
+            alignItems: "flex-end",
+          }}
+        >
+          <div style={{ flex: 2, minWidth: 180 }}>
+            <label style={lbl}>Search</label>
+            <input
+              value={filters.search}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
+              placeholder="Name, email, domain, WhatsApp..."
+              style={inp}
+            />
+          </div>
+          <div style={{ minWidth: 130 }}>
+            <label style={lbl}>Order Status</label>
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              style={sel}
+            >
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div style={{ minWidth: 140 }}>
+            <label style={lbl}>Trial Status</label>
+            <select
+              value={filters.trial_status}
+              onChange={(e) =>
+                setFilters({ ...filters, trial_status: e.target.value })
+              }
+              style={sel}
+            >
+              <option value="all">All Trials</option>
+              <option value="trial">🟡 Trial</option>
+              <option value="converted">✅ Converted</option>
+              <option value="cancelled">❌ Cancelled</option>
+            </select>
+          </div>
+          <div style={{ minWidth: 120 }}>
+            <label style={lbl}>Plan</label>
+            <select
+              value={filters.plan}
+              onChange={(e) => setFilters({ ...filters, plan: e.target.value })}
+              style={sel}
+            >
+              <option value="all">All Plans</option>
+              {uniquePlans.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div style={{ minWidth: 130 }}>
+            <label style={lbl}>From Date</label>
+            <input
+              type="date"
+              value={filters.date_from}
+              onChange={(e) =>
+                setFilters({ ...filters, date_from: e.target.value })
+              }
+              style={inp}
+            />
+          </div>
+          <div style={{ minWidth: 130 }}>
+            <label style={lbl}>To Date</label>
+            <input
+              type="date"
+              value={filters.date_to}
+              onChange={(e) =>
+                setFilters({ ...filters, date_to: e.target.value })
+              }
+              style={inp}
+            />
+          </div>
+          <button
+            onClick={() =>
+              setFilters({
+                status: "all",
+                trial_status: "all",
+                plan: "all",
+                search: "",
+                date_from: "",
+                date_to: "",
+              })
+            }
+            style={{
+              padding: "8px 14px",
+              background: "#f1f5f9",
+              border: "none",
+              borderRadius: 8,
+              fontSize: 12,
+              cursor: "pointer",
+              color: "#64748b",
+            }}
+          >
+            Clear
+          </button>
         </div>
 
         {/* Edit Modal */}
@@ -360,7 +612,7 @@ export default function OrdersPage() {
                   />
                 </div>
                 <div>
-                  <label style={lbl}>Status</label>
+                  <label style={lbl}>Order Status</label>
                   <select
                     value={editOrder.status || "pending"}
                     onChange={(e) =>
@@ -372,6 +624,37 @@ export default function OrdersPage() {
                     <option value="active">Active</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
+                </div>
+                <div>
+                  <label style={lbl}>Trial Status</label>
+                  <select
+                    value={editOrder.trial_status || "trial"}
+                    onChange={(e) =>
+                      setEditOrder({
+                        ...editOrder,
+                        trial_status: e.target.value,
+                      })
+                    }
+                    style={sel}
+                  >
+                    <option value="trial">🟡 Trial</option>
+                    <option value="converted">✅ Converted</option>
+                    <option value="cancelled">❌ Cancelled</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={lbl}>Trial Start Date</label>
+                  <input
+                    type="date"
+                    value={editOrder.trial_start_date || ""}
+                    onChange={(e) =>
+                      setEditOrder({
+                        ...editOrder,
+                        trial_start_date: e.target.value,
+                      })
+                    }
+                    style={inp}
+                  />
                 </div>
                 <div>
                   <label style={lbl}>Setup Date</label>
@@ -415,8 +698,8 @@ export default function OrdersPage() {
                     marginBottom: 10,
                   }}
                 >
-                  <label style={{ ...lbl, marginBottom: 0, fontSize: 12 }}>
-                    All Domains (primary + extras)
+                  <label style={{ ...lbl, marginBottom: 0 }}>
+                    Extra Domains
                   </label>
                   <button
                     onClick={addDomain}
@@ -469,7 +752,6 @@ export default function OrdersPage() {
                 ))}
               </div>
 
-              {/* Notes */}
               <div style={{ marginBottom: 20 }}>
                 <label style={lbl}>Notes</label>
                 <textarea
@@ -529,9 +811,9 @@ export default function OrdersPage() {
             <div style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>
               Loading...
             </div>
-          ) : orders.length === 0 ? (
+          ) : filtered.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>
-              No orders yet.
+              No orders found.
             </div>
           ) : (
             <div style={{ overflowX: "auto" }}>
@@ -548,20 +830,23 @@ export default function OrdersPage() {
                       "Name",
                       "Email",
                       "WhatsApp",
-                      "Primary Domain",
+                      "Domain",
                       "Extra Domains",
                       "Plan",
+                      "Trial Status",
+                      "Trial Start",
+                      "Days Left",
                       "Setup",
                       "Total",
-                      "Status",
+                      "Order Status",
                       "",
                     ].map((h) => (
                       <th
                         key={h}
                         style={{
-                          padding: "12px 16px",
+                          padding: "12px 14px",
                           textAlign: "left",
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: 700,
                           color: "#64748b",
                           textTransform: "uppercase",
@@ -575,11 +860,17 @@ export default function OrdersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((o, i) => {
+                  {filtered.map((o, i) => {
                     const sc = STATUS_COLORS[o.status] || STATUS_COLORS.pending;
+                    const tc =
+                      TRIAL_COLORS[o.trial_status] || TRIAL_COLORS.trial;
                     const extraDomains = Array.isArray(o.addon_domain_list)
                       ? o.addon_domain_list.filter(Boolean)
                       : [];
+                    const daysLeft =
+                      o.trial_status === "trial"
+                        ? trialDaysLeft(o.trial_start_date)
+                        : null;
                     return (
                       <tr
                         key={o.id}
@@ -590,7 +881,7 @@ export default function OrdersPage() {
                       >
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 12,
                             color: "#64748b",
                             whiteSpace: "nowrap",
@@ -600,7 +891,7 @@ export default function OrdersPage() {
                         </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 13,
                             fontWeight: 600,
                             color: "#0F172A",
@@ -611,20 +902,14 @@ export default function OrdersPage() {
                         </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 12,
                             color: "#64748b",
                           }}
                         >
                           {o.email}
                         </td>
-                        <td
-                          style={{
-                            padding: "14px 16px",
-                            fontSize: 12,
-                            color: "#0F172A",
-                          }}
-                        >
+                        <td style={{ padding: "12px 14px", fontSize: 12 }}>
                           {o.whatsapp ? (
                             <a
                               href={`https://wa.me/${o.whatsapp.replace(/\D/g, "")}`}
@@ -634,7 +919,6 @@ export default function OrdersPage() {
                                 color: "#25D366",
                                 fontWeight: 600,
                                 textDecoration: "none",
-                                fontSize: 12,
                               }}
                             >
                               {o.whatsapp}
@@ -645,7 +929,7 @@ export default function OrdersPage() {
                         </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 12,
                             fontFamily: "monospace",
                             color: "#0F172A",
@@ -653,7 +937,7 @@ export default function OrdersPage() {
                         >
                           {o.domain}
                         </td>
-                        <td style={{ padding: "14px 16px", fontSize: 12 }}>
+                        <td style={{ padding: "12px 14px", fontSize: 12 }}>
                           {extraDomains.length ? (
                             extraDomains.map((d, idx) => (
                               <div
@@ -673,7 +957,7 @@ export default function OrdersPage() {
                         </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 12,
                             fontWeight: 600,
                             color: "#0F172A",
@@ -682,9 +966,73 @@ export default function OrdersPage() {
                         >
                           {o.plan}
                         </td>
+                        <td style={{ padding: "12px 14px" }}>
+                          <select
+                            value={o.trial_status || "trial"}
+                            onChange={(e) =>
+                              updateTrialStatus(o.id, e.target.value)
+                            }
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: 20,
+                              border: "none",
+                              fontSize: 11,
+                              fontWeight: 700,
+                              background: tc.bg,
+                              color: tc.color,
+                              cursor: "pointer",
+                            }}
+                          >
+                            <option value="trial">🟡 Trial</option>
+                            <option value="converted">✅ Converted</option>
+                            <option value="cancelled">❌ Cancelled</option>
+                          </select>
+                        </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
+                            fontSize: 12,
+                            color: "#64748b",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {o.trial_start_date ? fmt(o.trial_start_date) : "—"}
+                        </td>
+                        <td
+                          style={{ padding: "12px 14px", whiteSpace: "nowrap" }}
+                        >
+                          {daysLeft !== null ? (
+                            <span
+                              style={{
+                                fontSize: 11,
+                                fontWeight: 700,
+                                padding: "2px 8px",
+                                borderRadius: 20,
+                                background:
+                                  daysLeft <= 0
+                                    ? "#FEE2E2"
+                                    : daysLeft === 1
+                                      ? "#FEF3C7"
+                                      : "#D1FAE5",
+                                color:
+                                  daysLeft <= 0
+                                    ? "#991B1B"
+                                    : daysLeft === 1
+                                      ? "#92400E"
+                                      : "#065F46",
+                              }}
+                            >
+                              {daysLeft <= 0 ? "Expired" : `${daysLeft}d left`}
+                            </span>
+                          ) : (
+                            <span style={{ color: "#94a3b8", fontSize: 11 }}>
+                              —
+                            </span>
+                          )}
+                        </td>
+                        <td
+                          style={{
+                            padding: "12px 14px",
                             fontSize: 12,
                             color: o.setup_date ? "#0F172A" : "#94a3b8",
                             whiteSpace: "nowrap",
@@ -696,7 +1044,7 @@ export default function OrdersPage() {
                         </td>
                         <td
                           style={{
-                            padding: "14px 16px",
+                            padding: "12px 14px",
                             fontSize: 13,
                             fontWeight: 700,
                             color: "#0F172A",
@@ -705,7 +1053,7 @@ export default function OrdersPage() {
                         >
                           ${Number(o.total).toFixed(2)}
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "12px 14px" }}>
                           <select
                             value={o.status || "pending"}
                             onChange={(e) => updateStatus(o.id, e.target.value)}
@@ -725,7 +1073,7 @@ export default function OrdersPage() {
                             <option value="cancelled">Cancelled</option>
                           </select>
                         </td>
-                        <td style={{ padding: "14px 16px" }}>
+                        <td style={{ padding: "12px 14px" }}>
                           <div style={{ display: "flex", gap: 6 }}>
                             <button
                               onClick={() => openEdit(o)}
@@ -766,10 +1114,20 @@ export default function OrdersPage() {
           )}
         </div>
 
-        <div style={{ marginTop: 16, fontSize: 12, color: "#94a3b8" }}>
-          {orders.length} order{orders.length !== 1 ? "s" : ""} total · $
-          {orders.reduce((s, o) => s + Number(o.total || 0), 0).toFixed(2)}{" "}
-          revenue
+        <div
+          style={{
+            marginTop: 14,
+            fontSize: 12,
+            color: "#94a3b8",
+            display: "flex",
+            gap: 20,
+          }}
+        >
+          <span>{filtered.length} orders shown</span>
+          <span>💰 ${totalRevenue.toFixed(2)} revenue</span>
+          <span>🟡 {activeTrials} active trials</span>
+          <span>✅ {converted} converted</span>
+          <span>❌ {cancelled} cancelled</span>
         </div>
       </div>
     </div>
