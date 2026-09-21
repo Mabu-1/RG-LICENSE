@@ -274,6 +274,7 @@ export default function Hero() {
               muted
               loop
               playsInline
+              preload="auto" // ← add this
             />
             <div className="rgl-hero-video-badge">
               <div className="rgl-hero-video-dot" />
