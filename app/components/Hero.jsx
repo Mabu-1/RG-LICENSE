@@ -1,6 +1,23 @@
 "use client";
 
+import { useRef, useState } from "react";
+
 export default function Hero() {
+  const videoRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+
+  const togglePlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play();
+      setPlaying(true);
+    } else {
+      v.pause();
+      setPlaying(false);
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -21,21 +38,21 @@ export default function Hero() {
           pointer-events: none;
         }
 
-   .rgl-hero-annotation-pill {
-  background: #fff;
-  border: 1.5px solid #BFDBFE;
-  border-radius: 100px;
-  padding: 5px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #64748B;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-  white-space: nowrap;
-  display: inline-block;
-  letter-spacing: normal;
-  word-spacing: normal;
-  font-family: 'Inter', sans-serif;
-}
+        .rgl-hero-annotation-pill {
+          background: #fff;
+          border: 1.5px solid #BFDBFE;
+          border-radius: 100px;
+          padding: 5px 14px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #64748B;
+          box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+          white-space: nowrap;
+          display: inline-block;
+          letter-spacing: normal;
+          word-spacing: normal;
+          font-family: 'Inter', sans-serif;
+        }
         .rgl-hero-h1 {
           font-family: 'Fraunces', serif;
           font-size: clamp(36px, 5vw, 64px);
@@ -50,7 +67,6 @@ export default function Hero() {
           position: relative;
         }
 
-        /* Annotation absolutely positioned inside h1 */
         .rgl-hero-ann {
           position: absolute;
           top: -68px;
@@ -115,6 +131,8 @@ export default function Hero() {
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
         }
+
+        /* Video wrapper */
         .rgl-hero-video-wrap {
           position: relative;
           border-radius: 20px;
@@ -124,6 +142,7 @@ export default function Hero() {
           background: #000;
           max-width: 900px;
           margin: 0 auto 40px;
+          cursor: pointer;
         }
         .rgl-hero-video-wrap::before {
           content: '';
@@ -131,25 +150,65 @@ export default function Hero() {
           background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4) 100%);
           z-index: 1; pointer-events: none;
         }
-        .rgl-hero-video { width: 100%; display: block; border-radius: 20px; }
+        .rgl-hero-video {
+          width: 100%;
+          display: block;
+          border-radius: 20px;
+        }
+
+        /* Big centered play button shown when paused */
+        .rgl-hero-play-overlay {
+          position: absolute;
+          inset: 0;
+          z-index: 3;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0,0,0,0.25);
+          transition: opacity 0.2s;
+        }
+        .rgl-hero-play-overlay.hidden {
+          opacity: 0;
+          pointer-events: none;
+        }
+        .rgl-hero-play-circle {
+          width: 72px; height: 72px;
+          background: rgba(255,255,255,0.95);
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+          transition: transform 0.2s;
+        }
+        .rgl-hero-play-circle:hover { transform: scale(1.1); }
+        .rgl-hero-play-circle svg { margin-left: 4px; }
+
+        /* Bottom-left badge / pause button */
         .rgl-hero-video-badge {
-          position: absolute; bottom: 20px; left: 20px; z-index: 2;
+          position: absolute; bottom: 20px; left: 20px; z-index: 4;
           background: rgba(255,255,255,0.15);
           backdrop-filter: blur(10px);
           border: 1px solid rgba(255,255,255,0.25);
           color: #fff; font-size: 12px; font-weight: 600;
           padding: 8px 14px; border-radius: 100px;
           display: flex; align-items: center; gap: 6px;
+          cursor: pointer;
+          user-select: none;
+          transition: background 0.2s;
         }
+        .rgl-hero-video-badge:hover { background: rgba(255,255,255,0.25); }
+
         .rgl-hero-video-dot {
           width: 8px; height: 8px;
           background: #2563EB; border-radius: 50%;
           animation: pulse 1.5s infinite;
         }
+        .rgl-hero-video-dot.paused { animation: none; background: #94a3b8; }
+
         @keyframes pulse {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(0.8); }
         }
+
         .rgl-hero-btn {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 18px 40px;
@@ -177,6 +236,7 @@ export default function Hero() {
           .rgl-hero-btn { padding: 15px 28px; font-size: 15px; }
           .rgl-hero-ann { transform: translateX(-120px); top: -60px; }
           .rgl-hero-annotation-pill { font-size: 11px; padding: 4px 10px; }
+          .rgl-hero-play-circle { width: 60px; height: 60px; }
         }
         @media (max-width: 480px) {
           .rgl-hero { padding: 90px 0 50px; }
@@ -184,16 +244,12 @@ export default function Hero() {
           .rgl-hero-points { flex-direction: row; align-items: center; }
           .rgl-hero-ann { transform: translateX(-120px); top: -70px; }
           .rgl-hero-btn { width: 100%; justify-content: center; padding: 15px 20px; }
-
-        
         }
-              
       `}</style>
 
       <section className="rgl-hero" id="hero">
         <div className="rgl-container">
           <h1 className="rgl-hero-h1">
-            {/* Annotation: pill above + arrow curving down to "Stop" */}
             <span className="rgl-hero-ann">
               <span className="rgl-hero-annotation-pill">
                 Fake review apps for your shopify store
@@ -217,7 +273,6 @@ export default function Hero() {
               </svg>
             </span>
 
-            {/* "Stop Paying Monthly" wavy underline */}
             <span className="rgl-hero-wave">
               Stop Paying Monthly
               <svg viewBox="0 0 480 10" fill="none" preserveAspectRatio="none">
@@ -234,7 +289,6 @@ export default function Hero() {
 
             <br />
 
-            {/* "Review Apps" blue + wavy underline */}
             <span className="rgl-hero-em">
               <span className="rgl-hero-wave">
                 Review Apps
@@ -266,19 +320,39 @@ export default function Hero() {
             <li>Google Sheet management</li>
           </ul>
 
-          <div className="rgl-hero-video-wrap">
+          {/* Video */}
+          <div className="rgl-hero-video-wrap" onClick={togglePlay}>
+            {/* Big centered play button — hidden while playing */}
+            <div className={`rgl-hero-play-overlay${playing ? " hidden" : ""}`}>
+              <div className="rgl-hero-play-circle">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <path d="M9 5.5L22 14L9 22.5V5.5Z" fill="#2563EB" />
+                </svg>
+              </div>
+            </div>
+
             <video
+              ref={videoRef}
               className="rgl-hero-video"
               src="https://cdn.shopify.com/videos/c/o/v/5cd7ad593733438498651d519cb155ac.mp4"
-              autoPlay
               muted
               loop
               playsInline
-              preload="auto" // ← add this
+              preload="auto"
             />
-            <div className="rgl-hero-video-badge">
-              <div className="rgl-hero-video-dot" />
-              Live Preview
+
+            {/* Bottom-left badge: shows Play / Pause label */}
+            <div
+              className="rgl-hero-video-badge"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlay();
+              }}
+            >
+              <div
+                className={`rgl-hero-video-dot${playing ? "" : " paused"}`}
+              />
+              {playing ? "Pause" : "Play"}
             </div>
           </div>
 
