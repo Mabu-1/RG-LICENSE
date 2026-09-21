@@ -269,7 +269,8 @@ export default function Hero() {
           <div className="rgl-hero-video-wrap">
             <video
               className="rgl-hero-video"
-              src="https://cdn.shopify.com/videos/c/o/v/5cd7ad593733438498651d519cb155ac.mp4"
+              src="https://cdn.shopify.com/videos/c/o/v/5cd7ad593733438498651d519cb155ac.mp4
+              "
               autoPlay
               muted
               loop
