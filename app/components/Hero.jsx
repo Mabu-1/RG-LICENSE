@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 export default function Hero() {
   return (
@@ -192,15 +192,28 @@ export default function Hero() {
 
       <section className="rgl-hero" id="hero">
         <div className="rgl-container">
-
           <h1 className="rgl-hero-h1">
-
             {/* Annotation: pill above + arrow curving down to "Stop" */}
             <span className="rgl-hero-ann">
-              <span className="rgl-hero-annotation-pill">Fake review apps for your shopify store</span>
+              <span className="rgl-hero-annotation-pill">
+                Fake review apps for your shopify store
+              </span>
               <svg width="56" height="52" viewBox="0 0 56 52" fill="none">
-                <path d="M8 4 C8 4 44 18 50 48" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
-                <path d="M44 46 L50 48 L48 41" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
+                <path
+                  d="M8 4 C8 4 44 18 50 48"
+                  stroke="#2563EB"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  opacity="0.5"
+                />
+                <path
+                  d="M44 46 L50 48 L48 41"
+                  stroke="#2563EB"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity="0.5"
+                />
               </svg>
             </span>
 
@@ -208,27 +221,43 @@ export default function Hero() {
             <span className="rgl-hero-wave">
               Stop Paying Monthly
               <svg viewBox="0 0 480 10" fill="none" preserveAspectRatio="none">
-                <path d="M0 6 Q30 1 60 6 Q90 11 120 6 Q150 1 180 6 Q210 11 240 6 Q270 1 300 6 Q330 11 360 6 Q390 1 420 6 Q450 11 480 6" stroke="#0F172A" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.2"/>
+                <path
+                  d="M0 6 Q30 1 60 6 Q90 11 120 6 Q150 1 180 6 Q210 11 240 6 Q270 1 300 6 Q330 11 360 6 Q390 1 420 6 Q450 11 480 6"
+                  stroke="#0F172A"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                  opacity="0.2"
+                />
               </svg>
             </span>
 
             <br />
 
-
             {/* "Review Apps" blue + wavy underline */}
             <span className="rgl-hero-em">
               <span className="rgl-hero-wave">
                 Review Apps
-                <svg viewBox="0 0 280 10" fill="none" preserveAspectRatio="none">
-                  <path d="M0 6 Q35 1 70 6 Q105 11 140 6 Q175 1 210 6 Q245 11 280 6" stroke="#2563EB" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
+                <svg
+                  viewBox="0 0 280 10"
+                  fill="none"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0 6 Q35 1 70 6 Q105 11 140 6 Q175 1 210 6 Q245 11 280 6"
+                    stroke="#2563EB"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
                 </svg>
               </span>
             </span>
-
           </h1>
 
           <p className="rgl-hero-sub">
-            Display unlimited photo, video, and star rating reviews — all powered by your Google Sheet.
+            Display unlimited photo, video, and star rating reviews — all
+            powered by your Google Sheet.
           </p>
 
           <ul className="rgl-hero-points">
@@ -240,8 +269,11 @@ export default function Hero() {
           <div className="rgl-hero-video-wrap">
             <video
               className="rgl-hero-video"
-              src="https://cdn.shopify.com/videos/c/o/v/02994640c893463e8c6d2f261fb75caa.mp4"
-              autoPlay muted loop playsInline
+              src="https://cdn.shopify.com/videos/c/o/v/5cd7ad593733438498651d519cb155ac.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
             />
             <div className="rgl-hero-video-badge">
               <div className="rgl-hero-video-dot" />
@@ -252,9 +284,8 @@ export default function Hero() {
           <a href="#pricing" className="rgl-hero-btn">
             Get For Your Store →
           </a>
-
         </div>
       </section>
     </>
-  )
+  );
 }
