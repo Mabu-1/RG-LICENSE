@@ -335,7 +335,6 @@ export default function Hero() {
               ref={videoRef}
               className="rgl-hero-video"
               src="https://cdn.shopify.com/videos/c/o/v/b31b46bc21cd43ac9fa48548d27a8f78.mp4"
-              muted
               loop
               playsInline
               preload="auto"
